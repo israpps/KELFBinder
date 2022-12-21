@@ -16,8 +16,8 @@ However it was also designed to be easily reusable by other projects... such as 
 The following installation modes are available:
 
 - [Normal Install](#Normal-Install)
-- [Advanced Install](#Advanced Install)
-- [Expert Install](#Expert Install)
+- [Advanced Install](#Advanced-Install)
+- [Expert Install](#Expert-Install)
 
 #### Normal Install
 
