@@ -17,5 +17,5 @@ Here you will find the following files files:
 - `SYSTEM.XLF`: System Update for Common PS2
 - `XSYSTEM.XLF`: System update for PSX DESR
 - `DVDPLAYER.XLF`: DVDPlayer update
-- 'OSDSYS.KERNEL': Kernel Patch for early SCPH-10000. __DON'T TOUCH THIS__
-- 'OSD110.KERNEL': Kernel Patch for Late SCPH-10000 and SCPH-15000  __DON'T TOUCH THIS__
+- `OSDSYS.KERNEL`: Kernel Patch for early SCPH-10000. __DON'T TOUCH THIS__
+- `OSD110.KERNEL`: Kernel Patch for Late SCPH-10000 and SCPH-15000  __DON'T TOUCH THIS__
