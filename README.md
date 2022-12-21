@@ -2,7 +2,7 @@
 
 <br />
 <p align="center">
-  <a href="https://github.com/DanielSant0s/Enceladus/">
+  <a href="https://github.com/israpps/KELFBinder">
     <img src="./logo.png" alt="Logo" width="100%" height="auto">
   </a>
 
