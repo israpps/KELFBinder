@@ -32,7 +32,9 @@ There are 3 tables and 2 variables:
 
 the two variables are:
 
-> to disable the installation of extra files, please change the value of the following variables to 0, dont comment the install tables and don't leave them empty, or installer will crash
+```note
+to disable the installation of extra files, please change the value of the following variables to 0, dont comment the install tables and don't leave them empty, or installer will crash
+```
 
 - `EXTRA_INST_COUNT`: the ammount of items inside the `EXTRA_INST_SRC` table
 - `EXTRA_INST_FOLDE`: the ammount of items inside the `EXTRA_INST_MKD` table
