@@ -6,7 +6,7 @@ sort: 1
 
 ## Custom updates
 
-To add your own updates, you will need to convert the desired program into a Memory card KELF.
+To add your own updates, you will need to [Convert an ELF file into a Memory Card KELF](./creating_KELFs.md).
 
 After that, just replace the appropiate file on the following path of KELFBinder package:
 
