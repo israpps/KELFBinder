@@ -56,7 +56,7 @@ IMPORT_BIN2C(libsd_irx);
 IMPORT_BIN2C(cdfs_irx);
 IMPORT_BIN2C(usbd_irx);
 IMPORT_BIN2C(bdm_irx);
-IMPORT_BIN2C(bdmfs_vfat_irx);
+IMPORT_BIN2C(bdmfs_fatfs_irx);
 IMPORT_BIN2C(usbmass_bd_irx);
 // IMPORT_BIN2C(audsrv_irx);
 IMPORT_BIN2C(ds34usb_irx);
@@ -255,8 +255,8 @@ int main(int argc, char *argv[])
 
     ret = SifExecModuleBuffer(&bdm_irx, size_bdm_irx, 0, NULL, &STAT);
     DPRINTF("[BDM.IRX]: ret=%d, stat=%d\n", ret, STAT);
-    ret = SifExecModuleBuffer(&bdmfs_vfat_irx, size_bdmfs_vfat_irx, 0, NULL, &STAT);
-    DPRINTF("[BDMFS_VFAT.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    ret = SifExecModuleBuffer(&bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &STAT);
+    DPRINTF("[BDMFS_FATFS.IRX]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &STAT);
     DPRINTF("[USBMASS_BD.IRX]: ret=%d, stat=%d\n", ret, STAT);
 
