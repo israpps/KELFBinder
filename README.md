@@ -3,9 +3,9 @@ DVDPlayer and System Updates Manager for SCE PlayStation2
 
 ![GitHub all releases](https://img.shields.io/github/downloads/israpps/KELFBinder/total)
 
+[![](https://img.shields.io/badge/Read%20the-Documentation-0020ff?style=for-the-badge&logo=pencil&labelColor=yellow)](https://israpps.github.io/KELFBinder/)
 
 Project still in development!
-Source code and releases will be pushed here when release gets done
 
 ![IMG1](./img/img1.png)
 ![IMG2](./img/img2.png)
