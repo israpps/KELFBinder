@@ -29,7 +29,7 @@ jobs:
         git fetch --prune --unshallow
 
     - name: update dependencies
-    - run: |
+      run: |
         echo wLaunchELF
         wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT-DS34-XFROM.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
         cp bin/INSTALL/CORE/BACKDOOR.ELF bin/INSTALL/ASSETS/BOOT/BOOT.ELF
