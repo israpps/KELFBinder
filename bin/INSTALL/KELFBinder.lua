@@ -241,7 +241,7 @@ function greeting()
   -- Sound.playADPCM(1, SND_OPEN)
   while CONTINUE do
     Screen.clear()
-    if Q > 0x80 then W = -1 end
+    if Q > 0x80 then W = -1 System.sleep(1) end
     if Q > 1 then Q = Q + W else CONTINUE = false end
     if W > 0 then
       Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(Q, Q, Q, Q))

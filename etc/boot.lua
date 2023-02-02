@@ -92,7 +92,7 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 
 
 	BETANUM = "014"
-IS_NOT_PUBLIC_READY = true
+IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
   elseif System.doesFileExist("System/index.lua") then
