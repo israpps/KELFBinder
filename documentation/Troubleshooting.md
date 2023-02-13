@@ -23,8 +23,9 @@ The expected location of this script is `INSTALL/EXTINST.lua`
 
 The expected location of this script is `INSTALL/KELFBinder.lua`
 
-### Black (with small white dot on screen center)
-- meaning: the program somehow crashed on a certain point between loading standard language strings and loading the main script
+### Black (with red bar on screen center)
+- meaning: the program could not load a special driver needed to install updates into the memory.
+#### [__PLEASE REPORT TO THE DEVELOPER__](https://github.com/israpps/KELFBinder/issues)
 
 ### Yellow
 - the exact color is: ![yellow](https://img.shields.io/badge/%20%20%20%20%20%20-%20%20%20%20%20-ffff00)
