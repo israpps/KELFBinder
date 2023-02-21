@@ -43,6 +43,12 @@ jobs:
       run: | 
         echo "SHA8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
 
+    - name: Get branch
+      if: github.ref != 'refs/heads/main'
+      id: brnch
+      run: | 
+        echo "BRANCH=$(echo -${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
     - name: Upload artifacts
       if: ${{ success() }}
       uses: actions/upload-artifact@v2
@@ -55,9 +61,10 @@ jobs:
         echo Repository commit hash is: ${{ env.SHA8 }}>>bin/INSTALL/CORE/HASH.TXT
         echo if you report an issue to the developer. there is a high chance that he might ask you this code>>bin/INSTALL/CORE/HASH.TXT
         mv bin/ ${{ github.event.repository.name }}/
-        7z a -t7z ${{ github.event.repository.name }}.7z ${{ github.event.repository.name }}/
+        7z a -t7z ${{ github.event.repository.name }}${{ env.BRANCH }}.7z ${{ github.event.repository.name }}/
  
     - name: Create pre-release
+      if: github.ref == 'refs/heads/main'
       uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
@@ -65,7 +72,7 @@ jobs:
         automatic_release_tag: "latest"
         title: "Latest Development build"
         files: |
-           ${{ github.event.repository.name }}.7z
+           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
 
     - name: Release
       if: startsWith(github.ref, 'refs/tags/v')
@@ -74,4 +81,4 @@ jobs:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
-           ${{ github.event.repository.name }}.7z
+           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
