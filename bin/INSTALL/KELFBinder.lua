@@ -1040,14 +1040,13 @@ function MagicGateTest(port, slot)
     end
     if Q < 0x20 then
       PADV = Pads.get()
-      --System.printf(string.format("%x\n", PADV))
       if A > 0 then A = A - 1 end
       promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
       if RET ~= 1 then
         Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
-        Font.ftPrint(font, 320, 40,  8, 630, 64, LNG_TESTSUCC..PADV, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(font, 120, 280, 8, 630, 64, LNG_KELF_HEAD..A.." "..Q.." "..QIN, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 320, 40,  8, 630, 64, LNG_TESTSUCC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 120, 280, 8, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(font, 120, 300, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
       if RET == (-5) then
@@ -1061,11 +1060,8 @@ function MagicGateTest(port, slot)
       elseif RET ~= 1 then -- only write unknown error if retcode is not a success
         Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0, 0, 0x80 - A))
       end
-      if Pads.check(PADV, PAD_TRIANGLE) then
-        System.printf("TRIANGLE\n")
-      end
+
       if Pads.check(PADV, PAD_CROSS) and A == 0 then
-        System.printf("CROSS\n")
         QIN = -2
         Q = 1
       end
