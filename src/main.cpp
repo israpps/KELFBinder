@@ -61,7 +61,7 @@ IMPORT_BIN2C(usbmass_bd_irx);
 // IMPORT_BIN2C(audsrv_irx);
 IMPORT_BIN2C(ds34usb_irx);
 IMPORT_BIN2C(ds34bt_irx);
-IMPORT_BIN2C(secrsif_irx);
+IMPORT_BIN2C(secrsif_debug_irx);
 IMPORT_BIN2C(secrman_irx);
 IMPORT_BIN2C(IOPRP);
 IMPORT_BIN2C(poweroff_irx);
@@ -128,14 +128,20 @@ void alternative_poweroff(void *arg)
 { // Power button was pressed. If no installation is in progress, begin shutdown of the PS2.
     DPRINTF("%s: called\n", __func__);
     if (AllowPoweroff == 1) {
+        DPRINTF("Poweroff is allowed!\n");
         // If dev9.irx was loaded successfully, shut down DEV9.
         // As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
         if (HaveFileXio)
+        {
+            DPRINTF("FileXio available! parking USB devices\n");
             fileXioDevctl("mass:", USBMASS_DEVCTL_STOP_ALL, NULL, 0, NULL, 0);
+        }
 
         /* Power-off the PlayStation 2 console. */
+        DPRINTF("shutting down...\n");
         poweroffShutdown();
-    }
+    } else {DPRINTF("Poweroff is  NOT allowed right now!\n"); return;}
+    
 }
 
 #include "SIOCookie.h"
@@ -194,17 +200,17 @@ int main(int argc, char *argv[])
     init_scr();
     const char *errMsg;
     int ret = -1, STAT;
+    DPRINTF_INIT();
 #ifdef RESET_IOP
     SifInitRpc(0);
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
     // while (!SifIopReset("", 0)){}; // common IOP Reset
-    SifIopRebootBuffer(IOPRP, size_IOPRP); // use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are inside.
+    SifIopRebootBuffer(IOPRP, size_IOPRP); DPRINTF("Flashing SECRMAN image\n");// use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are loaded.
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
     while (!SifIopSync()) {};
     SifInitRpc(0);
 #endif
 
-    DPRINTF_INIT();
     // install sbv patch fix
     DPRINTF("Installing SBV Patches...\n");
     sbv_patch_enable_lmb();
@@ -271,7 +277,7 @@ int main(int argc, char *argv[])
     ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
     DPRINTF("[SECRMAN_SPECIAL.IRX]: ret=%d, stat=%d\n", ret, STAT);
 #endif
-    ret = SifExecModuleBuffer(&secrsif_irx, size_secrsif_irx, 0, NULL, &STAT);
+    ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
     DPRINTF("[SECRSIF.IRX]: ret=%d, stat=%d\n", ret, STAT);
     DPRINTF("\n\n\nFINISHED LOADING IRX FILES\n");
     // waitUntilDeviceIsReady by fjtrujy
@@ -292,7 +298,7 @@ int main(int argc, char *argv[])
     DPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
     DPRINTF("Hooking alternative poweroff\n");
-    AllowPoweroff = 1;
+    AllowPoweroff = 0;
     poweroffSetCallback(alternative_poweroff, NULL);
 
     if ((fd = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
