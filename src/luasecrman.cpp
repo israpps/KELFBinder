@@ -171,10 +171,83 @@ static int lua_secrdownloadfile(lua_State *L)
     return 1;
 }
 
+static int lua_secrdownloadfileTest(lua_State *L)
+{
+    unsigned char header[32+1];
+    int argc = lua_gettop(L);
+#ifndef SKIP_ERROR_HANDLING
+    if (argc != 3)
+        return luaL_error(L, "wrong number of arguments");
+#endif
+    int port = luaL_checkinteger(L, 1);
+    int slot = luaL_checkinteger(L, 2);
+    const char *file_tbo = luaL_checkstring(L, 3);
+    DPRINTF("--------------------\n%s: Starting with %d argumments:\n"
+            "[Port]: %d\n"
+            "[Slot]: %d\n"
+            "[input KELF]: %s\n",
+            __func__, argc,
+            port, slot, file_tbo); 
+    void *buf;
+    int result = 0;
+    int fd = open(file_tbo, O_RDONLY);
+    DPRINTF("%s: input fd is %d\n", __func__, fd); 
+    if (fd < 0) {
+        lua_pushinteger(L, -201);
+        return 1;
+    }
+    int size = lseek(fd, 0, SEEK_END);
+    DPRINTF("%s: KELF size is %d\n", __func__, size); 
+    if (size < 0) {
+        close(fd);
+        lua_pushinteger(L, -201);
+        return -EIO;
+    }
+    lseek(fd, 0, SEEK_SET);
+    if ((buf = memalign(64, size)) != NULL) {
+        if ((read(fd, buf, size)) != size) {
+            close(fd);
+            result = -EIO;
+        } else {
+            close(fd);
+            if ((result = SignKELF(buf, size, port, slot)) < 0) {
+                free(buf);
+                DPRINTF("%s: SignKELF failed with value %d\n", __func__, result); 
+            } else {
+                DPRINTF("%s: SignKELF returns %d\n", __func__, result); 
+            }
+        }
+    } else {
+        DPRINTF("%s: memory allocation of %d bytesfailed\n", __func__, size); 
+        result = -ENOMEM;
+        close(fd);
+    }
+    if (buf != NULL)
+    {
+        memset(header, 0x00, 32);
+        memcpy(header, buf, 32);
+        DPRINTF("%s: finished!\nKELF Header = {", __func__);
+        int x=0;
+        for (x = 0; x < 32; x++)
+        {
+            if(!(x % 16))
+                DPRINTF("\n");
+            DPRINTF("%02x ", header[x]);
+        }
+        DPRINTF("\n}\n");
+        
+        free(buf);
+    }
+    lua_pushinteger(L, result);
+    lua_pushlstring(L, (const char *)header, 32);
+    return 2;
+}
+
 static const luaL_Reg Secrman_functions[] = {
     {"init", lua_initsecrman},
     {"deinit", lua_deinitsecrman},
     {"downloadfile", lua_secrdownloadfile},
+    {"Testdownloadfile", lua_secrdownloadfileTest},
     //{"signKELFfile", lua_signKELFfile},
     {0, 0}};
 

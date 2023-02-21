@@ -41,12 +41,14 @@ local SYSUPDATE_ICON_SYS_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_SYS
 DVDPLAYERUPDATE = "INSTALL/KELF/DVDPLAYER.XLF"
 SYSUPDATE_MAIN  = "INSTALL/KELF/SYSTEM.XLF"
 PSX_SYSUPDATE   = "INSTALL/KELF/XSYSTEM.XLF"
+KERNEL_PATCH_100 = "INSTALL/KELF/OSDSYS.KERNEL"
+KERNEL_PATCH_101 = "INSTALL/KELF/OSD110.KERNEL"
+TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 
 temporaryVar = System.openFile(SYSUPDATE_MAIN, FREAD)
 SYSUPDATE_SIZE = System.sizeFile(temporaryVar)
 System.closeFile(temporaryVar)
-KERNEL_PATCH_100 = "INSTALL/KELF/OSDSYS.KERNEL"
-KERNEL_PATCH_101 = "INSTALL/KELF/OSD110.KERNEL"
+
 
 Screen.clear() Graphics.drawRect(280, 222, 80, 4, Color.new(255, 255, 255)) Screen.flip()
 local circle = Graphics.loadImageEmbedded(5)
@@ -109,11 +111,6 @@ if System.doesFileExist(FONTPATH) then
 else
   Screen.clear(Color.new(128, 128, 0)) Screen.flip() while true do end
 end
-
--- Sound.setVolume(100)
--- Sound.setADPCMVolume(1, 100)
--- SND_NOTI = Sound.loadADPCM("common/NOTIF.ADP")
--- Sound.playADPCM(1, SND_OK)
 
 function ORBMAN(Q)
   R = R+RINCREMENT
@@ -369,26 +366,28 @@ function Installmodepicker()
   local PROMTPS = {
     LNG_IMPP0,
     LNG_IMPP1,
-    LNG_IMPP2
+    LNG_IMPP2,
+    LNG_IMPP3
   }
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
     ORBMAN(0x80)
     if T == 1 then
-      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_IMPMP1, Color.new(0, 0xde, 0xff, 0x80 - A))
-    else
+      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_IMPMP1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
       Font.ftPrint(font, 320, 150, 0, 630, 16, LNG_IMPMP1, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_IMPMP2, Color.new(0, 0xde, 0xff, 0x80 - A))
-    else
+      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_IMPMP2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
       Font.ftPrint(font, 320, 190, 0, 630, 16, LNG_IMPMP2, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, 321, 230, 0, 630, 16, LNG_IMPMP3, Color.new(0, 0xde, 0xff, 0x80 - A))
-    else
+      Font.ftPrint(font, 321, 230, 0, 630, 16, LNG_IMPMP3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
       Font.ftPrint(font, 320, 230, 0, 630, 16, LNG_IMPMP3, Color.new(200, 200, 200, 0x80 - A))
+    end
+    if T == 4 then
+      Font.ftPrint(font, 321, 270, 0, 630, 16, LNG_IMPMP4, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, 320, 270, 0, 630, 16, LNG_IMPMP4, Color.new(200, 200, 200, 0x80 - A))
     end
 
     Font.ftPrint(font, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
@@ -417,8 +416,8 @@ function Installmodepicker()
     end
     if D > 0 then D = D + 1 end
     if D > 10 then D = 0 end
-    if T < 1 then T = 3 end
-    if T > 3 then T = 1 end
+    if T < 1 then T = 4 end
+    if T > 4 then T = 1 end
 
   end
   return T
@@ -1004,6 +1003,80 @@ function secrerr(RET)
   OrbIntro(1)
 end
 
+function MagicGateTest(port, slot)
+  local A = 0x80
+  local Q = 0x7f
+  local QIN = 1
+  local PADV = 0
+  while A > 0 do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_PLS_WAIT, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    A = A - 1
+    Screen.flip()
+  end
+  local RET
+  local HEADER
+  local MESSAGE = ""
+  local LOL = 0
+  if System.doesFileExist(TEST_KELF) then
+    RET, HEADER = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
+    RET, HEADER = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
+  end
+  for b in HEADER:gmatch('.') do
+    MESSAGE = MESSAGE..string.format(('%02X '):format(b:byte()))
+    LOL = LOL+1
+    if LOL == 16 then MESSAGE = MESSAGE.."\n" end
+  end
+  A = 0x80
+  while true do
+    Screen.clear()
+    if RET == 1 then
+      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      ORBMANex(GREENCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
+    else
+      Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
+    end
+    if Q < 0x20 then
+      PADV = Pads.get()
+      --System.printf(string.format("%x\n", PADV))
+      if A > 0 then A = A - 1 end
+      promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
+      if RET ~= 1 then
+        Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      else
+        Font.ftPrint(font, 320, 40,  8, 630, 64, LNG_TESTSUCC..PADV, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 120, 280, 8, 630, 64, LNG_KELF_HEAD..A.." "..Q.." "..QIN, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 120, 300, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      end
+      if RET == (-5) then
+        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == (-22) then
+        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == (-12) then
+        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == (-201) then
+        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET ~= 1 then -- only write unknown error if retcode is not a success
+        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0, 0, 0x80 - A))
+      end
+      if Pads.check(PADV, PAD_TRIANGLE) then
+        System.printf("TRIANGLE\n")
+      end
+      if Pads.check(PADV, PAD_CROSS) and A == 0 then
+        System.printf("CROSS\n")
+        QIN = -2
+        Q = 1
+      end
+    end
+    if Q > 0 and Q < 0x80 then Q = Q - QIN end
+    if Q > 0x7f then break end
+    Screen.flip()
+  end
+  OrbIntro(1)
+end
+
 function WarnOfShittyFMCBInst()
   local A = 0x80
   local AIN = -1
@@ -1445,6 +1518,13 @@ while true do
           FadeWIthORBS()
           performExpertINST(port, 0, UPDT)
         else WaitWithORBS(20) end
+      end
+    elseif TTT == 4 then -- MAGICGATE TEST
+      local port = MemcardPickup()
+      if port ~= -1 then
+        FadeWIthORBS()
+        MagicGateTest(port, 0)
+        WaitWithORBS(50)
       end
     end
   elseif TT == 2 then -- DVDPLAYER
