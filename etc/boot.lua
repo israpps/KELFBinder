@@ -3,7 +3,7 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 	LNG_CRDTS1 = "Based on Enceladus by Daniel Santos"
 	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer"
 	LNG_CRDTS3 = "GFX by Berion"
-	LNG_CRDTS4 = "Get me free at https://www.github.com/israpps/KelfBinder"
+	LNG_CRDTS4 = "Get me free at https://github.com/israpps/KELFBinder"
 	LNG_CRDTS5 = "Thanks to:"
 	LNG_MM1 = "Welcome to KELFBinder"
 	LNG_MM2 = "Manage System Updates"

@@ -2,7 +2,7 @@
 	LNG_CRDTS1 = "Basado en Enceladus por Daniel Santos"
 	LNG_CRDTS2 = "SECRMAN y SECRSIF tomados de FreeMcBoot 1.9"
 	LNG_CRDTS3 = "GFX por Berion"
-	LNG_CRDTS4 = "obteneme gratis en github.com/israpps/KelfBinder"
+	LNG_CRDTS4 = "obteneme gratis en https://github.com/israpps/KELFBinder"
 	LNG_CRDTS5 = "Gracias a:"
 	LNG_MM1 = "Bienvenido a KELFBinder"
 	LNG_MM2 = "Administrar actualizaciones de sistema"
