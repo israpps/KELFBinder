@@ -518,7 +518,7 @@ static int lua_loadHWCimg(lua_State *L) {
 	if (argc != 1 && argc != 2) return luaL_error(L, "wrong number of arguments");
     lua_gc(L, LUA_GCCOLLECT, 0);
 	int numeroausar = luaL_checkinteger(L, 1);
-	DPRINTF("%s: resource ID %d requested!\n",__func__, numeroausar);
+	DPRINTF("Embedd res: resource ID %d requested!\n",__func__, numeroausar);
 	GSTEXTURE* image = NULL;
 	bool delayed = true;
 	image = luaP_loadHWCpng(numeroausar, delayed);
