@@ -8,12 +8,7 @@
 System.printf("KELFBinder.lua starts")
 Screen.clear() Graphics.drawRect(300, 222, 40, 4, Color.new(255, 255, 255)) Screen.flip() System.sleep(1)
 FONTPATH = "common/font2.ttf"
-local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
-local temporaryVar_size = System.sizeFile(temporaryVar)
-ROMVER = System.readFile(temporaryVar, temporaryVar_size)
-ROMVER = string.sub(ROMVER, 0, 14)
-System.closeFile(temporaryVar)
-KELFBinder.init(ROMVER)
+
 Screen.clear() Graphics.drawRect(290, 222, 60, 4, Color.new(128, 0, 0)) Screen.flip()
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()

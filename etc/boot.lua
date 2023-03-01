@@ -1,4 +1,3 @@
-Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Screen.flip()
 	LNG_CRDTS0 = "Coded by El_isra (aka: Matias Israelson)"
 	LNG_CRDTS1 = "Based on Enceladus by Daniel Santos"
 	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer"
@@ -96,6 +95,21 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 	LNG_EXTRA_INSTALL_DISABLE = "Extra files will not be installed"
 	LNG_KELF_HEAD = "KELF Header:"
 
+	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
+	local temporaryVar_size = System.sizeFile(temporaryVar)
+	ROMVER = System.readFile(temporaryVar, temporaryVar_size)
+	ROMVER = string.sub(ROMVER, 0, 14)
+	System.closeFile(temporaryVar)
+	KELFBinder.init(ROMVER)
+	local REGION = KELFBinder.getsystemregion()
+	if REGION == 3 then
+		System.printf("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD")
+		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
+	else
+		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
+		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
+	end
+	Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Screen.flip()
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
