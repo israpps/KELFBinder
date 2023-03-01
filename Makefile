@@ -21,6 +21,8 @@ export HEADER
 RESET_IOP ?= 1
 #---------------------- enable DEBUGGING MODE ---------------------#
 DEBUG ?= 0
+SIOR ?= 0 # load IRX that pipes all printf into EE_SIO
+EE_SIO ?= 0
 #----------------------- Set IP for PS2Client ---------------------#
 PS2LINK_IP ?= 192.168.1.10
 #------------------------------------------------------------------#
@@ -35,30 +37,25 @@ EE_LIBS += -liopreboot -lpoweroff
 
 EE_INCS += -Isrc/include -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/freetype2 -I$(PS2SDK)/ports/include/zlib
 
-EE_INCS += -Imodules/ds34bt/ee -Imodules/ds34usb/ee
+EE_INCS += -Imodules/ds34bt/ee -Imodules/ds34usb/ee -I.
 
 EE_CFLAGS   += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
 EE_CXXFLAGS += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
+
 ifeq ($(RESET_IOP),1)
-EE_CXXFLAGS += -DRESET_IOP
+  EE_CXXFLAGS += -DRESET_IOP
 endif
 
-EE_SIO ?= 0
-
 ifeq ($(DEBUG),1)
-EE_CXXFLAGS += -DDEBUG
-EE_CFLAGS += -DDEBUG
-EE_CFLAGS += -O0 -g
+  EE_CXXFLAGS += -DDEBUG
+  EE_CFLAGS += -DDEBUG
+  EE_CFLAGS += -O0 -g
 else
   EE_CFLAGS += -Os
   EE_LDFLAGS += -s
 endif
 
-ifeq ($(EE_SIO),1)
-  EE_CXXFLAGS += -DSIO_PRINTF
-  EE_CFLAGS += -DSIO_PRINTF
-#  EE_OBJS += SIOCookie.o
-endif
+
 
 BIN2S = $(PS2SDK)/bin/bin2s
 
@@ -83,6 +80,20 @@ EMBEDDED_RSC = boot.o \
     background.o background_error.o background_success.o checkbox_empty.o \
     checkbox_filled.o circle.o cross.o firefly.o firefly_error.o firefly_success.o \
     logo.o mc_empty.o mc_ps1.o mc_ps2.o square.o triangle.o
+
+
+ifeq ($(EE_SIO),1)
+  EE_CXXFLAGS += -DSIO_PRINTF
+  EE_CFLAGS += -DSIO_PRINTF
+  ifeq ($(SIOR), 1)
+    EE_CXXFLAGS += -DSIOR
+    EE_CFLAGS += -DSIOR
+    EE_LIBS += libisra_sior.a
+    IOP_MODULES += tty2sior.o
+  endif
+#  EE_OBJS += SIOCookie.o
+endif
+
 
 EE_OBJS = $(IOP_MODULES) $(EMBEDDED_RSC) $(APP_CORE) $(LUA_LIBS)
 
@@ -151,7 +162,7 @@ clean:
 rebuild: clean all
 
 run:
-	cd bin; ps2client -h $(PS2LINK_IP) execee host:$(EE_BIN)
+	cd bin; ps2client.exe -h $(PS2LINK_IP) execee host:$(EE_BIN)
        
 reset:
 	ps2client -h $(PS2LINK_IP) reset   

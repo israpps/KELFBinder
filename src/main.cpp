@@ -21,14 +21,19 @@
 #include <sbv_patches.h>
 #include <smem.h>
 
-#include "include/graphics.h"
-// #include "include/sound.h"
-#include "include/luaplayer.h"
-#include "include/pad.h"
 
 #define NEWLIB_PORT_AWARE
 #include <fileXio_rpc.h>
 #include <fileio.h>
+
+#ifdef SIOR
+#include <sior_rpc.h>
+#endif
+
+#include "include/graphics.h"
+// #include "include/sound.h"
+#include "include/luaplayer.h"
+#include "include/pad.h"
 
 extern "C" {
 #include <libds34bt.h>
@@ -62,9 +67,13 @@ IMPORT_BIN2C(usbmass_bd_irx);
 IMPORT_BIN2C(ds34usb_irx);
 IMPORT_BIN2C(ds34bt_irx);
 IMPORT_BIN2C(secrsif_debug_irx);
-IMPORT_BIN2C(secrman_irx);
+IMPORT_BIN2C(secrman_debug_irx);
 IMPORT_BIN2C(IOPRP);
 IMPORT_BIN2C(poweroff_irx);
+
+#ifdef SIOR
+IMPORT_BIN2C(tty2sior_irx);
+#endif
 
 char boot_path[255];
 char ConsoleROMVER[17];
@@ -155,16 +164,13 @@ void alternative_poweroff(void *arg)
 // char PRINTFBUG[64];
 FILE *EE_SIO;
 cookie_io_functions_t COOKIE_FNCTS;
-
 ssize_t cookie_sio_write(void *c, const char *buf, size_t size);
 ssize_t cookie_sio_read(void *c, char *buf, size_t size);
 // int cookie_sio_seek(void *c, _off64_t *offset, int whence);
 // int cookie_sio_close(void *c);
-
 int ee_sio_start(u32 baudrate, u8 lcr_ueps, u8 lcr_upen, u8 lcr_usbl, u8 lcr_umode)
 {
     sio_init(baudrate, lcr_ueps, lcr_upen, lcr_usbl, lcr_umode);
-
     COOKIE_FNCTS.read = cookie_sio_read;
     COOKIE_FNCTS.close = NULL;
     COOKIE_FNCTS.seek = NULL;
@@ -181,32 +187,32 @@ int ee_sio_start(u32 baudrate, u8 lcr_ueps, u8 lcr_upen, u8 lcr_usbl, u8 lcr_umo
     printf("lol %d\n", baudrate);
     return EESIO_SUCESS;
 }
-
-
 ssize_t cookie_sio_write(void *c, const char *buf, size_t size)
 {
     return sio_putsn(buf);
 }
-
 ssize_t cookie_sio_read(void *c, char *buf, size_t size)
 {
     return sio_read(buf, size);
 }
-
-
+#define HAS_IOPRP
 int main(int argc, char *argv[])
 {
     int fd;
     init_scr();
     const char *errMsg;
-    int ret = -1, STAT;
+    int ret = 0, STAT = 0;
     DPRINTF_INIT();
+    DPRINTF("WELCOME TO KELFBINDER\n"__DATE__"\n"__TIME__"\n");
 #ifdef RESET_IOP
     SifInitRpc(0);
-    // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
-    // while (!SifIopReset("", 0)){}; // common IOP Reset
-    SifIopRebootBuffer(IOPRP, size_IOPRP); DPRINTF("Flashing SECRMAN image\n");// use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are loaded.
-    // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
+#ifndef HAS_IOPRP
+    DPRINTF("Rebooting IOP\n");
+    while (!SifIopReset("", 0)){}; // common IOP Reset
+#else
+    DPRINTF("Flashing SECRMAN image\n");
+    SifIopRebootBuffer(IOPRP, size_IOPRP); // use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are loaded.
+#endif
     while (!SifIopSync()) {};
     SifInitRpc(0);
 #endif
@@ -216,6 +222,13 @@ int main(int argc, char *argv[])
     sbv_patch_enable_lmb();
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
+
+#ifdef SIOR
+    DPRINTF("Starting SIOR thread\n");
+    SIOR_Init(0x20);
+    ret = SifExecModuleBuffer(&tty2sior_irx, size_tty2sior_irx, 0, NULL, &STAT);
+    DPRINTF("[TTY2SIOR.IRX]: ret=%i, stat=%i\n", ret, STAT);
+#endif
 
     DIR *directorytoverify;
     directorytoverify = opendir("host:.");
@@ -273,8 +286,8 @@ int main(int argc, char *argv[])
     // DPRINTF("[AUDSRV.IRX]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &STAT);
     DPRINTF("[POWEROFF.IRX]: ret=%d, stat=%d\n", ret, STAT);
-#ifndef RESET_IOP
-    ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
+#ifndef HAS_IOPRP
+    ret = SifExecModuleBuffer(&secrman_debug_irx, size_secrman_debug_irx, 0, NULL, &STAT);
     DPRINTF("[SECRMAN_SPECIAL.IRX]: ret=%d, stat=%d\n", ret, STAT);
 #endif
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
@@ -298,7 +311,7 @@ int main(int argc, char *argv[])
     DPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
     DPRINTF("Hooking alternative poweroff\n");
-    AllowPoweroff = 0;
+    AllowPoweroff = 1;
     poweroffSetCallback(alternative_poweroff, NULL);
 
     if ((fd = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER

@@ -52,6 +52,9 @@ $(EE_ASM_DIR)secrman.s: iop/secrman_debug.irx | $(EE_ASM_DIR)
 $(EE_ASM_DIR)cdfs.s: $(PS2SDK)/iop/irx/cdfs.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
+$(EE_ASM_DIR)tty2sior.s: iop/tty2sior.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ $(IRXTAG)
+
 modules/ds34bt/ee/libds34bt.a: modules/ds34bt/ee
 	$(MAKE) -C $<
 

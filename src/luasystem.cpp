@@ -488,11 +488,6 @@ static int lua_getmcinfo(lua_State *L)
     inforet = mcGetInfo(mcslot, 0, &type, &freespace, &format);
     syncret = mcSync(0, NULL, &result);
 
-    DPRINTF("\nSLOT=%d\ttype=%d, freespace=%d, format=%d, inforet=%d\n"
-            "\tmcSync.result=%d mcSync.syncret=%d\n",
-            mcslot, type, freespace, format, inforet,
-            result, syncret); 
-
     lua_newtable(L);
 
     lua_pushstring(L, "type");
