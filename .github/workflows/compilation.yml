@@ -51,7 +51,7 @@ jobs:
 
     - name: Upload artifacts
       if: ${{ success() }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: ${{ github.event.repository.name }}-${{ env.SHA8 }}
         path: bin
