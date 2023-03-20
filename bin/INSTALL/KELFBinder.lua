@@ -10,27 +10,24 @@ SCR_Y = 480
 X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
 System.printf("KELFBinder.lua starts")
-drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255)) System.sleep(1)
+drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
-drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
 local console_model_sub = KELFBinder.getConsoleModel()
 console_model_sub = string.sub(console_model_sub, 0, 8)
 SUPPORTS_UPDATES = true
+MUST_INSTALL_EXTRA_FILES = true
 if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL-H100" then SUPPORTS_UPDATES = false System.printf("console is incompatible ("..ROMVERN..") ["..console_model_sub.."]") end
 --- PSX
 IS_PSX = 0
 REAL_IS_PSX = 0
-MUST_INSTALL_EXTRA_FILES = true
 if System.doesFileExist("rom0:PSXVER") then
   System.printf("rom0:PSXVER FOUND")
   IS_PSX = 1
   REAL_IS_PSX = 1
-else
-  IS_PSX = 0
 end
 ---PSX
 local SYSUPDATE_ICON_SYS = "PS2BBL.icn"
@@ -49,7 +46,7 @@ SYSUPDATE_SIZE = System.sizeFile(temporaryVar)
 System.closeFile(temporaryVar)
 
 
-drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
+drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
 local circle = Graphics.loadImageEmbedded(5)
 local cross = Graphics.loadImageEmbedded(6)
 local triangle = Graphics.loadImageEmbedded(15)
@@ -69,12 +66,13 @@ local CHKF = Graphics.loadImageEmbedded(4)
 EXTRA_INST_COUNT  = 0
 EXTRA_INST_FOLDE  = 0
 
-drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255)) System.sleep(1)
+drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
   Screen.clear(Color.new(128, 0, 128))
   Screen.flip()
   while true do end
 end
+drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
 Graphics.setImageFilters(LOGO, LINEAR)
 Graphics.setImageFilters(BG, LINEAR)
 Graphics.setImageFilters(BGERR, LINEAR)
@@ -164,6 +162,17 @@ function GetFileSizeX(PATH)
   local SIZE = System.sizeFile(FD)
   System.closeFile(FD)
   return SIZE
+end
+
+function HEXDUMP(DATA)
+  local LOL = 0
+  local MESSAGE = ""
+  for b in DATA:gmatch('.') do
+    MESSAGE = MESSAGE..string.format(('%02X '):format(b:byte()))
+    LOL = LOL+1
+    if LOL == 16 then MESSAGE = MESSAGE.."\n" end
+  end
+  return MESSAGE
 end
 
 function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
@@ -729,12 +738,12 @@ function expertINSTprompt()
     Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(font, X_MID, 50, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
-      Font.ftPrint(font, X_MID, 65, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
+      Font.ftPrint(font, X_MID, 70, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
     end
-    Font.ftPrint(font, 179, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 179, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 374, 120, 0, 630, 16, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 374, 200, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 160, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 160, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 332, 120, 0, 630, 16, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 332, 200, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(font, 104, 340, 0, 600, 32, UPDTT[T] , Color.new(200, 200, 200, 0x80 - A))
 
     if UPDT[0] == 1 then Graphics.drawImage(CHKF,  160, 142) else Graphics.drawImage(CHK_, 160, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
@@ -856,6 +865,7 @@ function AdvancedINSTprompt()
     LNG_DESC_CROSS_REGION,
     LNG_DESC_PSXDESR
   }
+  if REAL_IS_PSX == 1 then PROMTPS[3] = LNG_DESC_MACHINE_IS_PSX end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -872,7 +882,7 @@ function AdvancedINSTprompt()
     end
     if T == 3 then
       Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, "PSX DESR", Color.new(0, 0xde, 0xff, 0x80 - A))
-    elseif IS_PSX == 1 then
+    elseif REAL_IS_PSX == 1 then
       Font.ftPrint(font, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(50, 50, 50, 0x80 - A))
     else -- make the PSX option grey if runner machine is PSX
       Font.ftPrint(font, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(200, 200, 200, 0x80 - A))
@@ -885,7 +895,7 @@ function AdvancedINSTprompt()
     local pad = Pads.get()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
-      if T == 3 and IS_PSX == 1 then
+      if T == 3 and REAL_IS_PSX == 1 then
         --user requested a PSX install on a PSX, senseless, normal install will do the job
       else
         D = 1
@@ -1015,18 +1025,20 @@ function MagicGateTest(port, slot)
     Screen.flip()
   end
   local RET
-  local HEADER
-  local MESSAGE = ""
   local LOL = 0
+  local HEADER
+  local KBIT
+  local KCONT
+  local MESSAGE = ""
+  local MESSAGE1 = ""
+  local MESSAGE2 = ""
   if System.doesFileExist(TEST_KELF) then
-    RET, HEADER = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
-    RET, HEADER = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
-  for b in HEADER:gmatch('.') do
-    MESSAGE = MESSAGE..string.format(('%02X '):format(b:byte()))
-    LOL = LOL+1
-    if LOL == 16 then MESSAGE = MESSAGE.."\n" end
-  end
+  MESSAGE = HEXDUMP(HEADER)
+  MESSAGE1 = HEXDUMP(KBIT)
+  MESSAGE2 = HEXDUMP(KCONT)
   A = 0x80
   while true do
     Screen.clear()
@@ -1045,8 +1057,12 @@ function MagicGateTest(port, slot)
         Font.ftPrint(font, X_MID, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
         Font.ftPrint(font, X_MID, 40,  8, 630, 64, LNG_TESTSUCC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(font, 120, 280, 8, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(font, 120, 300, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 120, 200, 0, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 220, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(font, 120, 260, 0, 630, 64, "Kbit:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 280, 0, 630, 32, MESSAGE1, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(font, 120, 300, 0, 630, 64, "Kc:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 320, 0, 630, 32, MESSAGE2, Color.new(0x80, 0x80, 0, 0x80 - A))
       end
       if RET == (-5) then
         Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
@@ -1447,11 +1463,11 @@ function Credits()
     Font.ftPrint(font, X_MID, 220, 8, 630, 16, LNG_CRDTS1, Color.new(200, 200, 200, Q))
     Font.ftPrint(font, X_MID, 240, 8, 630, 16, LNG_CRDTS2, Color.new(200, 200, 200, Q))
     Font.ftPrint(font, X_MID, 260, 8, 630, 16, LNG_CRDTS3, Color.new(200, 200, 200, Q))
-    Graphics.drawRect(50, 290, 540, 1, Color.new(128, 128, 128, Q))
+    Graphics.drawRect(0, 290, SCR_X, 2, Color.new(128, 128, 128, Q))
     Font.ftPrint(font, X_MID, 300, 8, 630, 16, LNG_CRDTS5, Color.new(200, 200, 200, Q))
     Font.ftPrint(font, X_MID, 320, 8, 630, 16, "krHACKen, uyjulian, HWNJ", Color.new(200, 200, 200, Q))
     Font.ftPrint(font, X_MID, 340, 8, 630, 16, "sp193, Leo Oliveira", Color.new(200, 200, 200, Q))
-    Graphics.drawRect(50, 370, 540, 1, Color.new(128, 128, 128, Q))
+    Graphics.drawRect(0, 370, SCR_X, 2, Color.new(128, 128, 128, Q))
     Font.ftPrint(font, X_MID, 380, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 10, Q))
     Screen.flip()
     if (Q ~= 0x80) then Q = Q + QINC end
@@ -1466,7 +1482,7 @@ end
 -- SCRIPT BEHAVIOUR BEGINS --
 local NEIN = 0x80
 while NEIN > 0 do 
-  drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255))
+  drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255, NEIN))
   NEIN = NEIN-2
 end
 greeting()

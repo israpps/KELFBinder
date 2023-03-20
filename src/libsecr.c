@@ -17,10 +17,13 @@ static SifRpcClientData_t SifRpcClient07;
 
 static unsigned char RpcBuffer[0x1000] ALIGNED(64);
 
-
+unsigned char Gkbit[16];
+unsigned char Gkcontent[16];
 
 int SecrInit(void)
 {
+    memset(Gkbit, 0x00, 16);
+    memset(Gkcontent, 0x00, 16);
     DPRINTF("STARTING SECRMAN RPC BINDING\n");
     SifInitRpc(0);
 
@@ -60,6 +63,12 @@ int SecrInit(void)
     }
 
     return 1;
+}
+
+void GetLastKbitNKc(unsigned char Kbit[16], unsigned char kcontent[16])
+{
+    memcpy(Kbit, Gkbit, 16);
+    memcpy(kcontent, Gkcontent, 16);
 }
 
 void SecrDeinit(void)
@@ -302,10 +311,16 @@ void *SecrDownloadFile(int port, int slot, void *buffer)
         if (SecrDownloadGetKbit(port, slot, kbit) == 0) {
             DPRINTF("%s: Cannot get kbit\n", __func__);
             return NULL;
+        } else {
+            DPRINTF("kbit: { "); for (i = 0; i < 16; i++) DPRINTF("%02x ", kbit[i]); DPRINTF(" }\n");
+            memcpy(Gkbit, kbit, 16);
         }
         if (SecrDownloadGetKc(port, slot, kcontent) == 0) {
             DPRINTF("%s: Cannot get kc\n", __func__);
             return NULL;
+        } else {
+            DPRINTF("kcontent: { "); for (i = 0; i < 16; i++) DPRINTF("%02x ", kcontent[i]); DPRINTF(" }\n");
+            memcpy(Gkcontent, kcontent, 16);
         }
 
         store_kbit(buffer, kbit);
@@ -315,6 +330,8 @@ void *SecrDownloadFile(int port, int slot, void *buffer)
             if (SecrDownloadGetICVPS2(icvps2) == 0) {
                 DPRINTF("%s: Cannot get icvps2\n", __func__);
                 return NULL;
+            } else {
+                DPRINTF("icvps2: { "); for (i = 0; i < 8; i++) DPRINTF("%02x ", icvps2[i]); DPRINTF(" }\n");
             }
 
             store_icvps2(buffer, icvps2);

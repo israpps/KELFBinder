@@ -174,6 +174,7 @@ static int lua_secrdownloadfile(lua_State *L)
 static int lua_secrdownloadfileTest(lua_State *L)
 {
     unsigned char header[32+1];
+    unsigned char kbit[16], kcontent[16];
     int argc = lua_gettop(L);
 #ifndef SKIP_ERROR_HANDLING
     if (argc != 3)
@@ -224,8 +225,13 @@ static int lua_secrdownloadfileTest(lua_State *L)
     }
     if (buf != NULL)
     {
+
+        memset(kcontent, 0x00, 16);
+        memset(kbit, 0x00, 16);
         memset(header, 0x00, 32);
         memcpy(header, buf, 32);
+
+
         DPRINTF("%s: finished!\nKELF Header = {", __func__);
         int x=0;
         for (x = 0; x < 32; x++)
@@ -235,12 +241,16 @@ static int lua_secrdownloadfileTest(lua_State *L)
             DPRINTF("%02x ", header[x]);
         }
         DPRINTF("\n}\n");
-        
+        GetLastKbitNKc(kbit, kcontent);
+//            DPRINTF("kbit: { "); for (x = 0; x < 16; x++) DPRINTF("%02x ", kbit[x]); DPRINTF(" }\n"); //no need for those, libsecr already prints it
+//            DPRINTF("kcontent: { "); for (x = 0; x < 16; x++) DPRINTF("%02x ", kcontent[x]); DPRINTF(" }\n");
         free(buf);
     }
     lua_pushinteger(L, result);
     lua_pushlstring(L, (const char *)header, 32);
-    return 2;
+    lua_pushlstring(L, (const char *)kbit, 16);
+    lua_pushlstring(L, (const char *)kcontent, 16);
+    return 4;
 }
 
 static const luaL_Reg Secrman_functions[] = {
