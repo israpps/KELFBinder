@@ -47,7 +47,7 @@ $(EE_ASM_DIR)secrsif.s: iop/secrsif_debug.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
 $(EE_ASM_DIR)secrman.s: iop/secrman_debug.irx | $(EE_ASM_DIR)
-	$(BIN2S) $< $@ $(IRXTAG)
+	$(BIN2S) $< $@ secrman_irx
 
 $(EE_ASM_DIR)cdfs.s: $(PS2SDK)/iop/irx/cdfs.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)

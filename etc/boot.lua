@@ -95,6 +95,12 @@
 	LNG_EXTRA_INSTALL_DISABLE = "Extra files will not be installed"
 	LNG_KELF_HEAD = "KELF Header:"
 
+function drawbar(x, y, prog, col)
+	Screen.clear()
+	Graphics.drawRect(x-(prog), y, prog*2, 5, col)
+	Screen.flip()
+end
+
 	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
 	local temporaryVar_size = System.sizeFile(temporaryVar)
 	ROMVER = System.readFile(temporaryVar, temporaryVar_size)
@@ -109,7 +115,8 @@
 		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
-	Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Screen.flip()
+	drawbar(352, 240, 20, Color.new(255, 255, 255))
+	System.sleep(5)
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then

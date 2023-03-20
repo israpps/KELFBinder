@@ -18,13 +18,13 @@ export HEADER
 #----------------------- Configuration flags ----------------------#
 #------------------------------------------------------------------#
 #-------------------------- Reset the IOP -------------------------#
-RESET_IOP ?= 1
+RESET_IOP ?= 0
 #---------------------- enable DEBUGGING MODE ---------------------#
 DEBUG ?= 0
 #----------------------- Set IP for PS2Client ---------------------#
 PS2LINK_IP ?= 192.168.1.10
 #------------------------------------------------------------------#
-ifeq ($(DEBUG),0)
+ifneq ($(DEBUG),1)
 .SILENT:
 endif
 EE_BIN = KELFBinder.elf
@@ -111,7 +111,6 @@ endif
 #--------------------- Embedded ressources ------------------------#
 
 $(EE_ASM_DIR)boot.s: etc/boot.lua | $(EE_ASM_DIR)
-	echo "Embedding boot script..."
 	$(BIN2S) $< $@ bootString
 
 # Images
@@ -151,7 +150,7 @@ clean:
 rebuild: clean all
 
 run:
-	cd bin; ps2client -h $(PS2LINK_IP) execee host:$(EE_BIN)
+	cd bin; ps2client -h $(PS2LINK_IP) -t 1 execee host:$(EE_BIN)
        
 reset:
 	ps2client -h $(PS2LINK_IP) reset   
