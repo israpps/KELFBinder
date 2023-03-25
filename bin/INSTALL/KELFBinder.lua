@@ -825,6 +825,7 @@ function expertINSTprompt()
 
     if Pads.check(pad, PAD_TRIANGLE) and D == 0 then
       D = 1
+      UPDT["x"] = true
       break
     end
 
@@ -848,9 +849,14 @@ function expertINSTprompt()
     if T > CHN_STANDARD then T = JAP_ROM_100 end
 
   end
-
-  for i = 0, 9 do
-    if UPDT[i] == 1 then UPDT["x"] = true break end
+  if UPDT["x"] then -- if user wants to install check if he picked any item
+    for i = 0, 9 do
+      if UPDT[i] == 1 then -- found at least one selected item, proceed
+        UPDT["x"] = true
+        return UPDT
+      end
+    end
+    UPDT["x"] = false -- user hit install without picking items, quit
   end
   Screen.clear()
   return UPDT
@@ -930,7 +936,7 @@ function PreAdvancedINSTstep(INSTMODE)
   for i = 0, 10 do
     UPDT[i] = 0
   end
-  if INSTMODE == 1 then
+  if INSTMODE == 1 then -- all models for same region
     if REGION == 0 then
       for i = 0, 3 do
         UPDT[i] = 1
@@ -945,11 +951,11 @@ function PreAdvancedINSTstep(INSTMODE)
     elseif REGION == 4 then
       UPDT[9] = 1
     end
-  elseif INSTMODE == 2 then
+  elseif INSTMODE == 2 then -- all models of all regions (save PSX)
     for i = 0, 9 do
       UPDT[i] = 1
     end
-  elseif INSTMODE == 3 then
+  elseif INSTMODE == 3 then -- PSX
     UPDT[10] = 1
   else
     UPDT["x"] = false
@@ -1492,50 +1498,53 @@ while true do
   local TT = MainMenu()
   WaitWithORBS(50)
   if (TT == 1) then -- SYSTEM UPDATE
-    local TTT = Installmodepicker()
-    WaitWithORBS(50)
-    if TTT == 1 then -- NORMAL INST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        FadeWIthORBS()
-        NormalInstall(port, 0)
-        WaitWithORBS(50)
-      end
-    elseif TTT == 2 then -- ADVANCED INST
-      local port = 0
-      local LOL = AdvancedINSTprompt()
-      local UPDT = {}
-      UPDT = PreAdvancedINSTstep(LOL)
-      if UPDT["x"] == true then
-        port = MemcardPickup()
+    while true do
+      local TTT = Installmodepicker()
+      if TTT == 0 then break end
+      WaitWithORBS(50)
+      if TTT == 1 then -- NORMAL INST
+        local port = MemcardPickup()
         if port ~= -1 then
-          WaitWithORBS(30)
           FadeWIthORBS()
-          if UPDT[10] == 1 then -- IF PSX mode was selected
-            IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
-            NormalInstall(port, 0)
-            IS_PSX = 0
-          else
-            performExpertINST(port, 0, UPDT)
+          NormalInstall(port, 0)
+          WaitWithORBS(50)
+        end
+      elseif TTT == 2 then -- ADVANCED INST
+        local port = 0
+        local LOL = AdvancedINSTprompt()
+        local UPDT = {}
+        UPDT = PreAdvancedINSTstep(LOL)
+        if UPDT["x"] == true then
+          port = MemcardPickup()
+          if port ~= -1 then
+            WaitWithORBS(30)
+            FadeWIthORBS()
+            if UPDT[10] == 1 then -- IF PSX mode was selected
+              IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
+              NormalInstall(port, 0)
+              IS_PSX = 0
+            else
+              performExpertINST(port, 0, UPDT)
+            end
           end
         end
-      end
-    elseif TTT == 3 then -- EXPERT INST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        WaitWithORBS(30)
-        local UPDT = expertINSTprompt()
-        if UPDT["x"] == true then
+      elseif TTT == 3 then -- EXPERT INST
+        local port = MemcardPickup()
+        if port ~= -1 then
+          WaitWithORBS(30)
+          local UPDT = expertINSTprompt()
+          if UPDT["x"] == true then
+            FadeWIthORBS()
+            performExpertINST(port, 0, UPDT)
+          else WaitWithORBS(20) end
+        end
+      elseif TTT == 4 then -- MAGICGATE TEST
+        local port = MemcardPickup()
+        if port ~= -1 then
           FadeWIthORBS()
-          performExpertINST(port, 0, UPDT)
-        else WaitWithORBS(20) end
-      end
-    elseif TTT == 4 then -- MAGICGATE TEST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        FadeWIthORBS()
-        MagicGateTest(port, 0)
-        WaitWithORBS(50)
+          MagicGateTest(port, 0)
+          WaitWithORBS(50)
+        end
       end
     end
   elseif TT == 2 then -- DVDPLAYER
