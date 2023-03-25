@@ -16,7 +16,6 @@ static SifRpcClientData_t SifRpcClient06;
 static SifRpcClientData_t SifRpcClient07;
 
 static unsigned char RpcBuffer[0x1000] ALIGNED(64);
-
 unsigned char Gkbit[16];
 unsigned char Gkcontent[16];
 
