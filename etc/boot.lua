@@ -42,7 +42,7 @@
 	LNG_EXPERTINST_PROMPT1 = "This console uses:"
 	LNG_REGS0 = "Japan - SCPH-XXX00"
 	LNG_REGS1 = "USA and Asia"
-	LNG_REGS2 = "Europe / Oceania / Russia- SCPH-XXX0[2/3/4/8]"
+	LNG_REGS2 = "Europe / Oceania / Russia\nSCPH-XXX0[2/3/4/8]"
 	LNG_REGS3 = "China - SCPH-XXX09"
 	LNG_EIO = "I/O ERROR"
 	LNG_SECRMANERR = "SECRDOWNLOADFILE Failed! - Possible MagicGate error"
