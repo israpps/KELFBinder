@@ -40,5 +40,6 @@ extern void luaRender_init(lua_State *L);
 extern void stackDump(lua_State *L);
 extern void luaSecrMan_init(lua_State *L);
 extern void luaKELFBinder_init(lua_State *L);
+extern void luaHDD_init(lua_State *L);
 
 #endif

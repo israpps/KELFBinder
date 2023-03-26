@@ -302,24 +302,29 @@ function MainMenu()
       Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNG_MM2, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_MM7, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_MM3, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_MM7, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNG_MM4, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNG_MM4, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNG_MM3, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 4 then
-      Font.ftPrint(font, X_MID+1, 270, 0, 630, 16, LNG_MM6, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 270, 0, 630, 16, LNG_MM4, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, X_MID, 270, 0, 630, 16, LNG_MM6, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 270, 0, 630, 16, LNG_MM4, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 5 then
-      Font.ftPrint(font, X_MID+1, 310, 0, 630, 16, LNG_MM5, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 310, 0, 630, 16, LNG_MM6, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, X_MID, 310, 0, 630, 16, LNG_MM5, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 310, 0, 630, 16, LNG_MM6, Color.new(200, 200, 200, 0x80 - A))
+    end
+    if T == 6 then
+      Font.ftPrint(font, X_MID+1, 350, 0, 630, 16, LNG_MM5, Color.new(0, 0xde, 0xff, 0x90 - A))
+    else
+      Font.ftPrint(font, X_MID, 350, 0, 630, 16, LNG_MM5, Color.new(200, 200, 200, 0x80 - A))
     end
     if A > 0 then A = A - 1 end
     promptkeys(1, LNG_CT0, 0, 0, 0, 0, A)
@@ -360,8 +365,68 @@ function MainMenu()
 
     if D > 0 then D = D + 1 end
     if D > 10 then D = 0 end
-    if T < 1 then T = 5 end
-    if T > 5 then T = 1 end
+    if T < 1 then T = 6 end
+    if T > 6 then T = 1 end
+
+  end
+  return T
+end
+
+function HDDMAN()
+  local T = 1
+  local D = 15
+  local A = 0x80
+  local PROMTPS = {
+    LNG_HDDPROMPT,
+    LNG_HDDPROMPT1,
+    LNG_HDDPROMPT2,
+  }
+  while true do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    ORBMAN(0x80)
+    if T == 1 then
+      Font.ftPrint(font, X_MID+1, 150, 0, 630, 16, LNg_HDD_INSTOPT1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNg_HDD_INSTOPT1, Color.new(200, 200, 200, 0x80 - A))
+    end
+    if T == 2 then
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNg_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNg_HDD_INSTOPT2, Color.new(200, 200, 200, 0x80 - A))
+    end
+    if T == 3 then
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNg_HDD_INSTOPT3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNg_HDD_INSTOPT3, Color.new(200, 200, 200, 0x80 - A))
+    end
+
+    Font.ftPrint(font, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
+    promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
+    if A > 0 then A = A - 1 end
+    Screen.flip()
+    local pad = Pads.get()
+
+    if Pads.check(pad, PAD_CROSS) and D == 0 then
+      D = 1
+      Screen.clear()
+      break
+    end
+
+    if Pads.check(pad, PAD_CIRCLE) and D == 0 then
+      T = 0
+      break
+    end
+
+    if Pads.check(pad, PAD_UP) and D == 0 then
+      T = T - 1
+      D = 1
+    elseif Pads.check(pad, PAD_DOWN) and D == 0 then
+      T = T + 1
+      D = 1
+    end
+  
+    if D > 0 then D = D + 1 end
+    if D > 10 then D = 0 end
+    if T < 1 then T = 3 end
+    if T > 3 then T = 1 end
 
   end
   return T
@@ -1018,6 +1083,61 @@ function secrerr(RET)
   OrbIntro(1)
 end
 
+function Report(RET, IS_GOOD, IS_A_QUESTION)
+  local A = 0x80
+  local Q = 0x7f
+  local QIN = 1
+  local pad = 0
+  local ret = false
+  while A > 0 do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
+    A = A - 1
+    Screen.flip()
+  end
+  A = 0x80
+  while true do
+    Screen.clear()
+    if IS_GOOD then
+      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      ORBMANex(GREENCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
+    else
+      Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
+    end
+    if Q < 0x20 then
+      pad = Pads.get()
+      if A > 0 then A = A - 1 end
+      if IS_A_QUESTION then promptkeys(1, LNG_CONTINUE, 1, LNG_CT1, 0, 0, A) else promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A) end
+
+      if RET == 101 then
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_HDDBOOT_ALREADY_ENABLED, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == 100 then
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_HDDBOOT_ENABLED, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == 200 then
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_HDDFORMAT_CONFIRM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 100, 8, 630, 64, LNG_HDDFORMAT_CONFIRM2, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 140, 8, 630, 64, LNG_CONTINUE.."?", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      end
+
+      if Pads.check(pad, PAD_CROSS) and A == 0 then
+        ret = true
+        QIN = -1
+        Q = 1
+      end
+      if Pads.check(pad, PAD_CIRCLE) and A == 0 then
+        QIN = -1
+        Q = 1
+      end
+    end
+    if Q > 0 and Q < 0x80 then Q = Q - QIN end
+    if Q > 0x7f then break end
+    Screen.flip()
+  end
+  OrbIntro(1)
+  return ret
+end
+
 function MagicGateTest(port, slot)
   local A = 0x80
   local Q = 0x7f
@@ -1444,6 +1564,9 @@ function SystemInfo()
       Color.new(220, 220, 220, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(font, 50, 120, 0, 630, 32, string.format(LNG_SUPATH, UPDTPATH), Color.new(220, 220, 220, 0x80 - A))
+      --[[if ROMVERN > 120 and ROMVERN < 230 then
+        Font.ftPrint(font, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
+      end--]]
     end
 
     promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
@@ -1498,56 +1621,64 @@ while true do
   local TT = MainMenu()
   WaitWithORBS(50)
   if (TT == 1) then -- SYSTEM UPDATE
-    while true do
-      local TTT = Installmodepicker()
-      if TTT == 0 then break end
-      WaitWithORBS(50)
-      if TTT == 1 then -- NORMAL INST
-        local port = MemcardPickup()
-        if port ~= -1 then
-          FadeWIthORBS()
-          NormalInstall(port, 0)
-          WaitWithORBS(50)
-        end
-      elseif TTT == 2 then -- ADVANCED INST
-        local port = 0
-        local LOL = AdvancedINSTprompt()
-        local UPDT = {}
-        UPDT = PreAdvancedINSTstep(LOL)
-        if UPDT["x"] == true then
-          port = MemcardPickup()
-          if port ~= -1 then
-            WaitWithORBS(30)
-            FadeWIthORBS()
-            if UPDT[10] == 1 then -- IF PSX mode was selected
-              IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
-              NormalInstall(port, 0)
-              IS_PSX = 0
-            else
-              performExpertINST(port, 0, UPDT)
-            end
-          end
-        end
-      elseif TTT == 3 then -- EXPERT INST
-        local port = MemcardPickup()
+    local TTT = Installmodepicker()
+    WaitWithORBS(50)
+    if TTT == 1 then -- NORMAL INST
+      local port = MemcardPickup()
+      if port ~= -1 then
+        FadeWIthORBS()
+        NormalInstall(port, 0)
+        WaitWithORBS(50)
+      end
+    elseif TTT == 2 then -- ADVANCED INST
+      local port = 0
+      local LOL = AdvancedINSTprompt()
+      local UPDT = {}
+      UPDT = PreAdvancedINSTstep(LOL)
+      if UPDT["x"] == true then
+        port = MemcardPickup()
         if port ~= -1 then
           WaitWithORBS(30)
-          local UPDT = expertINSTprompt()
-          if UPDT["x"] == true then
-            FadeWIthORBS()
-            performExpertINST(port, 0, UPDT)
-          else WaitWithORBS(20) end
-        end
-      elseif TTT == 4 then -- MAGICGATE TEST
-        local port = MemcardPickup()
-        if port ~= -1 then
           FadeWIthORBS()
-          MagicGateTest(port, 0)
-          WaitWithORBS(50)
+          if UPDT[10] == 1 then -- IF PSX mode was selected
+            IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
+            NormalInstall(port, 0)
+            IS_PSX = 0
+          else
+            performExpertINST(port, 0, UPDT)
+          end
         end
       end
+    elseif TTT == 3 then -- EXPERT INST
+      local port = MemcardPickup()
+      if port ~= -1 then
+        WaitWithORBS(30)
+        local UPDT = expertINSTprompt()
+        if UPDT["x"] == true then
+          FadeWIthORBS()
+          performExpertINST(port, 0, UPDT)
+        else WaitWithORBS(20) end
+      end
+    elseif TTT == 4 then -- MAGICGATE TEST
+      local port = MemcardPickup()
+      if port ~= -1 then
+        FadeWIthORBS()
+        MagicGateTest(port, 0)
+        WaitWithORBS(50)
+      end
     end
-  elseif TT == 2 then -- DVDPLAYER
+  elseif TT == 2 then -- HDD
+    local ACT = HDDMAN()
+    if (ACT == 1) then
+    elseif (ACT == 2) then
+      local continue = Report(200, false, true)
+      if continue then System.printf("\nUser asked to format HDD...\n\n") end
+    elseif (ACT == 3) then
+      local ret = HDD.EnableHDDBoot()
+      ret = 100 + ret
+      Report(ret, true, false)
+    end
+  elseif TT == 3 then -- DVDPLAYER
     local port = MemcardPickup()
     WaitWithORBS(20)
     if (port >= 0) then
@@ -1557,11 +1688,11 @@ while true do
         DVDPlayerINST(port, 0, target_region)
       end
     end
-  elseif TT == 3 then
-    SystemInfo()
   elseif TT == 4 then
-    Credits()
+    SystemInfo()
   elseif TT == 5 then
+    Credits()
+  elseif TT == 6 then
     Ask2quit()
   end
   -- SYSTEM UPDATE

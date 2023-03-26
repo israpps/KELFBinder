@@ -14,6 +14,7 @@
 #include <usbhdfsd-common.h>
 #include <libpwroff.h>
 // #include <audsrv.h>
+#include <hdd-ioctl.h>
 #include <sys/stat.h>
 
 #include <dirent.h>
@@ -25,6 +26,7 @@
 // #include "include/sound.h"
 #include "include/luaplayer.h"
 #include "include/pad.h"
+#include "include/strUtils.h"
 
 #define NEWLIB_PORT_AWARE
 #include <fileXio_rpc.h>
@@ -66,11 +68,23 @@ IMPORT_BIN2C(secrman_irx);
 IMPORT_BIN2C(IOPRP);
 IMPORT_BIN2C(poweroff_irx);
 
+IMPORT_BIN2C(poweroff_irx);
+IMPORT_BIN2C(ps2dev9_irx);
+IMPORT_BIN2C(ps2atad_irx);
+IMPORT_BIN2C(ps2hdd_irx);
+IMPORT_BIN2C(ps2fs_irx);
+
 char boot_path[255];
 char ConsoleROMVER[17];
+bool HDD_USABLE = false;
+
+int LoadHDDIRX(void);
+extern int mnt(const char* path, int index, int openmod);
 
 void setLuaBootPath(int argc, char **argv, int idx)
 {
+    char MountPoint[32+6+1]; // max partition name + 'hdd0:/' = '\0' 
+    char newCWD[255];
     if (argc >= (idx + 1)) {
 
         char *p;
@@ -95,6 +109,21 @@ void setLuaBootPath(int argc, char **argv, int idx)
     // check if path needs patching
     if (!strncmp(boot_path, "mass:/", 6) && (strlen(boot_path) > 6)) {
         strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
+    }
+
+    if ((!strncmp(boot_path, "hdd0:", 5)) && (strstr(boot_path, ":pfs:") != NULL)) // hdd path found
+    {
+        if (getMountInfo(boot_path, NULL, MountPoint, newCWD)) // see if we can parse it
+        {
+            if (mnt(MountPoint, 0, FIO_MT_RDWR)==0) //mount the partition
+            {
+                strcpy(boot_path, newCWD); // replace boot path with mounted pfs path
+#ifdef RESERVE_PFS0
+                bootpath_is_on_HDD = 1;
+#endif
+            }
+
+        }
     }
 
     DPRINTF("%s: boot_path=%s\n", __func__, boot_path);
@@ -235,6 +264,8 @@ int main(int argc, char *argv[])
     if (directorytoverify != NULL) {
         closedir(directorytoverify);
     }
+    if (HaveFileXio)
+        LoadHDDIRX();
     ret = SifExecModuleBuffer(&mcman_irx, size_mcman_irx, 0, NULL, &STAT);
     DPRINTF("[MCMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcserv_irx, size_mcserv_irx, 0, NULL, &STAT);
@@ -356,6 +387,56 @@ int main(int argc, char *argv[])
             while (!isButtonPressed(PAD_START)) {
             }
         }
+    }
+
+    return 0;
+}
+
+
+static int CheckHDD(void) {
+    int ret = fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0);
+    /* 0 = HDD connected and formatted, 1 = not formatted, 2 = HDD not usable, 3 = HDD not connected. */
+    DPRINTF("%s: HDD status is %d\n", __func__, ret);
+    if ((ret >= 3) || (ret < 0))
+        return -1;
+    return ret;
+}
+
+int LoadHDDIRX(void)
+{
+    int ID, RET, HDDSTAT;
+    static const char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
+	//static const char pfsarg[] = "-n\0" "24\0" "-o\0" "8";
+
+    /* PS2DEV9.IRX */
+    ID = SifExecModuleBuffer(&ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &RET);
+    DPRINTF(" [DEV9.IRX]: ret=%d, ID=%d\n", RET, ID);
+    if (ID < 0)
+        return -1;
+
+    /* PS2ATAD.IRX */
+    ID = SifExecModuleBuffer(&ps2atad_irx, size_ps2atad_irx, 0, NULL, &RET);
+    DPRINTF(" [ATAD.IRX]: ret=%d, ID=%d\n", RET, ID);
+    if (ID < 0)
+        return -2;
+
+    /* PS2HDD.IRX */
+    ID = SifExecModuleBuffer(&ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &RET);
+    DPRINTF(" [PS2HDD.IRX]: ret=%d, ID=%d\n", RET, ID);
+    if (ID < 0)
+        return -3;
+
+    /* Check if HDD is formatted and ready to be used */
+    HDDSTAT = CheckHDD();
+    HDD_USABLE = (HDDSTAT == 0 || HDDSTAT == 1); // ONLY if HDD is usable. as we will offer HDD Formatting operation
+
+    /* PS2FS.IRX */
+    if (HDD_USABLE)
+    {
+        ID = SifExecModuleBuffer(&ps2fs_irx, size_ps2fs_irx, 0, NULL,  &RET);
+        DPRINTF(" [PS2FS.IRX]: ret=%d, ID=%d\n", RET, ID);
+        if (ID < 0)
+            return -5;
     }
 
     return 0;

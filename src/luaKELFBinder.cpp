@@ -17,7 +17,7 @@ static unsigned long int ROMVERSION;
 static unsigned int MACHINETYPE;
 // static int ROMYEAR, ROMMONTH, ROMDAY;
 static char ROMREGION;
-
+extern bool HDD_USABLE;
 #define ROMVER_LEN 16
 #define GET_MACHINE_TYPE(X)          \
     (X == 'C') ? MACHINETYPE::CEX :  \
@@ -218,6 +218,15 @@ static int lua_getromversion(lua_State *L)
     return 1;
 }
 
+static int lua_getsysupdateROMPatch(lua_State *L)
+{
+    char PATH[32];
+    const char REG_PREF[5] = {'I', 'A', 'A', 'E', 'C'};
+    sprintf(PATH, "B%cEXEC-SYSTEM/osd%03ld.elf", REG_PREF[ROMREGION], (ROMVERSION+10)&~0x0F);
+    lua_pushstring(L, PATH);
+    return 1;
+}
+
 static int lua_getosdconfigLNG(lua_State *L)
 {
     DPRINTF("%s: start\n", __func__);
@@ -255,6 +264,12 @@ static int lua_initConsoleModel(lua_State *L)
     return 1;
 }
 
+static int lua_getHDDSTATUS(lua_State *L)
+{
+    lua_pushboolean(L, HDD_USABLE);
+    return 1;
+}
+
 static int lua_getConsoleModel(lua_State *L)
 {
     const char* model = ModelNameGet();
@@ -265,7 +280,9 @@ static int lua_getConsoleModel(lua_State *L)
 static const luaL_Reg KELFBinder_functions[] = {
     {"init", lua_KELFBinderInit},
     {"deinit", lua_KELFBinderDeInit},
+    {"CheckHDDUsable", lua_getHDDSTATUS},
     {"calculateSysUpdatePath", lua_calcsysupdatepath},
+    {"calculateSysUpdateROMPatch", lua_getsysupdateROMPatch},
     {"setSysUpdateFoldProps", lua_setsysupdatefoldprops},
     {"getsysupdatefolder", lua_getsystemupdatefolder},
     {"getsystemregion", lua_getsystemregion},

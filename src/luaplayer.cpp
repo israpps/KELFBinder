@@ -38,9 +38,10 @@ const char * runScript(const char* script, bool isStringBuffer )
     DPRINTF("luaRender_init done !\n");
     luaSecrMan_init(L);
     DPRINTF("luaSecrMan_init done !\n");
-	luaKELFBinder_init(L);
+	  luaKELFBinder_init(L);
     DPRINTF("luaKELFBinder_init done !\n");
-    	
+    luaHDD_init(L);
+    DPRINTF("luaHDD_init done !\n");
     DPRINTF("done !\n");
      
 	if(!isStringBuffer){

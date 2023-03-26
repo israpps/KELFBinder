@@ -10,6 +10,7 @@
 	LNG_MM4 = "System Information"
 	LNG_MM5 = "Exit"
 	LNG_MM6 = "Credits"
+	LNG_MM7 = "Manage HDD Updates"
 	LNG_CT0 = "Select"
 	LNG_CT1 = "Cancel"
 	LNG_CT2 = "Refresh"
@@ -95,6 +96,17 @@
 	LNG_EXTRA_INSTALL_ENABLE = "Extra files will be installed"
 	LNG_EXTRA_INSTALL_DISABLE = "Extra files will not be installed"
 	LNG_KELF_HEAD = "KELF Header:"
+    LNG_HDDPROMPT = "Installs a Bootloader into the Internal HDD"
+    LNG_HDDPROMPT1 = "Formats the internal HDD into APA"
+    LNG_HDDPROMPT2 = "Enables EEPROM Configuration to allow expansion bay models\nTo automatically boot the HDD MBR program"
+	LNg_HDD_INSTOPT1 = "Install BootLoader"
+	LNg_HDD_INSTOPT2 = "Format HDD"
+	LNg_HDD_INSTOPT3 = "Enable HDDBoot"
+	LNG_HDDBOOT_ALREADY_ENABLED = "HDD Booting configuration is already enabled"
+	LNG_HDDBOOT_ENABLED = "HDD Booting has been enabled"
+	LNG_HDDFORMAT_CONFIRM = "You are about to format the internal HDD"
+	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
+	LNG_ROMPATCH_PATCH = "System update ROM Patch = [%s]"
 
 function drawbar(x, y, prog, col)
 	Screen.clear()
