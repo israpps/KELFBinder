@@ -5,33 +5,29 @@
   ISSUE REPORTS WICH CAN'T BE REPLICATED WITH THE ORIGINAL VERSION OF THIS FILE WILL NOT BE ACCEPTED
 --]]
 
+SCR_X = 704
+SCR_Y = 480
+X_MID = SCR_X / 2
+Y_MID = SCR_Y / 2
 System.printf("KELFBinder.lua starts")
-Screen.clear() Graphics.drawRect(300, 222, 40, 4, Color.new(255, 255, 255)) Screen.flip() System.sleep(1)
+drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
-local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
-local temporaryVar_size = System.sizeFile(temporaryVar)
-ROMVER = System.readFile(temporaryVar, temporaryVar_size)
-ROMVER = string.sub(ROMVER, 0, 14)
-System.closeFile(temporaryVar)
-KELFBinder.init(ROMVER)
-Screen.clear() Graphics.drawRect(290, 222, 60, 4, Color.new(128, 0, 0)) Screen.flip()
+
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
 local console_model_sub = KELFBinder.getConsoleModel()
 console_model_sub = string.sub(console_model_sub, 0, 8)
 SUPPORTS_UPDATES = true
+MUST_INSTALL_EXTRA_FILES = true
 if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL-H100" then SUPPORTS_UPDATES = false System.printf("console is incompatible ("..ROMVERN..") ["..console_model_sub.."]") end
 --- PSX
 IS_PSX = 0
 REAL_IS_PSX = 0
-MUST_INSTALL_EXTRA_FILES = true
 if System.doesFileExist("rom0:PSXVER") then
   System.printf("rom0:PSXVER FOUND")
   IS_PSX = 1
   REAL_IS_PSX = 1
-else
-  IS_PSX = 0
 end
 ---PSX
 local SYSUPDATE_ICON_SYS = "PS2BBL.icn"
@@ -50,7 +46,7 @@ SYSUPDATE_SIZE = System.sizeFile(temporaryVar)
 System.closeFile(temporaryVar)
 
 
-Screen.clear() Graphics.drawRect(280, 222, 80, 4, Color.new(255, 255, 255)) Screen.flip()
+drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
 local circle = Graphics.loadImageEmbedded(5)
 local cross = Graphics.loadImageEmbedded(6)
 local triangle = Graphics.loadImageEmbedded(15)
@@ -70,12 +66,13 @@ local CHKF = Graphics.loadImageEmbedded(4)
 EXTRA_INST_COUNT  = 0
 EXTRA_INST_FOLDE  = 0
 
-Screen.clear() Graphics.drawRect(260, 222, 120, 4, Color.new(255, 255, 255)) Screen.flip() System.sleep(1)
+drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
   Screen.clear(Color.new(128, 0, 128))
   Screen.flip()
   while true do end
 end
+drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
 Graphics.setImageFilters(LOGO, LINEAR)
 Graphics.setImageFilters(BG, LINEAR)
 Graphics.setImageFilters(BGERR, LINEAR)
@@ -84,7 +81,7 @@ Graphics.setImageFilters(CURSOR, LINEAR)
 Graphics.setImageFilters(REDCURSOR, LINEAR)
 Graphics.setImageFilters(GREENCURSOR, LINEAR)
 
-Screen.clear() Graphics.drawRect(240, 222, 160, 4, Color.new(255, 255, 255)) Screen.flip()
+drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
 local REGION = KELFBinder.getsystemregion()
 --local REGIONSTR = KELFBinder.getsystemregionString(REGION)
 local R = 0.1
@@ -103,7 +100,7 @@ elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then do
 else
   System.printf("unknown language ID ("..Language..")")
 end
-Screen.clear() Graphics.drawRect(220, 222, 200, 4, Color.new(255, 255, 255)) Screen.flip()
+drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
 if System.doesFileExist(FONTPATH) then
   Font.ftInit()
   font = Font.ftLoad(FONTPATH)
@@ -142,7 +139,7 @@ function WaitWithORBS(NN)
   N = NN
   while N > 1 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     Screen.flip()
     N = N - 1
@@ -153,7 +150,7 @@ function FadeWIthORBS()
   local A = 0x80
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(A)
     Screen.flip()
     A = A - 1
@@ -165,6 +162,17 @@ function GetFileSizeX(PATH)
   local SIZE = System.sizeFile(FD)
   System.closeFile(FD)
   return SIZE
+end
+
+function HEXDUMP(DATA)
+  local LOL = 0
+  local MESSAGE = ""
+  for b in DATA:gmatch('.') do
+    MESSAGE = MESSAGE..string.format(('%02X '):format(b:byte()))
+    LOL = LOL+1
+    if LOL == 16 then MESSAGE = MESSAGE.."\n" end
+  end
+  return MESSAGE
 end
 
 function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
@@ -241,20 +249,20 @@ function greeting()
     if Q > 0x80 then W = -1 System.sleep(1) end
     if Q > 1 then Q = Q + W else CONTINUE = false end
     if W > 0 then
-      Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(Q, Q, Q, Q))
+      Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(Q, Q, Q, Q))
     else
-      Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+      Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     end
-    Graphics.drawImage(LOGO, 64.0, 50.0, Color.new(128, 128, 128, Q))
+    Graphics.drawImage(LOGO, X_MID-256, 50.0, Color.new(128, 128, 128, Q))
     if IS_NOT_PUBLIC_READY then
-      Font.ftPrint(font, 320, 20, 8, 630, 16, "THIS IS NOT A PUBLIC-READY VERSION!", Color.new(128, 128, 128, Q))
-      Font.ftPrint(font, 320, 40, 8, 630, 16, "Closed Release candidate - build "..BETANUM, Color.new(128, 128, 128, Q))
+      Font.ftPrint(font, X_MID, 20, 8, 630, 16, "THIS IS NOT A PUBLIC-READY VERSION!", Color.new(128, 128, 128, Q))
+      Font.ftPrint(font, X_MID, 40, 8, 630, 16, "Closed Release candidate - build "..BETANUM, Color.new(128, 128, 128, Q))
     end
-    Font.ftPrint(font, 320, 310, 8, 630, 16, LNG_CRDTS0, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 330, 8, 630, 16, LNG_CRDTS1, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 350, 8, 630, 16, LNG_CRDTS2, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 370, 8, 630, 16, LNG_CRDTS3, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 390, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 240, Q))
+    Font.ftPrint(font, X_MID, 310, 8, 630, 16, LNG_CRDTS0, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 330, 8, 630, 16, LNG_CRDTS1, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 350, 8, 630, 16, LNG_CRDTS2, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 370, 8, 630, 16, LNG_CRDTS3, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 390, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 240, Q))
     Screen.flip()
   end
 end
@@ -266,9 +274,9 @@ function OrbIntro(BGQ)
   while X > 0 do
     Screen.clear()
     if BGQ == 0 then
-      Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+      Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     else
-      Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
       if Q > 0 then Q = Q - 1 end
     end
     ORBMANex(CURSOR, 0x70 - A, 180, 180, 80 + X)
@@ -285,33 +293,33 @@ function MainMenu()
   local NA = 0
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(font, 320, 20, 8, 630, 32, LNG_MM1, Color.new(220, 220, 220, 0x90 - A))
+    Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_MM1, Color.new(220, 220, 220, 0x90 - A))
     if T == 1 then
-      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_MM2, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 150, 0, 630, 16, LNG_MM2, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, 320, 150, 0, 630, 16, LNG_MM2, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNG_MM2, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, 320, 190, 0, 630, 16, LNG_MM3, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_MM3, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, 321, 230, 0, 630, 16, LNG_MM4, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNG_MM4, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, 320, 230, 0, 630, 16, LNG_MM4, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNG_MM4, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 4 then
-      Font.ftPrint(font, 321, 270, 0, 630, 16, LNG_MM6, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 270, 0, 630, 16, LNG_MM6, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, 320, 270, 0, 630, 16, LNG_MM6, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 270, 0, 630, 16, LNG_MM6, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 5 then
-      Font.ftPrint(font, 321, 310, 0, 630, 16, LNG_MM5, Color.new(0, 0xde, 0xff, 0x90 - A))
+      Font.ftPrint(font, X_MID+1, 310, 0, 630, 16, LNG_MM5, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(font, 320, 310, 0, 630, 16, LNG_MM5, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 310, 0, 630, 16, LNG_MM5, Color.new(200, 200, 200, 0x80 - A))
     end
     if A > 0 then A = A - 1 end
     promptkeys(1, LNG_CT0, 0, 0, 0, 0, A)
@@ -371,23 +379,23 @@ function Installmodepicker()
   }
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     if T == 1 then
-      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_IMPMP1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(font, 320, 150, 0, 630, 16, LNG_IMPMP1, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 150, 0, 630, 16, LNG_IMPMP1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNG_IMPMP1, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_IMPMP2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(font, 320, 190, 0, 630, 16, LNG_IMPMP2, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_IMPMP2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_IMPMP2, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, 321, 230, 0, 630, 16, LNG_IMPMP3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(font, 320, 230, 0, 630, 16, LNG_IMPMP3, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNG_IMPMP3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNG_IMPMP3, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 4 then
-      Font.ftPrint(font, 321, 270, 0, 630, 16, LNG_IMPMP4, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(font, 320, 270, 0, 630, 16, LNG_IMPMP4, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 270, 0, 630, 16, LNG_IMPMP4, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(font, X_MID, 270, 0, 630, 16, LNG_IMPMP4, Color.new(200, 200, 200, 0x80 - A))
     end
 
     Font.ftPrint(font, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
@@ -435,32 +443,32 @@ function DVDPlayerRegionPicker()
   }
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(font, 320, 20, 8, 630, 32, LNG_PICK_DVDPLAYER_REG, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_PICK_DVDPLAYER_REG, Color.new(220, 220, 220, 0x80 - A))
 
     if T == 1 then
-      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_JPN, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 150, 0, 630, 16, LNG_JPN, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 150, 0, 630, 16, LNG_JPN, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNG_JPN, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_USANASIA, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_USANASIA, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 190, 0, 630, 16, LNG_USANASIA, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_USANASIA, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, 321, 230, 0, 630, 16, LNG_EUR, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, LNG_EUR, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 230, 0, 630, 16, LNG_EUR, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, LNG_EUR, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 4 then
-      Font.ftPrint(font, 321, 270, 0, 630, 16, LNG_CHN, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 270, 0, 630, 16, LNG_CHN, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 270, 0, 630, 16, LNG_CHN, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 270, 0, 630, 16, LNG_CHN, Color.new(200, 200, 200, 0x80 - A))
     end
 
-    Font.ftPrint(font, 320, 350, 8, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
+    Font.ftPrint(font, X_MID, 350, 8, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
     promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
@@ -501,8 +509,8 @@ function DVDPlayerINST(port, slot, target_region)
   if System.doesFileExist(DVDPLAYERUPDATE) then
     System.AllowPowerOffButton(0)
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-    Font.ftPrint(font, 320, 20, 8, 600, 64, string.format(LNG_INSTPMPT, TARGET_KELF))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    Font.ftPrint(font, X_MID, 20, 8, 600, 64, string.format(LNG_INSTPMPT, TARGET_KELF))
     Screen.flip()
     System.createDirectory(string.format("mc%d:/%s", port, TARGET_FOLD))
     KELFBinder.setSysUpdateFoldProps(port, slot, TARGET_FOLD)
@@ -557,10 +565,10 @@ function NormalInstall(port, slot)
   SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
   if IS_PSX == 1 then SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf" end
   Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-  Font.ftPrint(font, 320, 20, 8, 600, 64, LNG_INSTALLING)
-  Font.ftPrint(font, 320, 45, 8, 600, 64, SYSUPDATEPATH)
-  Font.ftPrint(font, 320, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace /
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(font, X_MID, 20, 8, 600, 64, LNG_INSTALLING)
+  Font.ftPrint(font, X_MID, 45, 8, 600, 64, SYSUPDATEPATH)
+  Font.ftPrint(font, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace /
     1024))
   Screen.flip()
   if (ROMVERN == 100) or (ROMVERN == 101) then -- PROTOKERNEL NEEDS TWO UPDATES TO FUNCTION
@@ -581,11 +589,11 @@ function NormalInstall(port, slot)
   end
   -- KELF install finished! deal with extra files now!
   Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-  Font.ftPrint(font, 320, 20, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(font, 320, 45, 8, 600, 64, SYSUPDATEPATH)
-  Font.ftPrint(font, 320, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace / 1024))
-  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(font, 320, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(font, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(font, X_MID, 45, 8, 600, 64, SYSUPDATEPATH)
+  Font.ftPrint(font, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace / 1024))
+  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(font, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
   Screen.flip()
   InstallExtraAssets(port)
   System.AllowPowerOffButton(1)
@@ -615,9 +623,9 @@ function MemcardPickup()
     end
 
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(font, 320, 20, 8, 630, 32, LNG_MEMCARD0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_MEMCARD0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     Font.ftPrint(font, 160, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 1), Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if mcinfo0.type == 2 then
       if mcinfo0.format == 1 then
@@ -630,25 +638,25 @@ function MemcardPickup()
     end
 
     if T == 0 then
-      Graphics.drawScaleImage(mi0, 160.0 - 32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
+      Graphics.drawScaleImage(mi0, 160 - 32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
     else
-      Graphics.drawScaleImage(mi0, 160.0 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Graphics.drawScaleImage(mi0, 160 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
 
-    Font.ftPrint(font, 460, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 2), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(font, 524, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 2), Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if mcinfo1.type == 2 then
       if mcinfo1.format == 1 then
-        Font.ftPrint(font, 460, 290, 8, 630, 32, string.format(LNG_MEMCARD2, mcinfo1.freemem), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 524, 290, 8, 630, 32, string.format(LNG_MEMCARD2, mcinfo1.freemem), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
-        Font.ftPrint(font, 460, 290, 8, 630, 32, LNG_UNFORMATTED_CARD, Color.new(0x80, 0, 0, 0x80-A))
+        Font.ftPrint(font, 524, 290, 8, 630, 32, LNG_UNFORMATTED_CARD, Color.new(0x80, 0, 0, 0x80-A))
       end
     elseif mcinfo1.type ~= 0 then
-      Font.ftPrint(font, 460, 290, 8, 630, 32, LNG_INCOMPATIBLE_CARD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Font.ftPrint(font, 524, 290, 8, 630, 32, LNG_INCOMPATIBLE_CARD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
-    if T == 1 then -- minus 32 so image center lies on 460
-      Graphics.drawScaleImage(mi1, 460.0 - 32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
+    if T == 1 then -- minus 32 so image center (instead of the corner) lies on 524
+      Graphics.drawScaleImage(mi1, 524 - 32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
     else
-      Graphics.drawScaleImage(mi1, 460.0 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Graphics.drawScaleImage(mi1, 524 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
 
     if A > 0 then A = A - 1 end
@@ -725,78 +733,78 @@ function expertINSTprompt()
   SYSUP = REGI[KELFBinder.getsystemregion()+1].." - "..SYSUP
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x70)
-    Font.ftPrint(font, 320, 20, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if SUPPORTS_UPDATES then
-      Font.ftPrint(font, 320, 50, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
-      Font.ftPrint(font, 320, 65, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
+      Font.ftPrint(font, X_MID, 50, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
+      Font.ftPrint(font, X_MID, 70, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
     end
-    Font.ftPrint(font, 115, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 115, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 310, 120, 0, 630, 16, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font, 310, 200, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(font,  40, 340, 0, 600, 32, UPDTT[T] , Color.new(200, 200, 200, 0x80 - A))
+    Font.ftPrint(font, 110, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 110, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 292, 120, 0, 630, 32, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 292, 220, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(font, 104, 340, 0, 600, 32, UPDTT[T] , Color.new(200, 200, 200, 0x80 - A))
 
-    if UPDT[0] == 1 then Graphics.drawImage(CHKF,  95, 142) else Graphics.drawImage(CHK_,  95, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[1] == 1 then Graphics.drawImage(CHKF,  95, 162) else Graphics.drawImage(CHK_,  95, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[2] == 1 then Graphics.drawImage(CHKF,  95, 182) else Graphics.drawImage(CHK_,  95, 182, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[3] == 1 then Graphics.drawImage(CHKF,  95, 202) else Graphics.drawImage(CHK_,  95, 202, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[4] == 1 then Graphics.drawImage(CHKF,  95, 262) else Graphics.drawImage(CHK_,  95, 262, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[5] == 1 then Graphics.drawImage(CHKF,  95, 282) else Graphics.drawImage(CHK_,  95, 282, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[6] == 1 then Graphics.drawImage(CHKF,  95, 302) else Graphics.drawImage(CHK_,  95, 302, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[7] == 1 then Graphics.drawImage(CHKF, 300, 142) else Graphics.drawImage(CHK_, 300, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[8] == 1 then Graphics.drawImage(CHKF, 300, 162) else Graphics.drawImage(CHK_, 300, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 300, 222) else Graphics.drawImage(CHK_, 300, 222, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[0] == 1 then Graphics.drawImage(CHKF, 110, 142) else Graphics.drawImage(CHK_, 110, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[1] == 1 then Graphics.drawImage(CHKF, 110, 162) else Graphics.drawImage(CHK_, 110, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[2] == 1 then Graphics.drawImage(CHKF, 110, 182) else Graphics.drawImage(CHK_, 110, 182, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[3] == 1 then Graphics.drawImage(CHKF, 110, 202) else Graphics.drawImage(CHK_, 110, 202, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[4] == 1 then Graphics.drawImage(CHKF, 110, 262) else Graphics.drawImage(CHK_, 110, 262, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[5] == 1 then Graphics.drawImage(CHKF, 110, 282) else Graphics.drawImage(CHK_, 110, 282, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[6] == 1 then Graphics.drawImage(CHKF, 110, 302) else Graphics.drawImage(CHK_, 110, 302, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[7] == 1 then Graphics.drawImage(CHKF, 292, 162) else Graphics.drawImage(CHK_, 292, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[8] == 1 then Graphics.drawImage(CHKF, 292, 182) else Graphics.drawImage(CHK_, 292, 182, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 292, 242) else Graphics.drawImage(CHK_, 292, 242, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if T == JAP_ROM_100 then
-      Font.ftPrint(font, 115, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Font.ftPrint(font, 139, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x50 - A))
+      Font.ftPrint(font, 139, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x50 - A))
     end
     if T == JAP_ROM_101 then
-      Font.ftPrint(font, 115, 160, 0, 400, 16, "osd110.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 160, 0, 400, 16, "osd110.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 160, 0, 400, 16, "osd110.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 160, 0, 400, 16, "osd110.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == JAP_ROM_120 then
-      Font.ftPrint(font, 115, 180, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 180, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 180, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 180, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == JAP_STANDARD then
-      Font.ftPrint(font, 115, 200, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 200, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 200, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 200, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == USA_ROM_110 then
-      Font.ftPrint(font, 115, 260, 0, 400, 16, "osd120.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 260, 0, 400, 16, "osd120.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 260, 0, 400, 16, "osd120.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 260, 0, 400, 16, "osd120.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == USA_ROM_120 then
-      Font.ftPrint(font, 115, 280, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 280, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 280, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 280, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == USA_STANDARD then
-      Font.ftPrint(font, 115, 300, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, 139, 300, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 115, 300, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, 139, 300, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == EUR_ROM_120 then
-      Font.ftPrint(font, 320, 140, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID-40, 160, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 140, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, X_MID-40, 160, 0, 400, 16, "osd130.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == EUR_STANDARD then
-      Font.ftPrint(font, 320, 160, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID-40, 180, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 160, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, X_MID-40, 180, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == CHN_STANDARD then
-      Font.ftPrint(font, 320, 220, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 220, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(font, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if A > 0 then A = A - 1 end
     promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT3, A)
@@ -817,6 +825,7 @@ function expertINSTprompt()
 
     if Pads.check(pad, PAD_TRIANGLE) and D == 0 then
       D = 1
+      UPDT["x"] = true
       break
     end
 
@@ -840,9 +849,14 @@ function expertINSTprompt()
     if T > CHN_STANDARD then T = JAP_ROM_100 end
 
   end
-
-  for i = 0, 9 do
-    if UPDT[i] == 1 then UPDT["x"] = true break end
+  if UPDT["x"] then -- if user wants to install check if he picked any item
+    for i = 0, 9 do
+      if UPDT[i] == 1 then -- found at least one selected item, proceed
+        UPDT["x"] = true
+        return UPDT
+      end
+    end
+    UPDT["x"] = false -- user hit install without picking items, quit
   end
   Screen.clear()
   return UPDT
@@ -857,26 +871,27 @@ function AdvancedINSTprompt()
     LNG_DESC_CROSS_REGION,
     LNG_DESC_PSXDESR
   }
+  if REAL_IS_PSX == 1 then PROMTPS[3] = LNG_DESC_MACHINE_IS_PSX end
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     if T == 1 then
-      Font.ftPrint(font, 321, 150, 0, 630, 16, LNG_AI_CROSS_MODEL, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 150, 0, 630, 16, LNG_AI_CROSS_MODEL, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 150, 0, 630, 16, LNG_AI_CROSS_MODEL, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 150, 0, 630, 16, LNG_AI_CROSS_MODEL, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(font, 321, 190, 0, 630, 16, LNG_AI_CROSS_REGION, Color.new(0, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 190, 0, 630, 16, LNG_AI_CROSS_REGION, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(font, 320, 190, 0, 630, 16, LNG_AI_CROSS_REGION, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 190, 0, 630, 16, LNG_AI_CROSS_REGION, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(font, 321, 230, 0, 630, 16, "PSX DESR", Color.new(0, 0xde, 0xff, 0x80 - A))
-    elseif IS_PSX == 1 then
-      Font.ftPrint(font, 320, 230, 0, 630, 16, "PSX DESR", Color.new(50, 50, 50, 0x80 - A))
+      Font.ftPrint(font, X_MID+1, 230, 0, 630, 16, "PSX DESR", Color.new(0, 0xde, 0xff, 0x80 - A))
+    elseif REAL_IS_PSX == 1 then
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(50, 50, 50, 0x80 - A))
     else -- make the PSX option grey if runner machine is PSX
-      Font.ftPrint(font, 320, 230, 0, 630, 16, "PSX DESR", Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(font, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(200, 200, 200, 0x80 - A))
     end
 
     Font.ftPrint(font, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(0x70, 0x70, 0x70, 0x80 - A))
@@ -886,7 +901,7 @@ function AdvancedINSTprompt()
     local pad = Pads.get()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
-      if T == 3 and IS_PSX == 1 then
+      if T == 3 and REAL_IS_PSX == 1 then
         --user requested a PSX install on a PSX, senseless, normal install will do the job
       else
         D = 1
@@ -921,7 +936,7 @@ function PreAdvancedINSTstep(INSTMODE)
   for i = 0, 10 do
     UPDT[i] = 0
   end
-  if INSTMODE == 1 then
+  if INSTMODE == 1 then -- all models for same region
     if REGION == 0 then
       for i = 0, 3 do
         UPDT[i] = 1
@@ -936,11 +951,11 @@ function PreAdvancedINSTstep(INSTMODE)
     elseif REGION == 4 then
       UPDT[9] = 1
     end
-  elseif INSTMODE == 2 then
+  elseif INSTMODE == 2 then -- all models of all regions (save PSX)
     for i = 0, 9 do
       UPDT[i] = 1
     end
-  elseif INSTMODE == 3 then
+  elseif INSTMODE == 3 then -- PSX
     UPDT[10] = 1
   else
     UPDT["x"] = false
@@ -955,7 +970,7 @@ function secrerr(RET)
   local pad = 0
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A - 1
     Screen.flip()
   end
@@ -963,10 +978,10 @@ function secrerr(RET)
   while true do
     Screen.clear()
     if RET == 1 then
-      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
       ORBMANex(GREENCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
     else
-      Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
       ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
     end
     if Q < 0x20 then
@@ -975,20 +990,20 @@ function secrerr(RET)
 
       promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
       if RET ~= 1 then
-        Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_INSTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 40, 8, 630, 64, string.format(LNG_INSTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
-        Font.ftPrint(font, 320, 40, 8, 630, 64, LNG_INSTPMPT1, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 40, 8, 630, 64, LNG_INSTPMPT1, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
       if RET == (-5) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-22) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-12) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-201) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET ~= 1 then -- only write unknown error if retcode is not a success
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
 
       if Pads.check(pad, PAD_CROSS) and A == 0 then
@@ -1010,32 +1025,34 @@ function MagicGateTest(port, slot)
   local PADV = 0
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
-    Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_PLS_WAIT, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
+    Font.ftPrint(font, X_MID, 40, 8, 630, 64, string.format(LNG_PLS_WAIT, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
     A = A - 1
     Screen.flip()
   end
   local RET
-  local HEADER
-  local MESSAGE = ""
   local LOL = 0
+  local HEADER
+  local KBIT
+  local KCONT
+  local MESSAGE = ""
+  local MESSAGE1 = ""
+  local MESSAGE2 = ""
   if System.doesFileExist(TEST_KELF) then
-    RET, HEADER = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
-    RET, HEADER = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
-  for b in HEADER:gmatch('.') do
-    MESSAGE = MESSAGE..string.format(('%02X '):format(b:byte()))
-    LOL = LOL+1
-    if LOL == 16 then MESSAGE = MESSAGE.."\n" end
-  end
+  MESSAGE = HEXDUMP(HEADER)
+  MESSAGE1 = HEXDUMP(KBIT)
+  MESSAGE2 = HEXDUMP(KCONT)
   A = 0x80
   while true do
     Screen.clear()
     if RET == 1 then
-      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      Graphics.drawScaleImage(BGSCS, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
       ORBMANex(GREENCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
     else
-      Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+      Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
       ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
     end
     if Q < 0x20 then
@@ -1043,22 +1060,26 @@ function MagicGateTest(port, slot)
       if A > 0 then A = A - 1 end
       promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
       if RET ~= 1 then
-        Font.ftPrint(font, 320, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
-        Font.ftPrint(font, 320, 40,  8, 630, 64, LNG_TESTSUCC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(font, 120, 280, 8, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(font, 120, 300, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 40,  8, 630, 64, LNG_TESTSUCC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 120, 200, 0, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 220, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(font, 120, 260, 0, 630, 64, "Kbit:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 280, 0, 630, 32, MESSAGE1, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(font, 120, 300, 0, 630, 64, "Kc:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, 150, 320, 0, 630, 32, MESSAGE2, Color.new(0x80, 0x80, 0, 0x80 - A))
       end
       if RET == (-5) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-22) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-12) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-201) then
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET ~= 1 then -- only write unknown error if retcode is not a success
-        Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0, 0, 0x80 - A))
+        Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0, 0, 0x80 - A))
       end
 
       if Pads.check(PADV, PAD_CROSS) and A == 0 then
@@ -1081,19 +1102,19 @@ function WarnOfShittyFMCBInst()
   local pad = 0
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A - 1
     Screen.flip()
   end
   A = 0x80
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
-    Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 80, 8, 630, 64, LNG_FMCBINST_CRAP0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 120, 8, 630, 64, LNG_FMCBINST_CRAP1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 190, 8, 630, 64, LNG_FMCBINST_CRAP2, Color.new(0x80, 0x80, A, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 80, 8, 630, 64, LNG_FMCBINST_CRAP0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 120, 8, 630, 64, LNG_FMCBINST_CRAP1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 190, 8, 630, 64, LNG_FMCBINST_CRAP2, Color.new(0x80, 0x80, A, 0x80 - Q))
 
     if Q < 10 then
       pad = Pads.get()
@@ -1123,18 +1144,18 @@ function InsufficientSpace(NEEDED, AVAILABLE)
   local pad = 0
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A - 1
     Screen.flip()
   end
   A = 0x80
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
-    Font.ftPrint(font, 320, 60, 8, 630, 64, LNG_ERROR, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 80, 8, 630, 64, LNG_NOT_ENOUGH_SPACE0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 120, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED / 1024, AVAILABLE / 1024),
+    Font.ftPrint(font, X_MID, 60, 8, 630, 64, LNG_ERROR, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 80, 8, 630, 64, LNG_NOT_ENOUGH_SPACE0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 120, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED / 1024, AVAILABLE / 1024),
       Color.new(0x80, 0x80, 0x80, 0x80 - Q))
 
     if Q < 10 then
@@ -1169,14 +1190,14 @@ function Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, NEEDS
   local CHN_FOLD = string.format("mc%d:/%s", port, "BCEXEC-SYSTEM")
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A - 1
     Screen.flip()
   end
   A = 0x80
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
 
     if Q < 0x20 then
@@ -1207,7 +1228,7 @@ function Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, NEEDS
   A = 0
   while A < 0x80 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A + 1
     Screen.flip()
   end
@@ -1228,21 +1249,21 @@ function WarnIncompatibleMachine()
   local pad = 0
   while A > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, A))
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
     A = A - 1
     Screen.flip()
   end
   A = 0x80
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BGERR, 0.0, 0.0, 640.0, 448.0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
 
     pad = Pads.get()
     if A > 0 then A = A - 1 end
     promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, Q)
-    Font.ftPrint(font, 320, 40, 8, 630, 64, LNG_COMPAT0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(font, 320, 100, 8, 630, 64, LNG_COMPAT1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 40, 8, 630, 64, LNG_COMPAT0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(font, X_MID, 100, 8, 630, 64, LNG_COMPAT1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     if Pads.check(pad, PAD_CROSS) then
       QIN = -1
       Q = 1
@@ -1255,7 +1276,7 @@ end
 
 function performExpertINST(port, slot, UPDT)
   Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
 
   if System.doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
@@ -1326,9 +1347,9 @@ function performExpertINST(port, slot, UPDT)
 
   System.AllowPowerOffButton(0)
   Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-  Font.ftPrint(font, 320, 20, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(font, 320, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(font, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(font, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
   Screen.flip()
 
   if NEEDS_JPN then System.createDirectory(JPN_FOLD) end
@@ -1350,10 +1371,10 @@ function performExpertINST(port, slot, UPDT)
   if RET < 0 then secrerr(RET) return end
 
   Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-  Font.ftPrint(font, 320, 20, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(font, 320, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
-  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(font, 320, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(font, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(font, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
+  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(font, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
   Screen.flip()
 
   if NEEDS_JPN then
@@ -1391,8 +1412,8 @@ function Ask2quit()
     if Q < 1 then QQ = 1 end
     Q = Q + QQ
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
-    Font.ftPrint(font, 320, 40, 8, 630, 16, LNG_WANNAQUIT)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    Font.ftPrint(font, X_MID, 40, 8, 630, 16, LNG_WANNAQUIT)
     promptkeys(1, LNG_YES, 1, LNG_NO, 1, LNG_RWLE, 0)
     ORBMAN(0x80 - Q)
     local pad = Pads.get()
@@ -1412,9 +1433,9 @@ function SystemInfo()
   if SUPPORTS_UPDATES then COMPATIBLE_WITH_UPDATES = LNG_YES end
   while true do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(font, 320, 20, 8, 630, 32, LNG_SYSTEMINFO, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(font, X_MID, 20, 8, 630, 32, LNG_SYSTEMINFO, Color.new(220, 220, 220, 0x80 - A))
 
     Font.ftPrint(font, 50, 60, 0, 630, 32, string.format("ROMVER = [%s]", ROMVER), Color.new(220, 220, 220, 0x80 - A))
     Font.ftPrint(font, 50, 80, 0, 630, 32, string.format(LNG_CONSOLE_MODEL, KELFBinder.getConsoleModel()),
@@ -1441,19 +1462,19 @@ function Credits()
   local QINC = 1
   while Q > 0 do
     Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, 640.0, 448.0)
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Graphics.drawScaleImage(LOGO, 192.0, 40.0, 256, 128, Color.new(128, 200, 200, Q))
-    Font.ftPrint(font, 320, 200, 8, 630, 16, LNG_CRDTS0, Color.new(200, 200, 200, Q))
-    Font.ftPrint(font, 320, 220, 8, 630, 16, LNG_CRDTS1, Color.new(200, 200, 200, Q))
-    Font.ftPrint(font, 320, 240, 8, 630, 16, LNG_CRDTS2, Color.new(200, 200, 200, Q))
-    Font.ftPrint(font, 320, 260, 8, 630, 16, LNG_CRDTS3, Color.new(200, 200, 200, Q))
-    Graphics.drawRect(50, 290, 540, 1, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 300, 8, 630, 16, LNG_CRDTS5, Color.new(200, 200, 200, Q))
-    Font.ftPrint(font, 320, 320, 8, 630, 16, "krHACKen, uyjulian, HWNJ", Color.new(200, 200, 200, Q))
-    Font.ftPrint(font, 320, 340, 8, 630, 16, "sp193, Leo Oliveira", Color.new(200, 200, 200, Q))
-    Graphics.drawRect(50, 370, 540, 1, Color.new(128, 128, 128, Q))
-    Font.ftPrint(font, 320, 380, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 10, Q))
+    Graphics.drawScaleImage(LOGO, X_MID-128, 40.0, 256, 128, Color.new(128, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 200, 8, 630, 16, LNG_CRDTS0, Color.new(200, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 220, 8, 630, 16, LNG_CRDTS1, Color.new(200, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 240, 8, 630, 16, LNG_CRDTS2, Color.new(200, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 260, 8, 630, 16, LNG_CRDTS3, Color.new(200, 200, 200, Q))
+    Graphics.drawRect(0, 290, SCR_X, 2, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 300, 8, 630, 16, LNG_CRDTS5, Color.new(200, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 320, 8, 630, 16, "krHACKen, uyjulian, HWNJ", Color.new(200, 200, 200, Q))
+    Font.ftPrint(font, X_MID, 340, 8, 630, 16, "sp193, Leo Oliveira", Color.new(200, 200, 200, Q))
+    Graphics.drawRect(0, 370, SCR_X, 2, Color.new(128, 128, 128, Q))
+    Font.ftPrint(font, X_MID, 380, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 10, Q))
     Screen.flip()
     if (Q ~= 0x80) then Q = Q + QINC end
     pad = Pads.get()
@@ -1467,8 +1488,8 @@ end
 -- SCRIPT BEHAVIOUR BEGINS --
 local NEIN = 0x80
 while NEIN > 0 do 
-  Screen.clear() Graphics.drawRect(200, 222, 240, 4, Color.new(255, 255, 255, NEIN)) Screen.flip() 
-  NEIN = NEIN-2 
+  drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255, NEIN))
+  NEIN = NEIN-2
 end
 greeting()
 if SUPPORTS_UPDATES == false then WarnIncompatibleMachine() end
@@ -1477,50 +1498,53 @@ while true do
   local TT = MainMenu()
   WaitWithORBS(50)
   if (TT == 1) then -- SYSTEM UPDATE
-    local TTT = Installmodepicker()
-    WaitWithORBS(50)
-    if TTT == 1 then -- NORMAL INST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        FadeWIthORBS()
-        NormalInstall(port, 0)
-        WaitWithORBS(50)
-      end
-    elseif TTT == 2 then -- ADVANCED INST
-      local port = 0
-      local LOL = AdvancedINSTprompt()
-      local UPDT = {}
-      UPDT = PreAdvancedINSTstep(LOL)
-      if UPDT["x"] == true then
-        port = MemcardPickup()
+    while true do
+      local TTT = Installmodepicker()
+      if TTT == 0 then break end
+      WaitWithORBS(50)
+      if TTT == 1 then -- NORMAL INST
+        local port = MemcardPickup()
         if port ~= -1 then
-          WaitWithORBS(30)
           FadeWIthORBS()
-          if UPDT[10] == 1 then -- IF PSX mode was selected
-            IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
-            NormalInstall(port, 0)
-            IS_PSX = 0
-          else
-            performExpertINST(port, 0, UPDT)
+          NormalInstall(port, 0)
+          WaitWithORBS(50)
+        end
+      elseif TTT == 2 then -- ADVANCED INST
+        local port = 0
+        local LOL = AdvancedINSTprompt()
+        local UPDT = {}
+        UPDT = PreAdvancedINSTstep(LOL)
+        if UPDT["x"] == true then
+          port = MemcardPickup()
+          if port ~= -1 then
+            WaitWithORBS(30)
+            FadeWIthORBS()
+            if UPDT[10] == 1 then -- IF PSX mode was selected
+              IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
+              NormalInstall(port, 0)
+              IS_PSX = 0
+            else
+              performExpertINST(port, 0, UPDT)
+            end
           end
         end
-      end
-    elseif TTT == 3 then -- EXPERT INST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        WaitWithORBS(30)
-        local UPDT = expertINSTprompt()
-        if UPDT["x"] == true then
+      elseif TTT == 3 then -- EXPERT INST
+        local port = MemcardPickup()
+        if port ~= -1 then
+          WaitWithORBS(30)
+          local UPDT = expertINSTprompt()
+          if UPDT["x"] == true then
+            FadeWIthORBS()
+            performExpertINST(port, 0, UPDT)
+          else WaitWithORBS(20) end
+        end
+      elseif TTT == 4 then -- MAGICGATE TEST
+        local port = MemcardPickup()
+        if port ~= -1 then
           FadeWIthORBS()
-          performExpertINST(port, 0, UPDT)
-        else WaitWithORBS(20) end
-      end
-    elseif TTT == 4 then -- MAGICGATE TEST
-      local port = MemcardPickup()
-      if port ~= -1 then
-        FadeWIthORBS()
-        MagicGateTest(port, 0)
-        WaitWithORBS(50)
+          MagicGateTest(port, 0)
+          WaitWithORBS(50)
+        end
       end
     end
   elseif TT == 2 then -- DVDPLAYER

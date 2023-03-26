@@ -1,4 +1,3 @@
-Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Screen.flip()
 	LNG_CRDTS0 = "Coded by El_isra (aka: Matias Israelson)"
 	LNG_CRDTS1 = "Based on Enceladus by Daniel Santos"
 	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer"
@@ -36,14 +35,14 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 	LNG_SUC4 = "American release model\nSCPH-30001 with B chassis"
 	LNG_SUC5 = "American release model\nSCPH-30001 with C chassis"
 	LNG_SUC6 = "Any American and Asian models\nexcluding American release models"
-	LNG_SUC7 = "European release model\nSCPH-3000(2-4) with C chassis"
+	LNG_SUC7 = "European release model\nSCPH-3000(2/3/4/8) with C chassis"
 	LNG_SUC8 = "Any European model excluding release models"
 	LNG_SUC9 = "The rare Chinese models"
 	LNG_EXPERTINST_PROMPT = "Select the system update executables"
 	LNG_EXPERTINST_PROMPT1 = "This console uses:"
 	LNG_REGS0 = "Japan - SCPH-XXX00"
 	LNG_REGS1 = "USA and Asia"
-	LNG_REGS2 = "Europe / Oceania- SCPH-XXX0[2-4]"
+	LNG_REGS2 = "Europe / Oceania / Russia\nSCPH-XXX0[2/3/4/8]"
 	LNG_REGS3 = "China - SCPH-XXX09"
 	LNG_EIO = "I/O ERROR"
 	LNG_SECRMANERR = "SECRDOWNLOADFILE Failed! - Possible MagicGate error"
@@ -79,6 +78,7 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 	LNG_DESC_CROSS_MODEL  =  "Install system updates for every PS2 of this same region"
 	LNG_DESC_CROSS_REGION =  "Install system updates for every PS2 of every region"
 	LNG_DESC_PSXDESR      =  "Install a system update for PSX-DESR systems"
+	LNG_DESC_MACHINE_IS_PSX = "Current console is PSX\nuse normal install instead"
 	LNG_WARNING = "Warning!"
 	LNG_WARN_CONFLICT0 = "The selected Memory Card seems to have a system update\nalready installed"
 	LNG_WARN_CONFLICT1 = "clean the target folders before proceeding?"
@@ -96,6 +96,28 @@ Screen.clear() Graphics.drawRect(318, 222, 4, 4, Color.new(255, 255, 255)) Scree
 	LNG_EXTRA_INSTALL_DISABLE = "Extra files will not be installed"
 	LNG_KELF_HEAD = "KELF Header:"
 
+function drawbar(x, y, prog, col)
+	Screen.clear()
+	Graphics.drawRect(x-(prog), y, prog*2, 5, col)
+	Screen.flip()
+end
+
+	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
+	local temporaryVar_size = System.sizeFile(temporaryVar)
+	ROMVER = System.readFile(temporaryVar, temporaryVar_size)
+	ROMVER = string.sub(ROMVER, 0, 14)
+	System.closeFile(temporaryVar)
+	KELFBinder.init(ROMVER)
+	local REGION = KELFBinder.getsystemregion()
+	if REGION == 3 then
+		System.printf("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD")
+		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
+	else
+		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
+		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
+	end
+	drawbar(352, 240, 20, Color.new(255, 255, 255))
+	System.sleep(5)
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then

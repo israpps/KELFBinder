@@ -6,7 +6,6 @@ on:
       - '*'
     tags:
       - v*
-  pull_request:
   workflow_dispatch:
   repository_dispatch:
     types: [run_build]
@@ -30,9 +29,7 @@ jobs:
 
     - name: update dependencies
       run: |
-        echo wLaunchELF
-        wget https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT-DS34-XFROM.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
-        cp bin/INSTALL/CORE/BACKDOOR.ELF bin/INSTALL/ASSETS/BOOT/BOOT.ELF
+        make update_deps
 
     - name: Compile project
       run: |
