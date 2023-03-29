@@ -245,17 +245,17 @@ int main(int argc, char *argv[])
     sbv_patch_enable_lmb();
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
-
+#ifdef NO_FILEXIO_ON_HOST
     DIR *directorytoverify;
     directorytoverify = opendir("host:.");
     if (directorytoverify == NULL) {
+#endif
         ret = SifExecModuleBuffer(&iomanX_irx, size_iomanX_irx, 0, NULL, &STAT);
         DPRINTF("[IOMANX.IRX]: ret=%d, stat=%d\n", ret, STAT);
         ret = SifExecModuleBuffer(&fileXio_irx, size_fileXio_irx, 0, NULL, &STAT);
         DPRINTF("[FILEXIO.IRX]: ret=%d, stat=%d\n", ret, STAT);
+#ifdef NO_FILEXIO_ON_HOST
     }
-    ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
-    DPRINTF("[SIO2MAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
     if (directorytoverify == NULL) {
         fileXioInit();
         HaveFileXio = 1;
@@ -264,8 +264,15 @@ int main(int argc, char *argv[])
     if (directorytoverify != NULL) {
         closedir(directorytoverify);
     }
+#else
+        fileXioInit();
+        HaveFileXio = 1;
+#endif
     if (HaveFileXio)
         LoadHDDIRX();
+
+    ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
+    DPRINTF("[SIO2MAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcman_irx, size_mcman_irx, 0, NULL, &STAT);
     DPRINTF("[MCMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcserv_irx, size_mcserv_irx, 0, NULL, &STAT);
