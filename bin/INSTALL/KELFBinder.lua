@@ -41,6 +41,9 @@ KERNEL_PATCH_100 = "INSTALL/KELF/OSDSYS.KERNEL"
 KERNEL_PATCH_101 = "INSTALL/KELF/OSD110.KERNEL"
 TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 
+HDD_USABLE = KELFBinder.CheckHDDUsable()
+STR_HDD_USABLE = LNG_NO
+if HDD_USABLE then STR_HDD_USABLE = LNG_YES end
 temporaryVar = System.openFile(SYSUPDATE_MAIN, FREAD)
 SYSUPDATE_SIZE = System.sizeFile(temporaryVar)
 System.closeFile(temporaryVar)
@@ -1568,6 +1571,7 @@ function SystemInfo()
         Font.ftPrint(font, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
       end--]]
     end
+    Font.ftPrint(font, 50, 160, 0, 630, 32, "HDD Connected = "..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
 
     promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
     if A > 0 then A = A - 1 end

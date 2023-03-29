@@ -257,10 +257,10 @@ static int EnableHDDBooting(lua_State *L)
 			result = sceCdCloseConfig(&OpResult);
 		} while (OpResult & 9 || result == 0);
 
-		result = 0;
+		result = 0; // HDD Boot enabled
 	}
 	else
-		result = 1;
+		result = 1; //it was already enabled
     lua_pushinteger(L, result);
 	return 1;
 }
