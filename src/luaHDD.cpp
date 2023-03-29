@@ -13,6 +13,9 @@
 #include <fileXio_rpc.h>
 #include <fileio.h>
 
+
+#include <errno.h>
+
 #include "include/dbgprintf.h"
 #include "include/luaplayer.h"
 #ifdef RESERVE_PFS0
@@ -56,19 +59,25 @@ static int UmountPart(lua_State *L)
 
 static int lua_GetHDDStatus(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_STATUS: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
 static int lua_GetHDDSMARTStatus(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_SMARTSTAT, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_SMARTSTAT, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_SMARTSTAT: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
 static int lua_CheckHDDSectorError(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_GETSECTORERROR, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_GETSECTORERROR, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_GETSECTORERROR: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
@@ -76,6 +85,7 @@ static int lua_CheckDamagedPartitions(lua_State *L)
 {
     char ErrorPartName[64] = "";
     int ret = fileXioDevctl("hdd0:", HDIOC_GETERRORPARTNAME, NULL, 0, ErrorPartName, sizeof(ErrorPartName));
+    DPRINTF("HDIOC_GETERRORPARTNAME: %d - [%s]\n", ret, ErrorPartName);
     lua_pushinteger(L, ret);
     lua_pushstring(L, ErrorPartName);
     return 2;
@@ -92,6 +102,119 @@ static int lua_FormatHDD(lua_State *L)
 
 }
 
+static int lua_installMBRKELF(lua_State *L)
+{
+    int argc = lua_gettop(L);
+	if (argc != 1) return luaL_error(L, "%s: wrong number of arguments, expected only one", __func__); 
+
+    const char* input = luaL_checkstring(L, 1);
+    unsigned int size;
+//
+	int result = 0;
+	iox_stat_t statFile;
+	unsigned int numSectors;
+	unsigned int sector;
+	unsigned int remainder;
+	unsigned int i;
+	unsigned int numBytes;
+    unsigned char* buffer = NULL;
+	hddSetOsdMBR_t MBRInfo;
+
+	//Buffer for I/O devctl operations on HDD
+	uint8_t IOBuffer[512 + sizeof(hddAtaTransfer_t)] __attribute__((aligned(64)));
+
+//()
+    int fd = open(input, O_RDONLY);
+    DPRINTF("%s: input fd is %d\n", __func__, fd); 
+    if (fd < 0) {
+            result = -201;
+            DPRINTF("CANNOT OPEN INPUT KELF: %d error\n", fd);
+    } 
+    else
+    {
+        size = lseek(fd, 0, SEEK_END);
+        DPRINTF("%s: KELF size is %d\n", __func__, size); 
+        if (size < 0) {
+            close(fd);
+            result = -EIO;
+        }
+    }
+
+    if (result >= 0)
+    {
+        lseek(fd, 0, SEEK_SET);
+        if ((buffer = ( unsigned char * )malloc(size)) != NULL) {
+            if ((read(fd, buffer, size)) != size) {
+                DPRINTF("ERROR: Could not read %d bytes from file\n", size);
+                result = -EIO;
+            }
+            close(fd);
+        } else {
+            DPRINTF("ERROR: failed to malloc %d bytes for MBR\n", size);
+            result = -ENOMEM;
+        }
+    }
+//()
+    if (result >= 0)
+    {
+	    if ((result = fileXioGetStat("hdd0:__mbr", &statFile)) >= 0)
+	    {
+	    	//Sector to write
+	    	sector = statFile.private_5 + 0x2000;
+
+	    	//Bytes in last sector
+	    	remainder = (size & 0x1FF);
+
+	    	//Total sectors to inject
+	    	numSectors = (size / 512) + ((remainder) ? 1 : 0);
+	    	numBytes = 512;
+            DPRINTF("Beginning MBR writing... %d sectors to be written.\n", numSectors);
+	    	//Writes sectors
+	    	for (i = 0; i < numSectors; i++)
+	    	{
+	    		//If last sector
+	    		if ((i == (numSectors - 1)) && (remainder != 0))
+	    		{
+	    			numBytes = remainder;
+	    			//Performs read operation for one sector
+	    			((hddAtaTransfer_t *)IOBuffer)->lba = sector + i;
+	    			((hddAtaTransfer_t *)IOBuffer)->size = 1;
+	    			if ((result = fileXioDevctl("hdd0:", APA_DEVCTL_ATA_READ, IOBuffer, sizeof(hddAtaTransfer_t), IOBuffer + sizeof(hddAtaTransfer_t), 512)) < 0)
+	    		    {
+                        DPRINTF("ERROR: failed to read final sector on MBR install (%d)\n", result);
+                    	break;
+                    }
+	    		}
+	    		//Copies from buffer
+	    		memcpy(IOBuffer + sizeof(hddAtaTransfer_t), buffer + 512 * i, numBytes);
+	    		//Performs write operation for one sector
+	    		((hddAtaTransfer_t *)IOBuffer)->lba = sector + i;
+	    		((hddAtaTransfer_t *)IOBuffer)->size = 1;
+
+	    		if ((result = fileXioDevctl("hdd0:", APA_DEVCTL_ATA_WRITE, IOBuffer, 512 + sizeof(hddAtaTransfer_t), NULL, 0)) < 0)
+	    		{
+                    DPRINTF("ERROR: failed to write MBR program (%d)\n", result);
+                	break;
+                }
+	    	}
+	    	//Writes MBR information
+	    	if (result >= 0)
+	    	{
+	    		MBRInfo.start = sector;
+	    		MBRInfo.size = numSectors;
+	    		fileXioDevctl("hdd0:", APA_DEVCTL_SET_OSDMBR, &MBRInfo, sizeof(MBRInfo), NULL, 0);
+	    	}
+	    } else {
+            DPRINTF("ERROR: Cannot stat __mbr\n");
+        }
+    }
+    if (buffer != NULL)
+        free(buffer);
+    DPRINTF("MBR INSTALL: finished with result %d\n", result);
+    lua_pushinteger(L, result);
+//
+    return 1;
+}
 //this function comes from softdev2, alexparrado based this on FreeMcBoot installer.
 static int EnableHDDBooting(lua_State *L)
 {
@@ -151,6 +274,7 @@ static const luaL_Reg HDD_functions[] = {
   	{"CheckSectorError",         lua_CheckHDDSectorError},
   	{"CheckDamagedPartition",    lua_CheckDamagedPartitions},
   	{"EnableHDDBoot",            EnableHDDBooting},
+  	{"InstallBootstrap",         lua_installMBRKELF},
     {0, 0}
 };
 
