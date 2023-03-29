@@ -59,19 +59,25 @@ static int UmountPart(lua_State *L)
 
 static int lua_GetHDDStatus(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_STATUS: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
 static int lua_GetHDDSMARTStatus(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_SMARTSTAT, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_SMARTSTAT, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_SMARTSTAT: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
 static int lua_CheckHDDSectorError(lua_State *L)
 {
-    lua_pushinteger(L, fileXioDevctl("hdd0:", HDIOC_GETSECTORERROR, NULL, 0, NULL, 0));
+    int ret = fileXioDevctl("hdd0:", HDIOC_GETSECTORERROR, NULL, 0, NULL, 0);
+    DPRINTF("HDIOC_GETSECTORERROR: %d\n", ret);
+    lua_pushinteger(L, ret);
     return 1;
 }
 
@@ -79,6 +85,7 @@ static int lua_CheckDamagedPartitions(lua_State *L)
 {
     char ErrorPartName[64] = "";
     int ret = fileXioDevctl("hdd0:", HDIOC_GETERRORPARTNAME, NULL, 0, ErrorPartName, sizeof(ErrorPartName));
+    DPRINTF("HDIOC_GETERRORPARTNAME: %d - [%s]\n", ret, ErrorPartName);
     lua_pushinteger(L, ret);
     lua_pushstring(L, ErrorPartName);
     return 2;
