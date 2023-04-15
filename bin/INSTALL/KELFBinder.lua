@@ -530,7 +530,7 @@ function NormalInstall(port, slot)
 
   local RET
   local REG = KELFBinder.getsystemregion()
-  local TARGET_FOLD = string.format("mc%d:/%s", port, KELFBinder.getsysupdatefolder())
+  local TARGET_FOLD
   local FOLDCOUNT = 1 -- the system update folder that we'll be dealing with
   local FILECOUNT = 2 -- icons + whatever updates you push
   local NEEDED_SPACE = 1024 + 964 -- 1kb + icon.sys size to begin with
@@ -539,8 +539,10 @@ function NormalInstall(port, slot)
 
   if IS_PSX == 1 then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(PSX_SYSUPDATE)
+    TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
   else
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_MAIN)
+    TARGET_FOLD = string.format("mc%d:/%s", port, KELFBinder.getsysupdatefolder())
   end
   FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   AvailableSpace, NEEDED_SPACE = CalculateRequiredSpace(port, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
