@@ -278,9 +278,12 @@ static int getpartitionsizeKB(lua_State *L)
 	if (mnt(partition, pfs_index, FIO_MT_RDONLY) == 0) {
         AvailableSpace = fileXioDevctl("pfs0:", PDIOC_ZONEFREE, NULL, 0, NULL, 0) * fileXioDevctl("pfs0:", PDIOC_ZONESZ, NULL, 0, NULL, 0);
         DPRINTF("Free space on %s is %u\n", partition, AvailableSpace);
+        umnt(pfs_index);
+        lua_pushinteger(L, AvailableSpace);
+    } else {
+        DPRINTF("%s: impossible to mount '%s' into pfs%d:, returning %d\n", partition, pfs_index, -ENOENT);
+        lua_pushinteger(L, -ENOENT);
     }
-    umnt(pfs_index);
-    lua_pushinteger(L, AvailableSpace);
     return 1;
 }
 
@@ -330,7 +333,7 @@ int mnt(const char* path, int index, int openmod)
             DPRINTF("mount failed again!\n");
             return -1;
         } else {
-            DPRINTF("Second mount succed!\n");
+            DPRINTF("Second mount succeeded!\n");
         }
     } else DPRINTF("mount successfull on first attemp\n");
     return 0;

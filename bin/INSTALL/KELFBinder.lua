@@ -1534,8 +1534,10 @@ function PerformHDDInst()
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
-  local __sysconf_freespace = 0
-  local __common_freespace = 0
+  local __sysconf_freespace = HDD.GetPartitionSize("hdd0:__sysconf")
+  local __system_freespace  = HDD.GetPartitionSize("hdd0:__system")
+  local __common_freespace  = HDD.GetPartitionSize("hdd0:__common")
+  System.log(string.format("HDD:\n\t__sysconf %d\n\t__system %d\n\t__common %d\n"), __sysconf_freespace, __system_freespace, __common_freespace)
 end
 
 function Ask2quit()
