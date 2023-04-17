@@ -122,10 +122,10 @@ end
 	KELFBinder.init(ROMVER)
 	local REGION = KELFBinder.getsystemregion()
 	if REGION == 3 then
-		System.printf("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD")
+		System.log("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD\n")
 		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
 	else
-		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
+		System.log("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD\n")
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
 	drawbar(352, 240, 20, Color.new(255, 255, 255))

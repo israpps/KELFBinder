@@ -24,7 +24,7 @@ EE_SIO ?= 1
 #------------------- Display IOP printf on EE_SIO -----------------#
 TTY2SIOR ?= 0
 #------------------------- printf over UDP ------------------------#
-UDPTTY ?= 1
+UDPTTY ?= 0
 #---------------------- enable DEBUGGING MODE ---------------------#
 DEBUG ?= 0
 #----------------------- Set IP for PS2Client ---------------------#

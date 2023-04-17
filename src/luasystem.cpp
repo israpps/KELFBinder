@@ -113,7 +113,6 @@ static int lua_dir(lua_State *L)
     char path[255];
 
     getcwd((char *)path, 256);
-    DPRINTF("current dir %s\n", (char *)path); 
 
     if (argc != 0) {
         temp_path = luaL_checkstring(L, 1);
@@ -202,7 +201,6 @@ static int lua_dir(lua_State *L)
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             lua_pushnumber(L, i++); // push key for file entry
-            DPRINTF("%s\n", dir->d_name); 
             lua_newtable(L);
             lua_pushstring(L, "name");
             lua_pushstring(L, dir->d_name);
@@ -794,12 +792,12 @@ static int lua_getbootpath(lua_State *L)
 
 static int lua_printf(lua_State *L)
 {
-    DPRINTF("%s\n", luaL_checkstring(L, 1)); 
+    DPRINTF(luaL_checkstring(L, 1)); 
     return 0;
 }
 
 static const luaL_Reg System_functions[] = {
-    {"printf",          lua_printf},
+    {"log",          lua_printf},
     {"getbootpath", lua_getbootpath},
     {"AllowPowerOffButton", lua_AllowPowerOFF},
     {"openFile", lua_openfile},

@@ -9,7 +9,7 @@ SCR_X = 704
 SCR_Y = 480
 X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
-System.printf("KELFBinder.lua starts")
+System.log("KELFBinder.lua starts\n")
 drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
@@ -20,12 +20,12 @@ local console_model_sub = KELFBinder.getConsoleModel()
 console_model_sub = string.sub(console_model_sub, 0, 8)
 SUPPORTS_UPDATES = true
 MUST_INSTALL_EXTRA_FILES = true
-if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL-H100" then SUPPORTS_UPDATES = false System.printf("console is incompatible ("..ROMVERN..") ["..console_model_sub.."]") end
+if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL-H100" then SUPPORTS_UPDATES = false System.log("console is incompatible ("..ROMVERN..") ["..console_model_sub.."]\n") end
 --- PSX
 IS_PSX = 0
 REAL_IS_PSX = 0
 if System.doesFileExist("rom0:PSXVER") then
-  System.printf("rom0:PSXVER FOUND")
+  System.log("rom0:PSXVER FOUND\n")
   IS_PSX = 1
   REAL_IS_PSX = 1
 end
@@ -101,7 +101,7 @@ elseif Language == 5 then if System.doesFileExist("lang/italian.lua") then dofil
 elseif Language == 6 then if System.doesFileExist("lang/dutch.lua") then dofile("lang/dutch.lua") end
 elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then dofile("lang/portuguese.lua") end
 else
-  System.printf("unknown language ID ("..Language..")")
+  System.log("unknown language ID ("..Language..")")
 end
 drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
 if System.doesFileExist(FONTPATH) then
@@ -1676,7 +1676,7 @@ while true do
     if (ACT == 1) then
     elseif (ACT == 2) then
       local continue = Report(200, false, true)
-      if continue then System.printf("\nUser asked to format HDD...\n\n") end
+      if continue then System.log("\nUser asked to format HDD...\n\n") end
     elseif (ACT == 3) then
       local ret = HDD.EnableHDDBoot()
       ret = 100 + ret

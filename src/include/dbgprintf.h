@@ -4,8 +4,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-void sio_printf(const char *fmt, ...);
-#include <SIOCookie.h>
+
+#ifdef SIO_PRINTF
+    void sio_printf(const char *fmt, ...);
+    #include <SIOCookie.h>
+    #include <sio.h>
+#endif
+
 #ifdef __cplusplus
 }
 #endif
@@ -16,20 +21,24 @@ void sio_printf(const char *fmt, ...);
 #ifdef SIO_PRINTF
     #define DPRINTF_INIT() ee_sio_start(38400, 0, 0, 0, 0, 1)
 	#define DPRINTF(format, args...) sio_printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
+    #define DPUTS(buf) sio_putsn(buf)
     //#define DFLUSH() fflush(stdout)
 #endif
 
 #ifdef SCR_PRINTF
     #include <debug.h>
     #define DPRINTF(format, args...) scr_printf(format, ##args)
+    #define DPUTS(buf) scr_puts(buf)
 #endif
 
 #ifdef COMMON_PRINTF
     #define DPRINTF(format, args...) printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
+    #define DPUTS(buf) puts(buf)
 #endif
 
 #ifndef DPRINTF
     #define DPRINTF(format, args...) printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
+    #define DPUTS(buf) puts(buf)
 #endif
 
 #ifndef DPRINTF_INIT

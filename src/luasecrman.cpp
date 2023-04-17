@@ -133,20 +133,20 @@ static int lua_secrdownloadfile(lua_State *L)
                     DPRINTF("%s: written %d\n", __func__, written); 
                     close(McFileFD);
                 } else {
-                    DPRINTF("%s:flags was not empty, performing multiple installation\n", __func__); 
+                    DPRINTF("%s: flags was not empty, performing multiple installation\n", __func__); 
                     int x = 0, TF = 0;
                     char output[64];
                     for (x = 2; x < SYSTEM_UPDATE_COUNT; x++) // start from index 2, since 0 and 1 are kernel patches, wich require different value for file_tbo
                     {
                         TF = (1 << (x + 1));
-                        DPRINTF("%s: trying with %s ", __func__, sysupdate_paths[BSM2AI(TF)]); 
+                        DPRINTF("\ttrying with %s: ", sysupdate_paths[BSM2AI(TF)]); 
                         if (flags & TF) {
                             sprintf(output, "mc%d:/%s", port, sysupdate_paths[BSM2AI(TF)]);
-                            DPRINTF("\tIT IS FLAGGED\n"); 
+                            DPRINTF("Installing...\n"); 
                             int McFileFD = open(output, O_WRONLY | O_CREAT | O_TRUNC);
-                            DPRINTF("%s: [%s] fd is (%d)\n", __func__, sysupdate_paths[BSM2AI(TF)], McFileFD); 
+                            DPRINTF("\t fd is (%d)\n", McFileFD); 
                             int written = write(McFileFD, buf, size);
-                            DPRINTF("%s: written %d\n", __func__, written); 
+                            DPRINTF("\t written %d bytes\n", written); 
                             close(McFileFD);
                             if (written != size) {
                                 result = -EIO;
@@ -154,14 +154,14 @@ static int lua_secrdownloadfile(lua_State *L)
                             }
                         } else
                             {
-                                DPRINTF("NOT FLAGGED\n"); 
+                                DPRINTF("not marked for install.\n"); 
                             }
                     }
                 }
             }
         }
     } else {
-        DPRINTF("%s: memory allocation of %d bytesfailed\n", __func__, size); 
+        DPRINTF("%s: memory allocation of %d bytes failed\n", __func__, size); 
         result = -ENOMEM;
         close(fd);
     }
