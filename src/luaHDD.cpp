@@ -26,13 +26,14 @@ int mnt(const char* path, int index, int openmod);
 
 static int MountPart(lua_State *L)
 {
+
+    int openmod = FIO_MT_RDWR;
+    const char* mount;
 #ifdef RESERVE_PFS0
     int indx = 1;
 #else
     int indx = 0;
 #endif
-    int openmod = FIO_MT_RDWR;
-    const char* mount;
     int argc = lua_gettop(L);
 	if (argc > 1 && argc < 4) return luaL_error(L, "%s: wrong number of arguments, expected 1 or 2", __func__); 
 
