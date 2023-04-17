@@ -626,9 +626,13 @@ function NormalInstall(port, slot)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
-  KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
-  SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
-  if IS_PSX == 1 then SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf" end
+  if IS_PSX == 0 then
+    SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
+    KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
+  else
+    SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
+    KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
+  end
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(font, X_MID, 20, 8, 600, 64, LNG_INSTALLING)
