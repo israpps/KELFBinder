@@ -1614,7 +1614,7 @@ end
 
 -- SCRIPT BEHAVIOUR BEGINS --
 local NEIN = 0x80
-while NEIN > 0 do 
+while NEIN > 0 do
   drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255, NEIN))
   NEIN = NEIN-2
 end
