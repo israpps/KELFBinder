@@ -1,17 +1,15 @@
 -- EXTRA INSTALL ASSETS
 -- DO NOT REMOVE!
 -- IF YOU WANT TO DISABLE INSTALLATION OF EXTRA FILES press L1 on main menu (R1 Enables them back)
-
+System.log("declaring installation tables for PS2BBL")
 -- Installation tables. write values for fixed files, dynamic population of this list can be done with `Update_InstTable()`
 
-EXTRA_INST_SRC = {} -- SOURCE FILES FOR INSTALLATION, __PATHS ARE RELATIVE TO KELFBINDER LOCATION__
-
---- DESTINATION PATHS FOR THE FILES LISTED ON `EXTRA_INST_SRC`
---- __PATHS MUST NOT INCLUDE DEVICE__ (instead of `mc0:/BOOT/BOOT.ELF` use `BOOT/BOOT.ELF`)
+--- SOURCE FILE PATHS FOR INSTALLATION, __PATHS ARE RELATIVE TO KELFBINDER LOCATION__
+EXTRA_INST_SRC = {}
+--- DESTINATION PATHS FOR THE FILES LISTED ON `EXTRA_INST_SRC`, __PATHS MUST NOT INCLUDE DEVICE__ (instead of `mc0:/BOOT/BOOT.ELF` use `BOOT/BOOT.ELF`)
 EXTRA_INST_DST = {}
-
-
-EXTRA_INST_MKD = {} -- FOLDERS TO BE CREATED BEFORE INSTALLATION
+--- FOLDERS TO BE CREATED BEFORE INSTALLATION
+EXTRA_INST_MKD = {}
 
 ---parse directory and append paths based on files found inside `SOURCEDIR` into `SOURCE_TABLE` and `DEST_TABLE`.
 ---if at least 1 file is found, the value of `DESTNTDIR` is added into `MKDIR_TABLE`
