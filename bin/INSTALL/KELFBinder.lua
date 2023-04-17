@@ -294,7 +294,7 @@ function MainMenu()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 630, 32, LNG_MM1, Color.new(220, 220, 220, 0x90 - A))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_MM1, Color.new(220, 220, 220, 0x90 - A))
     if T == 1 then
       Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_MM2, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
@@ -444,6 +444,7 @@ function Installmodepicker()
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_MM2, Color.new(220, 220, 220, 0x80 - A))
     ORBMAN(0x80)
     if T == 1 then
       Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_IMPMP1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
@@ -509,7 +510,7 @@ function DVDPlayerRegionPicker()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 630, 32, LNG_PICK_DVDPLAYER_REG, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_PICK_DVDPLAYER_REG, Color.new(220, 220, 220, 0x80 - A))
 
     if T == 1 then
       Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_JPN, Color.new(0, 0xde, 0xff, 0x80 - A))
@@ -634,8 +635,8 @@ function NormalInstall(port, slot)
   end
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 20, 8, 600, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 45, 8, 600, 64, SYSUPDATEPATH)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
+  Font.ftPrint(LSANS, X_MID, 65, 8, 600, 64, SYSUPDATEPATH)
   Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace /
     1024))
   Screen.flip()
@@ -658,8 +659,8 @@ function NormalInstall(port, slot)
   -- KELF install finished! deal with extra files now!
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 45, 8, 600, 64, SYSUPDATEPATH)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(LSANS, X_MID, 65, 8, 600, 64, SYSUPDATEPATH)
   Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace / 1024))
   if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(LSANS, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
   Screen.flip()
@@ -693,7 +694,7 @@ function MemcardPickup()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 630, 32, LNG_MEMCARD0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_MEMCARD0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     Font.ftPrint(LSANS, 160, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 1), Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if mcinfo0.type == 2 then
       if mcinfo0.format == 1 then
@@ -803,10 +804,10 @@ function expertINSTprompt()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x70)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if SUPPORTS_UPDATES then
-      Font.ftPrint(LSANS, X_MID, 50, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
-      Font.ftPrint(LSANS, X_MID, 70, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 60, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 80, 8, 630, 32, SYSUP, Color.new(0x70, 0x70, 0x70, 0x80 - A))
     end
     Font.ftPrint(LSANS, 110, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 110, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
@@ -944,6 +945,8 @@ function AdvancedINSTprompt()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
+
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_IMPMP2, Color.new(220, 220, 220, 0x80 - A))
     if T == 1 then
       Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_AI_CROSS_MODEL, Color.new(0, 0xde, 0xff, 0x80 - A))
     else
@@ -1149,7 +1152,7 @@ function MagicGateTest(port, slot)
   while A > 0 do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, A))
-    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, string.format(LNG_PLS_WAIT, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, LNG_PLS_WAIT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     A = A - 1
     Screen.flip()
   end
@@ -1234,7 +1237,7 @@ function WarnOfShittyFMCBInst()
     Screen.clear()
     Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
-    Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, LNG_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 80, 8, 630, 64, LNG_FMCBINST_CRAP0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 120, 8, 630, 64, LNG_FMCBINST_CRAP1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 190, 8, 630, 64, LNG_FMCBINST_CRAP2, Color.new(0x80, 0x80, A, 0x80 - Q))
@@ -1276,7 +1279,7 @@ function InsufficientSpace(NEEDED, AVAILABLE)
     Screen.clear()
     Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
-    Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_ERROR, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, LNG_ERROR, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 80, 8, 630, 64, LNG_NOT_ENOUGH_SPACE0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 120, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED / 1024, AVAILABLE / 1024),
       Color.new(0x80, 0x80, 0x80, 0x80 - Q))
@@ -1471,7 +1474,7 @@ function performExpertINST(port, slot, UPDT)
   System.AllowPowerOffButton(0)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
   Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
   Screen.flip()
 
@@ -1495,7 +1498,7 @@ function performExpertINST(port, slot, UPDT)
 
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 20, 8, 400, 64, LNG_INSTALLING)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
   Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
   if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(LSANS, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
   Screen.flip()
