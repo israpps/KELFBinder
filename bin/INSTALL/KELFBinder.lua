@@ -502,8 +502,8 @@ function DVDPlayerRegionPicker()
   local A = 0x80
   local PROMTPS = {
     "SCPH-XXX00",
-    "SCPH-XXX0[1/6/7/8/10/11]",
-    "SCPH-XXX0[2/3/4]",
+    "SCPH-XXX[01/06/07/10/11/12]",
+    "SCPH-XXX0[2/3/4/8]",
     "SCPH-XXX09"
   }
   while true do
