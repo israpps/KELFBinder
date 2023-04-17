@@ -66,8 +66,6 @@ local REDCURSOR   = Graphics.loadImageEmbedded(8)
 local GREENCURSOR = Graphics.loadImageEmbedded(9)
 local CHK_ = Graphics.loadImageEmbedded(3)
 local CHKF = Graphics.loadImageEmbedded(4)
-EXTRA_INST_COUNT  = 0
-EXTRA_INST_FOLDE  = 0
 
 drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
@@ -179,15 +177,14 @@ function HEXDUMP(DATA)
 end
 
 function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
-  --FILECOUNT = FILECOUNT + EXTRA_INST_COUNT -- originally it sums the count
-  FOLDERCOUNT = FOLDERCOUNT + EXTRA_INST_FOLDE
-  if EXTRA_INST_FOLDE > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, EXTRA_INST_FOLDE do
+  FOLDERCOUNT = FOLDERCOUNT + #EXTRA_INST_MKD
+  if #EXTRA_INST_MKD > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #EXTRA_INST_MKD do
       FOLDERCOUNT = FOLDERCOUNT + 1
     end
   end
-  if EXTRA_INST_COUNT > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, EXTRA_INST_COUNT do -- @EXTRA_INST_COUNT
+  if #EXTRA_INST_SRC > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #EXTRA_INST_SRC do
       if System.doesFileExist(EXTRA_INST_SRC[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         SIZECOUNT = SIZECOUNT + GetFileSizeX(EXTRA_INST_SRC[i])
         FILECOUNT = FILECOUNT + 1 -- only add the confirmed files
@@ -200,15 +197,15 @@ end
 
 function InstallExtraAssets(port)
   ----------------------
-  if EXTRA_INST_FOLDE > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, EXTRA_INST_FOLDE do
+  if #EXTRA_INST_MKD > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #EXTRA_INST_MKD do
       -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", EXTRA_INST_MKD[i])) then -- only create the folder if source exists...
       System.createDirectory(string.format("mc%d:/%s", port, EXTRA_INST_MKD[i]))
       -- end
     end
   end
-  if EXTRA_INST_COUNT > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, EXTRA_INST_COUNT do
+  if #EXTRA_INST_SRC > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #EXTRA_INST_SRC do
       if System.doesFileExist(EXTRA_INST_SRC[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         System.copyFile(EXTRA_INST_SRC[i], string.format("mc%d:/%s", port, EXTRA_INST_DST[i]))
       end
@@ -619,7 +616,7 @@ function NormalInstall(port, slot)
   end
   System.AllowPowerOffButton(0)
   System.createDirectory(TARGET_FOLD)
-  if REG == 0 then -- JPN
+  if REG == 0  or IS_PSX == 1 then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("%s/icon.sys", TARGET_FOLD))
