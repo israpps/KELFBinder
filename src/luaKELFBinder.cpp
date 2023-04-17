@@ -11,6 +11,7 @@
 extern "C" {
 #include "modelname.h"
 }
+#define NEXT_MULTIPLE(VALUE, BASE) (VALUE + (BASE - VALUE % BASE))
 
 static int KELFBinderHelperFunctionsInited = false;
 static unsigned long int ROMVERSION;
@@ -222,7 +223,7 @@ static int lua_getsysupdateROMPatch(lua_State *L)
 {
     char PATH[32];
     const char REG_PREF[5] = {'I', 'A', 'A', 'E', 'C'};
-    sprintf(PATH, "B%cEXEC-SYSTEM/osd%03ld.elf", REG_PREF[ROMREGION], (ROMVERSION+10)&~0x0F);
+    sprintf(PATH, "B%cEXEC-SYSTEM/osd%03ld.elf", REG_PREF[ROMREGION], NEXT_MULTIPLE(ROMVERSION, 10));
     lua_pushstring(L, PATH);
     return 1;
 }
