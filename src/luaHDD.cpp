@@ -266,6 +266,24 @@ static int EnableHDDBooting(lua_State *L)
 	return 1;
 }
 
+static int getpartitionsizeKB(lua_State *L)
+{
+    int argc = lua_gettop(L);
+	if (argc != 1 || argc != 2) return luaL_error(L, "%s: wrong number of arguments, expected one or two argumments", __func__); 
+    unsigned int AvailableSpace = 0;
+    const char* partition = luaL_checkstring(L, 1);
+    int pfs_index = 0;
+    if (argc == 2) pfs_index = luaL_checkinteger(L, 2);
+    DPRINTF("checking space usage for %s\n", partition);
+	if (mnt(partition, pfs_index, FIO_MT_RDONLY) == 0) {
+        AvailableSpace = fileXioDevctl("pfs0:", PDIOC_ZONEFREE, NULL, 0, NULL, 0) * fileXioDevctl("pfs0:", PDIOC_ZONESZ, NULL, 0, NULL, 0);
+        DPRINTF("Free space on %s is %u\n", partition, AvailableSpace);
+    }
+    umnt(pfs_index);
+    lua_pushinteger(L, AvailableSpace);
+    return 1;
+}
+
 static const luaL_Reg HDD_functions[] = {
   	{"MountPartition",           MountPart},
   	{"UMountPartition",          UmountPart},
@@ -276,6 +294,7 @@ static const luaL_Reg HDD_functions[] = {
   	{"CheckDamagedPartition",    lua_CheckDamagedPartitions},
   	{"EnableHDDBoot",            EnableHDDBooting},
   	{"InstallBootstrap",         lua_installMBRKELF},
+    {"GetPartitionSize",         getpartitionsizeKB},
     {0, 0}
 };
 
