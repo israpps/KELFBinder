@@ -23,6 +23,7 @@ extern int bootpath_is_on_HDD;
 #endif
 
 int mnt(const char* path, int index, int openmod);
+int umnt(int indx);
 
 static int MountPart(lua_State *L)
 {
@@ -50,11 +51,10 @@ static int MountPart(lua_State *L)
 
 static int UmountPart(lua_State *L)
 {
-    char PFS[6] = "pfs0:";
-	if (lua_gettop(L) != 1) return luaL_error(L, "%s: wrong number of arguments, expected 1", __func__);
+	if (lua_gettop(L) != 1) return luaL_error(L, "%s: wrong number of arguments, expected 1 integer", __func__);
 
-    PFS[3] = '0' + luaL_checkinteger(L, 1);
-    lua_pushinteger(L, fileXioUmount(PFS));
+    int index = luaL_checkinteger(L, 1);
+    lua_pushinteger(L, umnt(index));
     return 1;
 }
 
@@ -315,4 +315,13 @@ int mnt(const char* path, int index, int openmod)
         }
     } else DPRINTF("mount successfull on first attemp\n");
     return 0;
+}
+
+int umnt(int indx)
+{
+    char PFS[5+1] = "pfs0:";
+    PFS[3] = '0' + indx;
+    int ret = fileXioUmount(PFS);
+    DPRINTF("%s: pfs%d: returned %d\n", __func__, indx, ret);
+    return ret;
 }
