@@ -129,7 +129,6 @@ end
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
 	drawbar(352, 240, 20, Color.new(255, 255, 255))
-	System.sleep(5)
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
