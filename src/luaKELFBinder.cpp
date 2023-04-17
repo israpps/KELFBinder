@@ -238,7 +238,6 @@ static int lua_getosdconfigLNG(lua_State *L)
 
 static int lua_setsysupdatefoldprops(lua_State *L)
 {
-    DPRINTF("%s: start\n", __func__); 
     int argc = lua_gettop(L);
 	if (argc != 3) 
         return luaL_error(L, "lua_createsysupdatefolder takes 3 argumments\n");
@@ -246,16 +245,16 @@ static int lua_setsysupdatefoldprops(lua_State *L)
     int port = luaL_checkinteger(L, 1);
     int slot = luaL_checkinteger(L, 2);
     const char* path = luaL_checkstring(L, 3);
-    DPRINTF("\tadding copy protection to %d:/%s\n", port, path); 
+    DPRINTF("adding copy protection to mc%d:/%s\n", port, path); 
     sceMcTblGetDir table;
     // Set desired file attributes.
     table.AttrFile = sceMcFileAttrReadable | sceMcFileAttrWriteable | sceMcFileAttrExecutable | sceMcFileAttrDupProhibit | sceMcFileAttrSubdir | sceMcFile0400;
     if ((result = mcSetFileInfo(port, slot, path, &table, sceMcFileInfoAttr)) == 0) {
-        DPRINTF("\tmcSetFileInfo: result was %d\n", result); 
         mcSync(0, NULL, &result);
     }
-
-    return result;
+    DPRINTF("\tresult was %d\n", result);
+    lua_pushinteger(L, result);
+    return 1;
 }
 
 static int lua_initConsoleModel(lua_State *L)

@@ -36,8 +36,8 @@
 	LNG_SUC4 = "American release model\nSCPH-30001 with B chassis"
 	LNG_SUC5 = "American release model\nSCPH-30001 with C chassis"
 	LNG_SUC6 = "Any American and Asian models\nexcluding American release models"
-	LNG_SUC7 = "European release model\nSCPH-3000(2/3/4/8) with C chassis"
-	LNG_SUC8 = "Any European model excluding release models"
+	LNG_SUC7 = "PAL release model\nSCPH-3000(2/3/4/8) with C chassis"
+	LNG_SUC8 = "Any PAL model excluding release models"
 	LNG_SUC9 = "The rare Chinese models"
 	LNG_EXPERTINST_PROMPT = "Select the system update executables"
 	LNG_EXPERTINST_PROMPT1 = "This console uses:"
@@ -70,7 +70,7 @@
 	LNG_USA = "USA"
 	LNG_ASI = "Asia"
 	LNG_USANASIA = "USA & Asia"
-	LNG_EUR = "Europe"
+	LNG_EUR = "Europe / Oceania / Russia"
 	LNG_CHN = "China"
 	LNG_AI_CROSS_MODEL = "Cross Model"
 	LNG_AI_CROSS_REGION = "Cross Region"
@@ -122,14 +122,13 @@ end
 	KELFBinder.init(ROMVER)
 	local REGION = KELFBinder.getsystemregion()
 	if REGION == 3 then
-		System.printf("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD")
+		System.log("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD\n")
 		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
 	else
-		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
+		System.log("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD\n")
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
 	drawbar(352, 240, 20, Color.new(255, 255, 255))
-	System.sleep(5)
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
