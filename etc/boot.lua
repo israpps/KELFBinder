@@ -99,16 +99,16 @@
     LNG_HDDPROMPT = "Installs a Bootloader into the Internal HDD"
     LNG_HDDPROMPT1 = "Formats the internal HDD into APA"
     LNG_HDDPROMPT2 = "Enables EEPROM Configuration to allow expansion bay models\nTo automatically boot the HDD MBR program"
-	LNg_HDD_INSTOPT1 = "Install BootLoader"
-	LNg_HDD_INSTOPT2 = "Format HDD"
-	LNg_HDD_INSTOPT3 = "Enable HDDBoot"
+	LNG_HDD_INSTOPT1 = "Install BootLoader"
+	LNG_HDD_INSTOPT2 = "Format HDD"
+	LNG_HDD_INSTOPT3 = "Enable HDDBoot"
 	LNG_HDDBOOT_ALREADY_ENABLED = "HDD Booting configuration is already enabled"
 	LNG_HDDBOOT_ENABLED = "HDD Booting has been enabled"
 	LNG_HDDFORMAT_CONFIRM = "You are about to format the internal HDD"
 	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
 	LNG_ROMPATCH_PATCH = "System update ROM Patch = [%s]"
 
-function drawbar(x, y, prog, col)
+function Drawbar(x, y, prog, col)
 	Screen.clear()
 	Graphics.drawRect(x-(prog), y, prog*2, 5, col)
 	Screen.flip()
@@ -128,7 +128,7 @@ end
 		System.log("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD\n")
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
-	drawbar(352, 240, 20, Color.new(255, 255, 255))
+	Drawbar(352, 240, 20, Color.new(255, 255, 255))
 	BETANUM = "014"
 IS_NOT_PUBLIC_READY = false
 if System.doesFileExist("INSTALL/KELFBinder.lua") then

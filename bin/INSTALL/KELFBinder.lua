@@ -10,7 +10,7 @@ SCR_Y = 480
 X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
 System.log("KELFBinder.lua starts\n")
-drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
+Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
 Secrman.init()
@@ -48,7 +48,7 @@ if HDD_USABLE then STR_HDD_USABLE = LNG_YES end
 
 
 
-drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
+Drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
 local circle = Graphics.loadImageEmbedded(5)
 local cross = Graphics.loadImageEmbedded(6)
 local triangle = Graphics.loadImageEmbedded(15)
@@ -66,13 +66,13 @@ local GREENCURSOR = Graphics.loadImageEmbedded(9)
 local CHK_ = Graphics.loadImageEmbedded(3)
 local CHKF = Graphics.loadImageEmbedded(4)
 
-drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
+Drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
   Screen.clear(Color.new(128, 0, 128))
   Screen.flip()
   while true do end
 end
-drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
+Drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
 Graphics.setImageFilters(LOGO, LINEAR)
 Graphics.setImageFilters(BG, LINEAR)
 Graphics.setImageFilters(BGERR, LINEAR)
@@ -81,7 +81,7 @@ Graphics.setImageFilters(CURSOR, LINEAR)
 Graphics.setImageFilters(REDCURSOR, LINEAR)
 Graphics.setImageFilters(GREENCURSOR, LINEAR)
 
-drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
+Drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
 local REGION = KELFBinder.getsystemregion()
 --local REGIONSTR = KELFBinder.getsystemregionString(REGION)
 local R = 0.1
@@ -100,7 +100,7 @@ elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then do
 else
   System.log("unknown language ID ("..Language..")")
 end
-drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
+Drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
 if System.doesFileExist(FONTPATH) then
   Font.ftInit()
   LSANS = Font.ftLoad(FONTPATH)
@@ -222,7 +222,7 @@ function CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   return AvailableSpace, TotalRequiredSpace
 end
 
-function promptkeys(SELECT, ST, CANCEL, CT, REFRESH, RT, ALFA)
+function Promptkeys(SELECT, ST, CANCEL, CT, REFRESH, RT, ALFA)
   if SELECT == 1 then
     Graphics.drawScaleImage(cross, 80.0, 400.0, 32, 32, Color.new(0x80, 0x80, 0x80, 0x80 - ALFA))
     Font.ftPrint(LSANS, 110, 407, 0, 400, 16, ST, Color.new(0x80, 0x80, 0x80, 0x80 - ALFA))
@@ -238,7 +238,7 @@ function promptkeys(SELECT, ST, CANCEL, CT, REFRESH, RT, ALFA)
 
 end
 
-function greeting()
+function Greeting()
   local CONTINUE = true
   local Q = 2
   local W = 1
@@ -326,7 +326,7 @@ function MainMenu()
       Font.ftPrint(LSANS, X_MID, 350, 0, 630, 16, LNG_MM5, Color.new(200, 200, 200, 0x80 - A))
     end
     if A > 0 then A = A - 1 end
-    promptkeys(1, LNG_CT0, 0, 0, 0, 0, A)
+    Promptkeys(1, LNG_CT0, 0, 0, 0, 0, A)
 
     if NA > 0 then
       if MUST_INSTALL_EXTRA_FILES then
@@ -385,20 +385,20 @@ function HDDMAN()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     if T == 1 then
-      Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNg_HDD_INSTOPT1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNg_HDD_INSTOPT1, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNg_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNg_HDD_INSTOPT2, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(200, 200, 200, 0x80 - A))
     end
     if T == 3 then
-      Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNg_HDD_INSTOPT3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 230, 0, 630, 16, LNg_HDD_INSTOPT3, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_HDD_INSTOPT3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
+      Font.ftPrint(LSANS, X_MID, 230, 0, 630, 16, LNG_HDD_INSTOPT3, Color.new(200, 200, 200, 0x80 - A))
     end
 
     Font.ftPrint(LSANS, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
     local pad = Pads.get()
@@ -464,7 +464,7 @@ function Installmodepicker()
     end
 
     Font.ftPrint(LSANS, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
     local pad = Pads.get()
@@ -534,7 +534,7 @@ function DVDPlayerRegionPicker()
     end
 
     Font.ftPrint(LSANS, X_MID, 350, 8, 600, 32, PROMTPS[T], Color.new(128, 128, 128, 0x80 - A))
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
     local pad = Pads.get()
@@ -581,10 +581,10 @@ function DVDPlayerINST(port, slot, target_region)
     KELFBinder.setSysUpdateFoldProps(port, slot, TARGET_FOLD)
     RET = Secrman.downloadfile(port, slot, DVDPLAYERUPDATE, TARGET_KELF)
     System.AllowPowerOffButton(1)
-    if RET < 0 then secrerr(RET) return end
-    secrerr(RET)
+    if RET < 0 then Secrerr(RET) return end
+    Secrerr(RET)
   else
-    secrerr(-201)
+    Secrerr(-201)
   end
 end
 
@@ -644,17 +644,17 @@ function NormalInstall(port, slot)
     Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, "BIEXEC-SYSTEM/osd130.elf")) -- SCPH-18000
     if (ROMVERN == 100) then
       RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-      if RET < 0 then secrerr(RET) return end
+      if RET < 0 then Secrerr(RET) return end
     else
       RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-      if RET < 0 then secrerr(RET) return end
+      if RET < 0 then Secrerr(RET) return end
     end
   elseif IS_PSX == 1 then -- PSX NEEDS SPECIAL PATH
     RET = Secrman.downloadfile(port, slot, PSX_SYSUPDATE, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
-    if RET < 0 then secrerr(RET) return end
+    if RET < 0 then Secrerr(RET) return end
   else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-    if RET < 0 then secrerr(RET) return end
+    if RET < 0 then Secrerr(RET) return end
   end
   -- KELF install finished! deal with extra files now!
   Screen.clear()
@@ -666,7 +666,7 @@ function NormalInstall(port, slot)
   Screen.flip()
   InstallExtraAssets(port)
   System.AllowPowerOffButton(1)
-  secrerr(RET)
+  Secrerr(RET)
 end
 
 function MemcardPickup()
@@ -729,7 +729,7 @@ function MemcardPickup()
     end
 
     if A > 0 then A = A - 1 end
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT2, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT2, A)
     Screen.flip()
     local pad = Pads.get()
     if Pads.check(pad, PAD_CROSS) and (D == 0) and (HC == true) then
@@ -771,7 +771,7 @@ function MemcardPickup()
   return T
 end
 
-function expertINSTprompt()
+function ExpertINSTprompt()
   local T = 0
   local D = 15
   local A = 0x40
@@ -876,7 +876,7 @@ function expertINSTprompt()
       Font.ftPrint(LSANS, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if A > 0 then A = A - 1 end
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT3, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT3, A)
     Screen.flip()
     local pad = Pads.get()
     if UPDT[0] == 1 or UPDT[1] == 1 and UPDT[2] == 0 then
@@ -966,7 +966,7 @@ function AdvancedINSTprompt()
     end
 
     Font.ftPrint(LSANS, 80, 350, 0, 600, 32, PROMTPS[T], Color.new(0x70, 0x70, 0x70, 0x80 - A))
-    promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
+    Promptkeys(1, LNG_CT0, 1, LNG_CT1, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
     local pad = Pads.get()
@@ -1034,7 +1034,7 @@ function PreAdvancedINSTstep(INSTMODE)
   return UPDT
 end
 
-function secrerr(RET)
+function Secrerr(RET)
   local A = 0x80
   local Q = 0x7f
   local QIN = 1
@@ -1059,7 +1059,7 @@ function secrerr(RET)
       pad = Pads.get()
       if A > 0 then A = A - 1 end
 
-      promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
+      Promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
       if RET ~= 1 then
         Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, string.format(LNG_INSTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
@@ -1114,14 +1114,14 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
     if Q < 0x20 then
       pad = Pads.get()
       if A > 0 then A = A - 1 end
-      if IS_A_QUESTION then promptkeys(1, LNG_CONTINUE, 1, LNG_CT1, 0, 0, A) else promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A) end
+      if IS_A_QUESTION then Promptkeys(1, LNG_CONTINUE, 1, LNG_CT1, 0, 0, A) else Promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A) end
 
       if RET == 101 then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_HDDBOOT_ALREADY_ENABLED, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == 100 then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_HDDBOOT_ENABLED, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == 200 then
-        Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_HDDFORMAT_CONFIRM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDDFORMAT_CONFIRM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_HDDFORMAT_CONFIRM2, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_CONTINUE.."?", Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
@@ -1184,7 +1184,7 @@ function MagicGateTest(port, slot)
     if Q < 0x20 then
       PADV = Pads.get()
       if A > 0 then A = A - 1 end
-      promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
+      Promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, A)
       if RET ~= 1 then
         Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, string.format(LNG_TESTTERR, RET), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
@@ -1330,7 +1330,7 @@ function Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, NEEDS
       pad = Pads.get()
       if A > 0 then A = A - 1 end
 
-      promptkeys(1, LNG_YES, 1, LNG_NO, 0, 0, A)
+      Promptkeys(1, LNG_YES, 1, LNG_NO, 0, 0, A)
       Font.ftPrint(LSANS, 50, 40, 0, 630, 64, LNG_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       Font.ftPrint(LSANS, 50, 100, 0, 630, 64, LNG_WARN_CONFLICT0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       Font.ftPrint(LSANS, 50, 160, 0, 630, 64, LNG_WARN_CONFLICT1, Color.new(0x80, 0x80, 0x80, 0x80 - A))
@@ -1387,7 +1387,7 @@ function WarnIncompatibleMachine()
 
     pad = Pads.get()
     if A > 0 then A = A - 1 end
-    promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, Q)
+    Promptkeys(1, LNG_CONTINUE, 0, 0, 0, 0, Q)
     Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, LNG_COMPAT0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_COMPAT1, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     if Pads.check(pad, PAD_CROSS) then
@@ -1400,7 +1400,7 @@ function WarnIncompatibleMachine()
   end
 end
 
-function performExpertINST(port, slot, UPDT)
+function PerformExpertINST(port, slot, UPDT)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
@@ -1485,16 +1485,16 @@ function performExpertINST(port, slot, UPDT)
 
   if UPDT[0] == 1 then
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/BIEXEC-SYSTEM/osdsys.elf", port), 0)
-    if RET < 0 then secrerr(RET) return end
+    if RET < 0 then Secrerr(RET) return end
   end
   if UPDT[1] == 1 then
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/BIEXEC-SYSTEM/osd110.elf", port), 0)
-    if RET < 0 then secrerr(RET) return end
+    if RET < 0 then Secrerr(RET) return end
   end
 
   SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
   local RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH), FLAGS)
-  if RET < 0 then secrerr(RET) return end
+  if RET < 0 then Secrerr(RET) return end
 
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -1527,7 +1527,15 @@ function performExpertINST(port, slot, UPDT)
   InstallExtraAssets(port)
   System.AllowPowerOffButton(1)
   System.sleep(2)
-  secrerr(RET)
+  Secrerr(RET)
+end
+
+function PerformHDDInst()
+  Screen.clear()
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Screen.flip()
+  local __sysconf_freespace = 0
+  local __common_freespace = 0
 end
 
 function Ask2quit()
@@ -1540,7 +1548,7 @@ function Ask2quit()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     Font.ftPrint(LSANS, X_MID, 40, 8, 630, 16, LNG_WANNAQUIT)
-    promptkeys(1, LNG_YES, 1, LNG_NO, 1, LNG_RWLE, 0)
+    Promptkeys(1, LNG_YES, 1, LNG_NO, 1, LNG_RWLE, 0)
     ORBMAN(0x80 - Q)
     local pad = Pads.get()
     if Pads.check(pad, PAD_CROSS) then System.exitToBrowser() end
@@ -1576,7 +1584,7 @@ function SystemInfo()
     end
     Font.ftPrint(LSANS, 50, 160, 0, 630, 32, "HDD Connected = "..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
 
-    promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
+    Promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
     if A > 0 then A = A - 1 end
     Screen.flip()
     local pad = Pads.get()
@@ -1619,10 +1627,10 @@ end
 -- SCRIPT BEHAVIOUR BEGINS --
 local NEIN = 0x80
 while NEIN > 0 do
-  drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255, NEIN))
+  Drawbar(X_MID, Y_MID, 100, Color.new(255, 255, 255, NEIN))
   NEIN = NEIN-2
 end
-greeting()
+Greeting()
 if SUPPORTS_UPDATES == false then WarnIncompatibleMachine() end
 OrbIntro(0)
 while true do
@@ -1653,7 +1661,7 @@ while true do
             NormalInstall(port, 0)
             IS_PSX = 0
           else
-            performExpertINST(port, 0, UPDT)
+            PerformExpertINST(port, 0, UPDT)
           end
         end
       end
@@ -1661,10 +1669,10 @@ while true do
       local port = MemcardPickup()
       if port ~= -1 then
         WaitWithORBS(30)
-        local UPDT = expertINSTprompt()
+        local UPDT = ExpertINSTprompt()
         if UPDT["x"] == true then
           FadeWIthORBS()
-          performExpertINST(port, 0, UPDT)
+          PerformExpertINST(port, 0, UPDT)
         else WaitWithORBS(20) end
       end
     elseif TTT == 4 then -- MAGICGATE TEST
@@ -1678,6 +1686,7 @@ while true do
   elseif TT == 2 then -- HDD
     local ACT = HDDMAN()
     if (ACT == 1) then
+      PerformHDDInst()
     elseif (ACT == 2) then
       local continue = Report(200, false, true)
       if continue then System.log("\nUser asked to format HDD...\n\n") end
