@@ -46,7 +46,6 @@ HDD_USABLE = KELFBinder.CheckHDDUsable()
 STR_HDD_USABLE = LNG_NO
 if HDD_USABLE then STR_HDD_USABLE = LNG_YES end
 
-SYSUPDATE_SIZE = GetFileSizeX(SYSUPDATE_MAIN)
 
 
 drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
