@@ -14,6 +14,8 @@
 #define MAX_DIR_FILES 512
 extern int AllowPoweroff;
 
+void recursive_mkdir(char *dir);
+
 static int lua_getCurrentDirectory(lua_State *L)
 {
     char path[256];
@@ -233,7 +235,14 @@ static int lua_createDir(lua_State *L)
 
     return 0;
 }
-
+static int lua_recursivemkdir(lua_State *L)
+{
+    if (lua_gettop(L) != 1)
+        return luaL_error(L, "%s: one argumment expected with path.", __func__);
+    char* path = (char*)luaL_checkstring(L, 1);
+    recursive_mkdir(path);
+    return 0;
+}
 static int lua_removeDir(lua_State *L)
 {
     const char *path = luaL_checkstring(L, 1);
@@ -811,6 +820,7 @@ static const luaL_Reg System_functions[] = {
     {"currentDirectory", lua_curdir},
     {"listDirectory", lua_dir},
     {"createDirectory", lua_createDir},
+    {"createDirectoryRecursive", lua_recursivemkdir},
     {"removeDirectory", lua_removeDir},
     {"WipeDirectory", lua_wipedir},
     {"moveFile", lua_movefile},
