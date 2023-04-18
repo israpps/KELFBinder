@@ -17,6 +17,7 @@
 #include <errno.h>
 
 #include "include/dbgprintf.h"
+#include "include/strUtils.h"
 #include "include/luaplayer.h"
 #ifdef RESERVE_PFS0
 extern int bootpath_is_on_HDD;
@@ -268,20 +269,25 @@ static int EnableHDDBooting(lua_State *L)
 
 static int getpartitionsizeKB(lua_State *L)
 {
+    char PFS[5+1] = "pfs0:";
     int argc = lua_gettop(L);
-	if (argc != 1 || argc != 2) return luaL_error(L, "%s: wrong number of arguments, expected one or two argumments", __func__); 
     unsigned int AvailableSpace = 0;
-    const char* partition = luaL_checkstring(L, 1);
     int pfs_index = 0;
-    if (argc == 2) pfs_index = luaL_checkinteger(L, 2);
-    DPRINTF("checking space usage for %s\n", partition);
+	if (argc != 1 && argc != 2) 
+        return luaL_error(L, "%s: wrong number of arguments, expected one or two argumments", __func__); 
+
+    const char* partition = luaL_checkstring(L, 1);
+    if (argc == 2) 
+        pfs_index = luaL_checkinteger(L, 2);
+    PFS[3] = '0' + pfs_index;
+
 	if (mnt(partition, pfs_index, FIO_MT_RDONLY) == 0) {
-        AvailableSpace = fileXioDevctl("pfs0:", PDIOC_ZONEFREE, NULL, 0, NULL, 0) * fileXioDevctl("pfs0:", PDIOC_ZONESZ, NULL, 0, NULL, 0);
-        DPRINTF("Free space on %s is %u\n", partition, AvailableSpace);
+        AvailableSpace = (unsigned int)(fileXioDevctl(PFS, PDIOC_ZONEFREE, NULL, 0, NULL, 0) * fileXioDevctl(PFS, PDIOC_ZONESZ, NULL, 0, NULL, 0));
+        DPRINTF("Free space on '%s' is %u\n", partition, AvailableSpace);
         umnt(pfs_index);
         lua_pushinteger(L, AvailableSpace);
     } else {
-        DPRINTF("%s: impossible to mount '%s' into pfs%d:, returning %d\n", partition, pfs_index, -ENOENT);
+        DPRINTF("%s: impossible to mount '%s' into %s:, returning %d\n", partition, PFS, -ENOENT);
         lua_pushinteger(L, -ENOENT);
     }
     return 1;
