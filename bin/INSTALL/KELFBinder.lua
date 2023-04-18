@@ -1603,9 +1603,8 @@ function SystemInfo()
       Color.new(220, 220, 220, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(LSANS, 50, 120, 0, 630, 32, string.format(LNG_SUPATH, UPDTPATH), Color.new(220, 220, 220, 0x80 - A))
-      --[[if ROMVERN > 120 and ROMVERN < 230 then
-        Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
-      end--]]
+      Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
+
     end
     Font.ftPrint(LSANS, 50, 160, 0, 630, 32, "HDD Connected = "..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
 
