@@ -156,6 +156,29 @@ function FadeWIthORBS()
     A = A - 1
   end
 end
+--- Processes a HDD full path into its components. (eg: `hdd0:__system:pfs:/osd110/hosdsys.elf`)
+---@param PATH string
+---@return string mountpart: will return partition path for mounting (`hdd0:__system`)
+---@return string pfsindx: will return pfs index (`pfs:`)
+---@return string filepath: will return path to file when partition gets mounted (`pfs:/osd110/hosdsys.elf`)
+function GetMountData(PATH)
+  local CNT = 0
+  local TBL = {}
+  for i in string.gmatch(PATH, "[^:]*") do
+    table.insert(TBL, i)
+    CNT = CNT+1
+  end
+  local mountpart = ""
+  local pfsindx   = ""
+  local filepath  = ""
+  if CNT == 4 then
+    mountpart = string.format("%s:%s", TBL[1], TBL[2])
+    pfsindx   = string.format("%s:", TBL[3])
+    filepath  = string.format("%s:%s", TBL[3], TBL[4])
+    System.log(string.format("%s\n%s\n%s\n", mountpart, pfsindx, filepath))
+  end
+  return mountpart, pfsindx, filepath
+end
 
 function GetFileSizeX(PATH)
   local FD = System.openFile(PATH, FREAD)
@@ -1537,7 +1560,6 @@ function PerformHDDInst()
   local __sysconf_freespace = HDD.GetPartitionSize("hdd0:__sysconf")
   local __system_freespace  = HDD.GetPartitionSize("hdd0:__system")
   local __common_freespace  = HDD.GetPartitionSize("hdd0:__common")
-  System.log(string.format("HDD:\n\t__sysconf %d\n\t__system %d\n\t__common %d\n"), __sysconf_freespace, __system_freespace, __common_freespace)
 end
 
 function Ask2quit()
