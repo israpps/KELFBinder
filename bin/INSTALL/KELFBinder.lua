@@ -205,10 +205,10 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
       FOLDERCOUNT = FOLDERCOUNT + 1
     end
   end
-  if #EXTRA_INST_SRC > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, #EXTRA_INST_SRC do
-      if System.doesFileExist(EXTRA_INST_SRC[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
-        SIZECOUNT = SIZECOUNT + GetFileSizeX(EXTRA_INST_SRC[i])
+  if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #MC_INST_TABLE.source do
+      if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        SIZECOUNT = SIZECOUNT + GetFileSizeX(MC_INST_TABLE.source[i])
         FILECOUNT = FILECOUNT + 1 -- only add the confirmed files
       end
     end
@@ -226,10 +226,10 @@ function InstallExtraAssets(port)
       -- end
     end
   end
-  if #EXTRA_INST_SRC > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, #EXTRA_INST_SRC do
-      if System.doesFileExist(EXTRA_INST_SRC[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
-        System.copyFile(EXTRA_INST_SRC[i], string.format("mc%d:/%s", port, EXTRA_INST_DST[i]))
+  if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #MC_INST_TABLE.source do
+      if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
       end
     end
   end
