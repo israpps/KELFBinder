@@ -11,11 +11,13 @@ MC_INST_TABLE = {
   dirs = {} --- contains a list of directory names to be created before writing files to target
 }
 
---- FOLDERS TO BE CREATED BEFORE INSTALLATION
-EXTRA_INST_MKD = {}
+--- installation table for HardDrive
+HDD_INST_TABLE = {
+  source = {}, --- holds file locations relative to KELFBinder CWD.
+  target = {}, --- contains fully qualified HDD paths, so installation routine has all the needed info (partition name, and PFS path)
+  dirs = {} --- contains a list of directory names to be created before writing files to target
+}
 
----HDD_INST_TABLE = {}
----HDD_INST_MKD = {}
 ---parse directory and append paths based on files found inside `SOURCEDIR` into `SOURCE_TABLE` and `DEST_TABLE`.
 ---if at least 1 file is found, the value of `DESTNTDIR` is added into `MKDIR_TABLE`
 ---@param SOURCEDIR string
@@ -44,6 +46,10 @@ Update_InstTable("INSTALL/ASSETS/PS2BBL", "PS2BBL", MC_INST_TABLE.source, MC_INS
 Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 
+
+Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/APPS-HDD"  , "hdd0:__common:pfs:/APPS"   , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/BOOT-HDD"  , "hdd0:__sysconf:pfs:/BOOT"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 
 System.log("file installation table:\n")
 for x = 1, #MC_INST_TABLE.source do
