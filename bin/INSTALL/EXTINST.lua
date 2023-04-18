@@ -4,10 +4,11 @@
 System.log("declaring installation tables for PS2BBL\n")
 -- Installation tables. write values for fixed files, dynamic population of this list can be done with `Update_InstTable()`
 
---- SOURCE FILE PATHS FOR INSTALLATION, __PATHS ARE RELATIVE TO KELFBINDER LOCATION__
+--- installation table for memory card.
 MC_INST_TABLE = {
-  source = {},
-  target = {}
+  source = {}, --- holds file locations relative to KELFBinder CWD.
+  target = {}, --- contains installation paths ignoring device (eg: instead of `mc0:/A/BOOT.ELF` use `A/BOOT.ELF`)
+  dirs = {} --- contains a list of directory names to be created before writing files to target
 }
 
 --- FOLDERS TO BE CREATED BEFORE INSTALLATION
@@ -39,9 +40,9 @@ function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_
   return COUNT
 end
 
-Update_InstTable("INSTALL/ASSETS/PS2BBL", "PS2BBL", MC_INST_TABLE.source, MC_INST_TABLE.target, EXTRA_INST_MKD)
-Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, EXTRA_INST_MKD)
-Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, EXTRA_INST_MKD)
+Update_InstTable("INSTALL/ASSETS/PS2BBL", "PS2BBL", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 
 
 System.log("file installation table:\n")
@@ -50,6 +51,6 @@ for x = 1, #MC_INST_TABLE.source do
 end
 
 System.log("folder creation table:\n")
-for x = 1, #EXTRA_INST_MKD do
-  System.log(string.format("\t[%s]\n", EXTRA_INST_MKD[x]))
+for x = 1, #MC_INST_TABLE.dirs do
+  System.log(string.format("\t[%s]\n", MC_INST_TABLE.dirs[x]))
 end

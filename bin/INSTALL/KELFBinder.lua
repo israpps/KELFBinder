@@ -199,11 +199,8 @@ function HEXDUMP(DATA)
 end
 
 function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
-  FOLDERCOUNT = FOLDERCOUNT + #EXTRA_INST_MKD
-  if #EXTRA_INST_MKD > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, #EXTRA_INST_MKD do
-      FOLDERCOUNT = FOLDERCOUNT + 1
-    end
+  if MUST_INSTALL_EXTRA_FILES then
+    FOLDERCOUNT = FOLDERCOUNT + #MC_INST_TABLE.dirs
   end
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
@@ -219,10 +216,10 @@ end
 
 function InstallExtraAssets(port)
   ----------------------
-  if #EXTRA_INST_MKD > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, #EXTRA_INST_MKD do
-      -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", EXTRA_INST_MKD[i])) then -- only create the folder if source exists...
-      System.createDirectory(string.format("mc%d:/%s", port, EXTRA_INST_MKD[i]))
+  if #MC_INST_TABLE.dirs > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #MC_INST_TABLE.dirs do
+      -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", MC_INST_TABLE.dirs[i])) then -- only create the folder if source exists...
+      System.createDirectory(string.format("mc%d:/%s", port, MC_INST_TABLE.dirs[i]))
       -- end
     end
   end
