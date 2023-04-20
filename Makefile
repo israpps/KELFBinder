@@ -179,7 +179,7 @@ reset:
 	ps2client -h $(PS2LINK_IP) reset   
 
 update_deps:
-	wget -q https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT-XFROM.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
+	wget -q https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
 	cp bin/INSTALL/CORE/BACKDOOR.ELF bin/INSTALL/ASSETS/BOOT/BOOT.ELF
 
 .PHONY: reset run rclean debug
