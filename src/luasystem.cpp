@@ -231,8 +231,8 @@ static int lua_createDir(lua_State *L)
     const char *path = luaL_checkstring(L, 1);
     if (!path)
         return luaL_error(L, "Argument error: System.createDirectory(directory) takes a directory name as string as argument.");
-    mkdir(path, 0777);
-
+    int ret = mkdir(path, 0777);
+    DPRINTF("\tpath '%s'. result = %d\n", path, ret);
     return 0;
 }
 static int lua_recursivemkdir(lua_State *L)
