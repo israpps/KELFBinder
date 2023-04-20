@@ -22,12 +22,12 @@ SUPPORTS_UPDATES = true
 MUST_INSTALL_EXTRA_FILES = true
 if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL-H100" then SUPPORTS_UPDATES = false System.log("console is incompatible ("..ROMVERN..") ["..console_model_sub.."]\n") end
 ---@PSX
-IS_PSX = 0
-REAL_IS_PSX = 0
+IS_PSX = false
+REAL_IS_PSX = false
 if System.doesFileExist("rom0:PSXVER") then
   System.log("rom0:PSXVER FOUND\n")
-  IS_PSX = 1
-  REAL_IS_PSX = 1
+  IS_PSX = true
+  REAL_IS_PSX = true
 end
 ---PSX
 
@@ -36,7 +36,7 @@ SYSUPDATE_ICON_SYS_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_SYS
 
 ---
 SYSUPDATE_MAIN  = "INSTALL/KELF/SYSTEM.XLF"
-PSX_SYSUPDATE   = "INSTALL/KELF/XSYSTEM.XLF"
+SYSUPDATE_PSX   = "INSTALL/KELF/XSYSTEM.XLF"
 KERNEL_PATCH_100 = "INSTALL/KELF/OSDSYS.KERNEL"
 KERNEL_PATCH_101 = "INSTALL/KELF/OSD110.KERNEL"
 
@@ -44,7 +44,7 @@ DVDPLAYERUPDATE = "INSTALL/KELF/DVDPLAYER.XLF"
 TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 
 SYSUPDATE_HDD_MAIN  = "INSTALL/KELF/HDD_SYSTEM.XLF"
-SYSUPDATE_HDD_BOOTSTRAP = "INSTALL/KELF/MBR.XIN"
+SYSUPDATE_HDD_BOOTSTRAP = "INSTALL/KELF/MBR.XLF"
 
 HDD_USABLE = KELFBinder.CheckHDDUsable()
 STR_HDD_USABLE = LNG_NO
@@ -179,7 +179,6 @@ function GetMountData(PATH)
     mountpart = string.format("%s:%s", TBL[1], TBL[2])
     pfsindx   = string.format("%s:", TBL[3])
     filepath  = string.format("%s:%s", TBL[3], TBL[4])
-    System.log(string.format("%s\n%s\n%s\n", mountpart, pfsindx, filepath))
   end
   return mountpart, pfsindx, filepath
 end
@@ -219,7 +218,6 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
 end
 
 function InstallExtraAssets(port)
-  ----------------------
   if #MC_INST_TABLE.dirs > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.dirs do
       -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", MC_INST_TABLE.dirs[i])) then -- only create the folder if source exists...
@@ -244,6 +242,16 @@ function CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   TotalRequiredSpace = TotalRequiredSpace + ((FILECOUNT + FOLDERCOUNT + 3) / 2) --  A new cluster is required for every two files.
   AvailableSpace = (mcinfo.freemem * 1024)
   return AvailableSpace, TotalRequiredSpace
+end
+
+function HDDCalculateRequiredSpace(INSTALL_TABLE, partition)
+  local TotalRequiredSpace = 0
+  for i = 1, #INSTALL_TABLE.source do
+    if string.sub(INSTALL_TABLE.target[i], 1, #partition) == partition then -- check if the target path correspondes to the specified partition...
+      TotalRequiredSpace = TotalRequiredSpace + GetFileSizeX(INSTALL_TABLE.source[i])
+    end
+  end
+  return TotalRequiredSpace
 end
 
 function Promptkeys(SELECT, ST, CANCEL, CT, REFRESH, RT, ALFA)
@@ -314,6 +322,8 @@ function MainMenu()
   local D = 15
   local A = 0x80
   local NA = 0
+  local COL
+  if REAL_IS_PSX then COL = 100 else COL = 200 end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -327,7 +337,7 @@ function MainMenu()
     if T == 2 then
       Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_MM7, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
-      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_MM7, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_MM7, Color.new(COL, COL, COL, 0x80 - A))
     end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
@@ -399,22 +409,24 @@ function HDDMAN()
   local T = 1
   local D = 15
   local A = 0x80
+  local COL = 100
   local PROMTPS = {
     LNG_HDDPROMPT,
     LNG_HDDPROMPT1,
     LNG_HDDPROMPT2,
   }
+  if HDD_USABLE then COL = 200 end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     if T == 1 then
       Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(COL, COL, COL, 0x80 - A))
     end
     if T == 2 then
       Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(200, 200, 200, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(COL, COL, COL, 0x80 - A))
     end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_HDD_INSTOPT3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
@@ -429,8 +441,12 @@ function HDDMAN()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
       D = 1
-      Screen.clear()
-      break
+      if HDD_USABLE then -- hdd usable means all features are available, else. only eeprom stuff
+        Screen.clear()
+        break
+      else
+        if T ~= 3 then break end
+      end
     end
 
     if Pads.check(pad, PAD_CIRCLE) and D == 0 then
@@ -445,7 +461,7 @@ function HDDMAN()
       T = T + 1
       D = 1
     end
-  
+
     if D > 0 then D = D + 1 end
     if D > 10 then D = 0 end
     if T < 1 then T = 3 end
@@ -626,21 +642,21 @@ function NormalInstall(port, slot)
   local AvailableSpace = 0
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
 
-  if IS_PSX == 1 then
-    NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(PSX_SYSUPDATE)
+  if IS_PSX then
+    NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
   else
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_MAIN)
   end
   FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   AvailableSpace, NEEDED_SPACE = CalculateRequiredSpace(port, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
-  if AvailableSpace < NEEDED_SPACE then InsufficientSpace(NEEDED_SPACE, AvailableSpace) return end
+  if AvailableSpace < NEEDED_SPACE then InsufficientSpace(NEEDED_SPACE, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
 
   if System.doesDirExist(TARGET_FOLD) then
     Ask2WipeSysUpdateDirs(false, false, false, false, true, port)
   end
   System.AllowPowerOffButton(0)
   System.createDirectory(TARGET_FOLD)
-  if REG == 0  or IS_PSX == 1 then -- JPN
+  if REG == 0 or IS_PSX then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("%s/icon.sys", TARGET_FOLD))
@@ -650,12 +666,12 @@ function NormalInstall(port, slot)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
-  if IS_PSX == 0 then
-    SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
-    KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
-  else
+  if IS_PSX then
     SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
     KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
+  else
+    SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
+    KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
   end
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -673,8 +689,8 @@ function NormalInstall(port, slot)
       RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/%s", port, SYSUPDATEPATH))
       if RET < 0 then Secrerr(RET) return end
     end
-  elseif IS_PSX == 1 then -- PSX NEEDS SPECIAL PATH
-    RET = Secrman.downloadfile(port, slot, PSX_SYSUPDATE, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
+  elseif IS_PSX then -- PSX NEEDS SPECIAL PATH
+    RET = Secrman.downloadfile(port, slot, SYSUPDATE_PSX, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
     if RET < 0 then Secrerr(RET) return end
   else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
@@ -964,7 +980,7 @@ function AdvancedINSTprompt()
     LNG_DESC_CROSS_REGION,
     LNG_DESC_PSXDESR
   }
-  if REAL_IS_PSX == 1 then PROMTPS[3] = LNG_DESC_MACHINE_IS_PSX end
+  if REAL_IS_PSX then PROMTPS[3] = LNG_DESC_MACHINE_IS_PSX end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -983,7 +999,7 @@ function AdvancedINSTprompt()
     end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, "PSX DESR", Color.new(0, 0xde, 0xff, 0x80 - A))
-    elseif REAL_IS_PSX == 1 then
+    elseif REAL_IS_PSX then
       Font.ftPrint(LSANS, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(50, 50, 50, 0x80 - A))
     else -- make the PSX option grey if runner machine is PSX
       Font.ftPrint(LSANS, X_MID, 230, 0, 630, 16, "PSX DESR", Color.new(200, 200, 200, 0x80 - A))
@@ -996,7 +1012,7 @@ function AdvancedINSTprompt()
     local pad = Pads.get()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
-      if T == 3 and REAL_IS_PSX == 1 then
+      if T == 3 and REAL_IS_PSX then
         --user requested a PSX install on a PSX, senseless, normal install will do the job
       else
         D = 1
@@ -1286,7 +1302,7 @@ function WarnOfShittyFMCBInst()
   OrbIntro(1)
 end
 
-function InsufficientSpace(NEEDED, AVAILABLE)
+function InsufficientSpace(NEEDED, AVAILABLE, targetdev)
   local A = 0x80
   local AIN = -1
   local Q = 0x7f
@@ -1304,7 +1320,7 @@ function InsufficientSpace(NEEDED, AVAILABLE)
     Graphics.drawScaleImage(BGERR, 0.0, 0.0, SCR_X, SCR_Y, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     ORBMANex(REDCURSOR, 0x80 - Q - 1, 180, 180, 80 + Q)
     Font.ftPrint(LSANS, X_MID, 40, 8, 630, 64, LNG_ERROR, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
-    Font.ftPrint(LSANS, X_MID, 80, 8, 630, 64, LNG_NOT_ENOUGH_SPACE0, Color.new(0x80, 0x80, 0x80, 0x80 - Q))
+    Font.ftPrint(LSANS, X_MID, 80, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE0, targetdev), Color.new(0x80, 0x80, 0x80, 0x80 - Q))
     Font.ftPrint(LSANS, X_MID, 120, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED / 1024, AVAILABLE / 1024),
       Color.new(0x80, 0x80, 0x80, 0x80 - Q))
 
@@ -1492,7 +1508,7 @@ function PerformExpertINST(port, slot, UPDT)
 
   FILECOUNT, FOLDERCOUNT, SIZE_NEED = PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZE_NEED)
   AvailableSpace, SIZE_NEED2 = CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZE_NEED)
-  if AvailableSpace < SIZE_NEED2 then InsufficientSpace(SIZE_NEED2, AvailableSpace) return end
+  if AvailableSpace < SIZE_NEED2 then InsufficientSpace(SIZE_NEED2, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
   if FOLDS_CONFLICT then Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, false, port) end
 
   System.AllowPowerOffButton(0)
@@ -1554,13 +1570,87 @@ function PerformExpertINST(port, slot, UPDT)
   Secrerr(RET)
 end
 
-function PerformHDDInst()
+function HDDInstProgress(prog, total)
+  Screen.clear()
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
+  DrawbarNbg(X_MID, Y_MID, 100, Color.new(100, 100, 100, 0x80))
+  DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
+  Screen.flip()
+end
+
+function WriteDataToHDD()
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
+  local mountpath
+  local current_mount = "NONE"
+  local total = 2 + #HDD_INST_TABLE.source
+  local pfs_path
+  local pfs_mkdir
+  HDDInstProgress(1, total)
+  HDD.EnableHDDBoot()
+  local ret = HDD.InstallBootstrap(SYSUPDATE_HDD_BOOTSTRAP)
+  HDDInstProgress(1, total)
+  if ret < 0 then
+    Secrerr(ret)
+    return
+  end
+  for i = 1, #HDD_INST_TABLE.source do
+    HDDInstProgress(2+i, total)
+    mountpath, _, pfs_path = GetMountData(HDD_INST_TABLE.target[i]) -- calculate needed paths
+    if mountpath ~= current_mount then --different partition...
+      System.log("partition change needed '"..mountpath.."'\n")
+      if HDD.MountPartition(mountpath, 0, FIO_MT_RDWR) < 0 then -- ...mount needed one
+        Secrerr(-5)
+        return
+      else --success
+        current_mount = mountpath
+        for x = 1, #HDD_INST_TABLE.dirs do
+          if string.sub(HDD_INST_TABLE.dirs[x], 1, #current_mount) == current_mount then -- check if the target path correspondes to the specified partition...
+            _ , _, pfs_mkdir = GetMountData(HDD_INST_TABLE.dirs[x])
+            if not System.doesDirExist(pfs_mkdir) then System.createDirectory(pfs_mkdir) end
+          end
+        end
+      end
+    end
+    System.copyFile(HDD_INST_TABLE.source[i], pfs_path)
+  end
+  HDD.UMountPartition(0)
+  local Z = 0x80
+  while Z > 0 do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, Z))
+    Screen.flip()
+    Z = Z-2
+  end
+  Secrerr(1)
+end
+
+function PerformHDDInst()
+  Screen.clear()
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_CALCULATING)
+  Screen.flip()
   local __sysconf_freespace = HDD.GetPartitionSize("hdd0:__sysconf")
+  local __sysconf_reqspace = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__sysconf")
+  System.log("Space needed for __sysconf is "..__sysconf_reqspace.."\n")
+  if __sysconf_reqspace > __sysconf_freespace then InsufficientSpace(__sysconf_reqspace, __sysconf_freespace, LNG_PARTITION.." __sysconf") return end
+
   local __system_freespace  = HDD.GetPartitionSize("hdd0:__system")
+  local __system_reqspace  = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__system")
+  System.log("Space needed for __system is "..__system_reqspace.."\n")
+  if __system_reqspace > __system_freespace then InsufficientSpace(__system_reqspace, __system_freespace, LNG_PARTITION.." __system") return end
+
   local __common_freespace  = HDD.GetPartitionSize("hdd0:__common")
+  local __common_reqspace  = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__common")
+  System.log("Space needed for __common is "..__common_reqspace.."\n")
+  if __common_reqspace > __common_freespace then InsufficientSpace(__common_reqspace, __common_freespace, LNG_PARTITION.." __common") return end
+  System.sleep(1)
+  System.AllowPowerOffButton(0)
+  WriteDataToHDD()
+  System.AllowPowerOffButton(1)
 end
 
 function Ask2quit()
@@ -1587,7 +1677,11 @@ function SystemInfo()
   local D = 15
   local A = 0x50
   local UPDTPATH
-  if REAL_IS_PSX == 0 then UPDTPATH = KELFBinder.calculateSysUpdatePath() else UPDTPATH = "BIEXEC-SYSTEM/xosdmain.elf" end
+  if REAL_IS_PSX then 
+    UPDTPATH = "BIEXEC-SYSTEM/xosdmain.elf"
+  else
+    UPDTPATH = KELFBinder.calculateSysUpdatePath()
+  end
   local COMPATIBLE_WITH_UPDATES = LNG_NO
   if SUPPORTS_UPDATES then COMPATIBLE_WITH_UPDATES = LNG_YES end
   while true do
@@ -1681,9 +1775,9 @@ while true do
           WaitWithORBS(30)
           FadeWIthORBS()
           if UPDT[10] == 1 then -- IF PSX mode was selected
-            IS_PSX = 1 -- simulate runner console is a PSX to reduce code duplication
+            IS_PSX = true -- simulate runner console is a PSX to reduce code duplication
             NormalInstall(port, 0)
-            IS_PSX = 0
+            IS_PSX = false
           else
             PerformExpertINST(port, 0, UPDT)
           end
@@ -1707,7 +1801,7 @@ while true do
         WaitWithORBS(50)
       end
     end
-  elseif TT == 2 then -- HDD
+  elseif TT == 2 and (not REAL_IS_PSX) then -- HDD
     local ACT = HDDMAN()
     if (ACT == 1) then
       PerformHDDInst()

@@ -88,7 +88,10 @@
 	LNG_FMCBINST_CRAP1 = "The Memory Card must be formatted before installing."
 	LNG_FMCBINST_CRAP2 = "There is risk of FileSystem corruption if the card is not formatted"
 	LNG_ERROR = "Error!"
-	LNG_NOT_ENOUGH_SPACE0 = "There is not enough space on the selected Memory Card"
+	LNG_MEMORY_CARD = "Memory card"
+	LNG_HDD = "Hard Drive"
+	LNG_PARTITION = "Partition"
+	LNG_NOT_ENOUGH_SPACE0 = "There is not enough space on %s"
 	LNG_NOT_ENOUGH_SPACE1 = "Needed space  %.1f Kb - Available Space %.1f Kb"
 	LNG_INCOMPATIBLE_CARD = "incompatible device!"
 	LNG_INSTALLING_EXTRA = "Installing aditional files..."
@@ -107,13 +110,17 @@
 	LNG_HDDFORMAT_CONFIRM = "You are about to format the internal HDD"
 	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
 	LNG_ROMPATCH_PATCH = "System update ROM Patch = [%s]"
-
+	LNG_CALCULATING = "Calculating required space..."
+_ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()
-	Graphics.drawRect(x-(prog), y, prog*2, 5, col)
+	Graphics.drawRect(x-(prog*2), y, prog*4, 5, col)
 	Screen.flip()
 end
 
+function DrawbarNbg(x, y, prog, col)
+	Graphics.drawRect(x-(prog*2), y, prog*4, 5, col)
+end
 	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
 	local temporaryVar_size = System.sizeFile(temporaryVar)
 	ROMVER = System.readFile(temporaryVar, temporaryVar_size)

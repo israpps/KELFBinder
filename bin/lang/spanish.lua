@@ -10,6 +10,7 @@
 	LNG_MM4 = "Información de sistema"
 	LNG_MM5 = "Salir del programa"
 	LNG_MM6 = "Créditos"
+	LNG_MM7 = "Administrar actualizaciones HDD"
 	LNG_CT0 = "aceptar"
 	LNG_CT1 = "Cancelar"
 	LNG_CT2 = "Refrescar"
@@ -88,7 +89,10 @@
 	LNG_FMCBINST_CRAP1 = "La tarjeta de memoria debe ser formateada antes de instalar."
 	LNG_FMCBINST_CRAP2 = "hay riesgo de corromper el sistema de archivos si no se formatea"
 	LNG_ERROR = "Error!"
-	LNG_NOT_ENOUGH_SPACE0 = "No hay espacio suficiente en la Memory Card"
+	LNG_MEMORY_CARD = "Memory card"
+	LNG_HDD = "Disco duro"
+	LNG_PARTITION = "Partición"
+	LNG_NOT_ENOUGH_SPACE0 = "No hay espacio suficiente en %s"
 	LNG_NOT_ENOUGH_SPACE1 = "Espacio requerido  %.1f Kb - Espacio disponible %.1f Kb"
 	LNG_INCOMPATIBLE_CARD = "Dispositivo incompatible!"
 	LNG_INSTALLING_EXTRA = "Instalando archivos adicionales..."
@@ -107,5 +111,6 @@
 	LNG_HDDFORMAT_CONFIRM = "Estás a punto de formatear el disco duro interno"
 	LNG_HDDFORMAT_CONFIRM2 = "esto borrará toda información contenida dentro de el"
 	LNG_ROMPATCH_PATCH = "actualización de sistem (parche de ROM) = [%s]"
+	LNG_CALCULATING = "Calculando espacio requerido..."
 
 -- TRADUCCION POR El_isra
