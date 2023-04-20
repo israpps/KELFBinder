@@ -96,12 +96,22 @@ static int lua_direxists(lua_State *L)
     const char *path = luaL_checkstring(L, 1);
     struct stat info;
 
+        DPRINTF("%s: %s\n", __func__, path);
     if (stat(path, &info) != 0)
+    {
         lua_pushboolean(L, false);
+        DPRINTF("\tcant stat\n");
+    }
     else if (info.st_mode & S_IFDIR)
+    {
         lua_pushboolean(L, true);
+        DPRINTF("\tis a folder!\n");
+    }
     else
+    {
         lua_pushboolean(L, false);
+        DPRINTF("\tthis is not a folder\n");
+    }
     return 1;
 }
 
