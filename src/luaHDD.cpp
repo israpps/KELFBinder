@@ -12,8 +12,6 @@
 #define NEWLIB_PORT_AWARE
 #include <fileXio_rpc.h>
 #include <fileio.h>
-
-
 #include <errno.h>
 
 #include "include/dbgprintf.h"
@@ -37,14 +35,17 @@ static int MountPart(lua_State *L)
     int indx = 0;
 #endif
     int argc = lua_gettop(L);
-	if (argc > 1 && argc < 4) return luaL_error(L, "%s: wrong number of arguments, expected 1 or 2", __func__); 
+	if (argc < 1 || argc >= 4) return luaL_error(L, "%s: wrong number of arguments, expected 1 or 2", __func__); 
 
     mount = luaL_checkstring(L, 1);
-    if (argc >= 2) indx = luaL_checkinteger(L, 2);
-    if (argc == 3) openmod = luaL_checkinteger(L, 3);
+    if (argc >= 2) 
+        indx = luaL_checkinteger(L, 2);
+    if (argc == 3) 
+        openmod = luaL_checkinteger(L, 3);
 #ifdef RESERVE_PFS0
     if (indx == 0 && bootpath_is_on_HDD) luaL_error(L, "%s: pfs0:/ is reserved\n", __func__);
 #endif
+    DPRINTF("%s: %s %d %d\n", __func__, mount, indx, openmod);
     lua_pushinteger(L, mnt(mount, indx, openmod));
     return 1;
 
@@ -195,7 +196,7 @@ static int lua_installMBRKELF(lua_State *L)
 
 	    		if ((result = fileXioDevctl("hdd0:", APA_DEVCTL_ATA_WRITE, IOBuffer, 512 + sizeof(hddAtaTransfer_t), NULL, 0)) < 0)
 	    		{
-                    DPRINTF("ERROR: failed to write MBR program (%d)\n", result);
+                    DPRINTF("ERROR: failed to write MBR program (%d) while writing to sector %d\n", result, sector + i);
                 	break;
                 }
 	    	}
@@ -241,7 +242,7 @@ static int EnableHDDBooting(lua_State *L)
 
 	if ((OSDConfigBuffer[0] & 3) != 2)
 	{ //If ATAD support and HDD booting are not already activated.
-        DPRINTF("HDDBooting: HDD Boot is disabled, activating...\n");
+        DPRINTF("%s: HDD Boot is disabled, activating...\n", __func__);
 		OSDConfigBuffer[0] = (OSDConfigBuffer[0] & ~3) | 2;
 
 		do
@@ -283,7 +284,7 @@ static int getpartitionsizeKB(lua_State *L)
 
 	if (mnt(partition, pfs_index, FIO_MT_RDONLY) == 0) {
         AvailableSpace = (unsigned int)(fileXioDevctl(PFS, PDIOC_ZONEFREE, NULL, 0, NULL, 0) * fileXioDevctl(PFS, PDIOC_ZONESZ, NULL, 0, NULL, 0));
-        DPRINTF("Free space on '%s' is %u\n", partition, AvailableSpace);
+        DPRINTF("\tFree space on '%s' is [%uB | %dMb]\n", partition, AvailableSpace, ((AvailableSpace / 1024) / 1024));
         umnt(pfs_index);
         lua_pushinteger(L, AvailableSpace);
     } else {
