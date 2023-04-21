@@ -24,8 +24,12 @@ The expected location of this script is `INSTALL/EXTINST.lua`
 The expected location of this script is `INSTALL/KELFBinder.lua`
 
 ### Black (with red bar on screen center)
-- meaning: the program could not load a special driver needed to install updates into the memory.
+- meaning: the program could not load the special security manager driver needed to encrypt and install the update into the card
 #### [__PLEASE REPORT TO THE DEVELOPER__](https://github.com/israpps/KELFBinder/issues)
+
+### Black (with green bar on screen center)
+- meaning: the program crashed when loading the extra files installation table.
+- __NOTE:__ since extra installation table is an external file wich every user can customize. issue reports related to this will not be accepted if they can't be reproduced with the original copy of that script
 
 ### Yellow
 - the exact color is: ![yellow](https://img.shields.io/badge/%20%20%20%20%20%20-%20%20%20%20%20-ffff00)
