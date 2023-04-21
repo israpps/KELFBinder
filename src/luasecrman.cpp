@@ -118,7 +118,7 @@ static int lua_secrdownloadfile(lua_State *L)
         } else {
             close(fd);
             if ((result = SignKELF(buf, size, port, slot)) < 0) {
-                free(buf);
+                //free(buf); //dont free twice
                 DPRINTF("%s: SignKELF failed with value %d\n", __func__, result); 
             } else {
                 DPRINTF("%s: SignKELF returns %d\n", __func__, result); 
@@ -212,7 +212,7 @@ static int lua_secrdownloadfileTest(lua_State *L)
         } else {
             close(fd);
             if ((result = SignKELF(buf, size, port, slot)) < 0) {
-                free(buf);
+                //free(buf); //dont free twice
                 DPRINTF("%s: SignKELF failed with value %d\n", __func__, result); 
             } else {
                 DPRINTF("%s: SignKELF returns %d\n", __func__, result); 
