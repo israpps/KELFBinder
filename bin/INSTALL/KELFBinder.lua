@@ -643,7 +643,6 @@ function NormalInstall(port, slot)
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
 
   if IS_PSX then
-  if IS_PSX == 1 then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(PSX_SYSUPDATE)
     TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
   else
