@@ -40,6 +40,12 @@ jobs:
       run: | 
         echo "SHA8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
 
+    - name: build changelogs and move extra files
+      run: | 
+        git --no-pager log --name-only --oneline --pretty=format:"%n---------- commit %h by %an: %s%n -- Changed files are:"> bin/FULL_CHANGELOG.TXT
+        git --no-pager log Latest..HEAD --pretty=format:"- %h  %<(18)%an: %s"> bin/PARTIAL_CHANGELOG.TXT
+        cp LICENSE bin/LICENSE.TXT
+
     - name: Get branch
       if: github.ref != 'refs/heads/main'
       id: brnch
