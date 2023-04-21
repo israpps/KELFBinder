@@ -216,9 +216,9 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
 
   return FILECOUNT, FOLDERCOUNT, SIZECOUNT
 end
-
 function InstallExtraAssets(port, cur, total)
   ReportProgress(cur, total)
+  local ret = 0
   if #MC_INST_TABLE.dirs > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.dirs do
       -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", MC_INST_TABLE.dirs[i])) then -- only create the folder if source exists...
@@ -230,11 +230,12 @@ function InstallExtraAssets(port, cur, total)
     for i = 1, #MC_INST_TABLE.source do
       ReportProgress(cur+i, total)
       if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
-        System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
+        ret = System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
+        if ret < 0 then return ret end
       end
     end
   end
-
+return 1
 end
 
 function CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZECOUNT)
@@ -705,7 +706,7 @@ function NormalInstall(port, slot)
   -- KELF install finished! deal with extra files now!
   ReportProgress(5, tot)
   Screen.flip()
-  InstallExtraAssets(port, 5, tot)
+  RET = InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
   local Z = 0x80
   while Z > 0 do
@@ -1582,7 +1583,7 @@ function PerformExpertINST(port, slot, UPDT)
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
 
-  InstallExtraAssets(port, cur, total)
+  RET = InstallExtraAssets(port, cur, total)
   System.AllowPowerOffButton(1)  local Z = 0x80
   while Z > 0 do
     Screen.clear()
@@ -1617,8 +1618,7 @@ function WriteDataToHDD()
   local ret = HDD.InstallBootstrap(SYSUPDATE_HDD_BOOTSTRAP)
   ReportProgress(1, total)
   if ret < 0 then
-    Secrerr(ret)
-    return
+    return ret
   end
   for i = 1, #HDD_INST_TABLE.source do
     ReportProgress(2+i, total)
@@ -1626,8 +1626,7 @@ function WriteDataToHDD()
     if mountpath ~= current_mount then --different partition...
       System.log("partition change needed '"..mountpath.."'\n")
       if HDD.MountPartition(mountpath, 0, FIO_MT_RDWR) < 0 then -- ...mount needed one
-        Secrerr(-5)
-        return
+        return -5
       else --success
         current_mount = mountpath
         for x = 1, #HDD_INST_TABLE.dirs do
@@ -1638,7 +1637,10 @@ function WriteDataToHDD()
         end
       end
     end
-    System.copyFile(HDD_INST_TABLE.source[i], pfs_path)
+    ret = System.copyFile(HDD_INST_TABLE.source[i], pfs_path)
+    if ret < 0 then
+       return ret
+    end
   end
   HDD.UMountPartition(0)
   local Z = 0x80
@@ -1649,7 +1651,7 @@ function WriteDataToHDD()
     Screen.flip()
     Z = Z-2
   end
-  Secrerr(1)
+  return 1
 end
 
 function PerformHDDInst()
@@ -1673,7 +1675,7 @@ function PerformHDDInst()
   if __common_reqspace > __common_freespace then InsufficientSpace(__common_reqspace, __common_freespace, LNG_PARTITION.." __common") return end
   System.sleep(1)
   System.AllowPowerOffButton(0)
-  WriteDataToHDD()
+  Secrerr(WriteDataToHDD())
   System.AllowPowerOffButton(1)
 end
 
