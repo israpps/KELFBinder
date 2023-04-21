@@ -250,11 +250,11 @@ int main(int argc, char *argv[])
     const char *errMsg;
     int ret = -1, STAT;
     DPRINTF_INIT();
-#ifdef DPRINTF
+#ifdef EPRINTF
     for (fd = 0; fd < argc; fd++)
         EPRINTF("\targv[%d] = '%s'\n", fd, argv[fd]);
-    EPRINTF("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
 #endif
+    EPRINTF("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
 #ifdef RESET_IOP
     SifInitRpc(0);
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
