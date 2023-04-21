@@ -5,7 +5,10 @@ DVDPlayer and System Updates Manager for SCE PlayStation2
 
 [![](https://img.shields.io/badge/Read%20the-Documentation-0020ff?style=for-the-badge&logo=pencil&labelColor=yellow)](https://israpps.github.io/KELFBinder/)
 
-Project still in development!
+
+<details>
+  <summary>Preview Images</summary>
+  
 
 ![IMG1](./img/img1.png)
 ![IMG2](./img/img2.png)
@@ -15,3 +18,6 @@ Project still in development!
 ![IMG6](./img/img6.png)
 ![IMG7](./img/img7.png)
 ![IMG8](./img/img8.png)
+
+</details>
+
