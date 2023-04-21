@@ -217,7 +217,8 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   return FILECOUNT, FOLDERCOUNT, SIZECOUNT
 end
 
-function InstallExtraAssets(port)
+function InstallExtraAssets(port, cur, total)
+  ReportProgress(cur, total)
   if #MC_INST_TABLE.dirs > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.dirs do
       -- if System.doesDirExist(string.format("INSTALL/ASSETS/%s", MC_INST_TABLE.dirs[i])) then -- only create the folder if source exists...
@@ -227,6 +228,7 @@ function InstallExtraAssets(port)
   end
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
+      ReportProgress(cur+i, total)
       if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
       end
@@ -643,7 +645,7 @@ function NormalInstall(port, slot)
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
 
   if IS_PSX then
-    NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(PSX_SYSUPDATE)
+    NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
     TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
   else
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_MAIN)
@@ -652,12 +654,15 @@ function NormalInstall(port, slot)
   FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   AvailableSpace, NEEDED_SPACE = CalculateRequiredSpace(port, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   if AvailableSpace < NEEDED_SPACE then InsufficientSpace(NEEDED_SPACE, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
-
+  local tot = FILECOUNT + 3
+  local cur = 0
   if System.doesDirExist(TARGET_FOLD) then
     Ask2WipeSysUpdateDirs(false, false, false, false, true, port)
   end
+  ReportProgress(0, tot)
   System.AllowPowerOffButton(0)
   System.createDirectory(TARGET_FOLD)
+  ReportProgress(1, tot)
   if REG == 0 or IS_PSX then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
@@ -668,6 +673,8 @@ function NormalInstall(port, slot)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
+
+  ReportProgress(2, tot)
   if IS_PSX then
     SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
     KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
@@ -675,13 +682,8 @@ function NormalInstall(port, slot)
     SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
     KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
   end
-  Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 65, 8, 600, 64, SYSUPDATEPATH)
-  Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace /
-    1024))
-  Screen.flip()
+
+  ReportProgress(3, tot)
   if (ROMVERN == 100) or (ROMVERN == 101) then -- PROTOKERNEL NEEDS TWO UPDATES TO FUNCTION
     Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, "BIEXEC-SYSTEM/osd130.elf")) -- SCPH-18000
     if (ROMVERN == 100) then
@@ -692,22 +694,27 @@ function NormalInstall(port, slot)
       if RET < 0 then Secrerr(RET) return end
     end
   elseif IS_PSX then -- PSX NEEDS SPECIAL PATH
+    ReportProgress(4, tot)
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_PSX, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
     if RET < 0 then Secrerr(RET) return end
   else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
+    ReportProgress(4, tot)
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
     if RET < 0 then Secrerr(RET) return end
   end
   -- KELF install finished! deal with extra files now!
-  Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 65, 8, 600, 64, SYSUPDATEPATH)
-  Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, NEEDED_SPACE / 1024, AvailableSpace / 1024))
-  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(LSANS, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
+  ReportProgress(5, tot)
   Screen.flip()
-  InstallExtraAssets(port)
+  InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
+  local Z = 0x80
+  while Z > 0 do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, Z))
+    Screen.flip()
+    Z = Z-2
+  end
   Secrerr(RET)
 end
 
@@ -1449,6 +1456,12 @@ function PerformExpertINST(port, slot, UPDT)
 
   if System.doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
       System.doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
+
+  Screen.clear()
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_CALCULATING)
+  Screen.flip()
+
   local AvailableSpace = 0
   local FLAGS = 0
   local SIZE_NEED = 1024 -- FreeMcBoot installed automatically adds 1024 to the needed space counter
@@ -1510,15 +1523,14 @@ function PerformExpertINST(port, slot, UPDT)
 
   FILECOUNT, FOLDERCOUNT, SIZE_NEED = PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZE_NEED)
   AvailableSpace, SIZE_NEED2 = CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZE_NEED)
+  local total = FILECOUNT+3
+  local cur=0
   if AvailableSpace < SIZE_NEED2 then InsufficientSpace(SIZE_NEED2, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
   if FOLDS_CONFLICT then Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, false, port) end
 
   System.AllowPowerOffButton(0)
-  Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
-  Screen.flip()
+
+  ReportProgress(0, total)
 
   if NEEDS_JPN then System.createDirectory(JPN_FOLD) end
   if NEEDS_USA then System.createDirectory(USA_FOLD) end
@@ -1526,10 +1538,14 @@ function PerformExpertINST(port, slot, UPDT)
   if NEEDS_CHN then System.createDirectory(CHN_FOLD) end
 
   if UPDT[0] == 1 then
+    cur = cur+1
+    ReportProgress(cur, total)
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/BIEXEC-SYSTEM/osdsys.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
   if UPDT[1] == 1 then
+    cur = cur+1
+    ReportProgress(cur, total)
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/BIEXEC-SYSTEM/osd110.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
@@ -1538,41 +1554,47 @@ function PerformExpertINST(port, slot, UPDT)
   local RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH), FLAGS)
   if RET < 0 then Secrerr(RET) return end
 
-  Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 400, 64, LNG_INSTALLING)
-  Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, string.format(LNG_NOT_ENOUGH_SPACE1, SIZE_NEED2 / 1024, AvailableSpace / 1024))
-  if MUST_INSTALL_EXTRA_FILES then Font.ftPrint(LSANS, X_MID, 120, 8, 400, 64, LNG_INSTALLING_EXTRA) end
-  Screen.flip()
+  cur = cur+1
+  ReportProgress(cur, total)
 
   if NEEDS_JPN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
+    cur = cur+1 ReportProgress(cur, total)
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("mc%d:/%s/icon.sys", port, "BIEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_USA then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BAEXEC-SYSTEM")
+    cur = cur+1 ReportProgress(cur, total)
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("mc%d:/%s/icon.sys", port, "BAEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_EUR then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BEEXEC-SYSTEM")
+    cur = cur+1 ReportProgress(cur, total)
     System.copyFile("INSTALL/ASSETS/EUR.sys", string.format("mc%d:/%s/icon.sys", port, "BEEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_CHN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BCEXEC-SYSTEM")
+    cur = cur+1 ReportProgress(cur, total)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("mc%d:/%s/icon.sys", port, "BCEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
 
-  InstallExtraAssets(port)
-  System.AllowPowerOffButton(1)
-  System.sleep(2)
+  InstallExtraAssets(port, cur, total)
+  System.AllowPowerOffButton(1)  local Z = 0x80
+  while Z > 0 do
+    Screen.clear()
+    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+    DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, Z))
+    Screen.flip()
+    Z = Z-2
+  end
   Secrerr(RET)
 end
 
-function HDDInstProgress(prog, total)
+function ReportProgress(prog, total)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
@@ -1590,16 +1612,16 @@ function WriteDataToHDD()
   local total = 2 + #HDD_INST_TABLE.source
   local pfs_path
   local pfs_mkdir
-  HDDInstProgress(1, total)
+  ReportProgress(1, total)
   HDD.EnableHDDBoot()
   local ret = HDD.InstallBootstrap(SYSUPDATE_HDD_BOOTSTRAP)
-  HDDInstProgress(1, total)
+  ReportProgress(1, total)
   if ret < 0 then
     Secrerr(ret)
     return
   end
   for i = 1, #HDD_INST_TABLE.source do
-    HDDInstProgress(2+i, total)
+    ReportProgress(2+i, total)
     mountpath, _, pfs_path = GetMountData(HDD_INST_TABLE.target[i]) -- calculate needed paths
     if mountpath ~= current_mount then --different partition...
       System.log("partition change needed '"..mountpath.."'\n")
