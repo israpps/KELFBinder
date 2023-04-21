@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <libmc.h>
 #include <malloc.h>
+#include <errno.h>
 #include <sys/fcntl.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -396,22 +397,35 @@ static int lua_copyfile(lua_State *L)
     const char *ogfile = luaL_checkstring(L, 1);
     const char *newfile = luaL_checkstring(L, 2);
     if (!ogfile || !newfile)
-        return luaL_error(L, "Argument error: System.copyFile(source, destination) takes two filenames as strings as arguments.");
+        return luaL_error(L, "%s expected two strings as arguments.", __func__);
     DPRINTF("%s: Copying [%s] to [%s]\n", __func__, ogfile, newfile); 
     char buf[BUFSIZ];
     size_t size;
 
     int source = open(ogfile, O_RDONLY, 0);
     int dest = open(newfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
-    while ((size = read(source, buf, BUFSIZ)) > 0) {
-        write(dest, buf, size);
+    int ret = 0;
+    if ((dest < 0) || (source < 0)) 
+    {
+        ret = (source < 0) ? source : dest; //source not accessible is ENOENT. else I/O ERR
+    } 
+    else
+    {
+        while ((size = read(source, buf, BUFSIZ)) > 0) {
+            if (write(dest, buf, size) != size)
+                {
+                    ret = -EIO;
+                    goto err;
+                }
+        }
     }
-
-    close(source);
-    close(dest);
-
-    return 0;
+err:
+    if (source >= 0)
+        close(source);
+    if (dest >= 0)
+        close(dest);
+    lua_pushinteger(L, ret);
+    return 1;
 }
 
 static char modulePath[256];
