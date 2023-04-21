@@ -70,12 +70,12 @@ local GREENCURSOR = Graphics.loadImageEmbedded(9)
 local CHK_ = Graphics.loadImageEmbedded(3)
 local CHKF = Graphics.loadImageEmbedded(4)
 
-Drawbar(X_MID, Y_MID, 60, Color.new(255, 255, 255))
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
   Screen.clear(Color.new(128, 0, 128))
   Screen.flip()
   while true do end
 end
+System.sleep(1)
 Drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
 Graphics.setImageFilters(LOGO, LINEAR)
 Graphics.setImageFilters(BG, LINEAR)
