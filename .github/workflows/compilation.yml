@@ -44,7 +44,6 @@ jobs:
     - name: build changelogs and move extra files
       run: | 
         git --no-pager log --name-only --oneline --pretty=format:"%n---------- commit %h by %an: %s%n -- Changed files are:"> bin/FULL_CHANGELOG.TXT
-        git --no-pager log Latest..HEAD --pretty=format:"- %h  %<(18)%an: %s"> bin/PARTIAL_CHANGELOG.TXT
         cp LICENSE bin/LICENSE.TXT
 
     - name: Get branch
