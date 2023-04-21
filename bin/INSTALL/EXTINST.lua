@@ -1,8 +1,9 @@
--- EXTRA INSTALL ASSETS
--- DO NOT REMOVE!
+
+Drawbar(X_MID, Y_MID, 60, Color.new(0, 255, 0)) -- THIS MUST ALWAYS BE THE FIRST LINE OF THE INSTALLATION TABLE FILE. THIS ENSURES THAT SCREEN HALTS AT A GREEN BAR IF SOMETHING FAILS
+
+
 -- IF YOU WANT TO DISABLE INSTALLATION OF EXTRA FILES press L1 on main menu (R1 Enables them back)
 System.log("declaring installation tables for PS2BBL\n")
--- Installation tables. write values for fixed files, dynamic population of this list can be done with `Update_InstTable()`
 
 --- installation table for memory card.
 MC_INST_TABLE = {
@@ -14,15 +15,15 @@ MC_INST_TABLE = {
 --- installation table for HardDrive
 HDD_INST_TABLE = {
   source = { --- holds file locations relative to KELFBinder CWD.
-  --  SYSUPDATE_HDD_MAIN,
+    SYSUPDATE_HDD_MAIN,
     "INSTALL/KELF/FSCK.XLF"
   },
   target = { --- contains fully qualified HDD paths, so installation routine has all the needed info (partition name, and PFS path)
-  --  "hdd0:__system:pfs:/osd/osdmain.elf",
+    "hdd0:__system:pfs:/osd/osdmain.elf",
     "hdd0:__system:pfs:/fsck/fsck.elf"
   },
   dirs = { --- contains a list of directory names to be created before writing files to target
-  --  "hdd0:__system:pfs:/osd/",
+    "hdd0:__system:pfs:/osd/",
     "hdd0:__system:pfs:/fsck/"
   },
 }
