@@ -729,6 +729,7 @@ function MemcardPickup()
   local mi1
   local mcinfo0 = System.getMCInfo(0)
   local mcinfo1 = System.getMCInfo(1)
+  local MC2_CNTR = SCR_X - 160 - 64
   while true do
     local HC = ((mcinfo0.type == 2) or (mcinfo1.type == 2))
     if mcinfo0.type == 2 then mi0 = MC2
@@ -762,20 +763,20 @@ function MemcardPickup()
       Graphics.drawScaleImage(mi0, 160 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
 
-    Font.ftPrint(LSANS, 524, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 2), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+    Font.ftPrint(LSANS, MC2_CNTR, 270, 8, 630, 32, string.format(LNG_MEMCARD1, 2), Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if mcinfo1.type == 2 then
       if mcinfo1.format == 1 then
-        Font.ftPrint(LSANS, 524, 290, 8, 630, 32, string.format(LNG_MEMCARD2, mcinfo1.freemem), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, MC2_CNTR, 290, 8, 630, 32, string.format(LNG_MEMCARD2, mcinfo1.freemem), Color.new(0x80, 0x80, 0x80, 0x80 - A))
       else
-        Font.ftPrint(LSANS, 524, 290, 8, 630, 32, LNG_UNFORMATTED_CARD, Color.new(0x80, 0, 0, 0x80-A))
+        Font.ftPrint(LSANS, MC2_CNTR, 290, 8, 630, 32, LNG_UNFORMATTED_CARD, Color.new(0x80, 0, 0, 0x80-A))
       end
     elseif mcinfo1.type ~= 0 then
-      Font.ftPrint(LSANS, 524, 290, 8, 630, 32, LNG_INCOMPATIBLE_CARD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Font.ftPrint(LSANS, MC2_CNTR, 290, 8, 630, 32, LNG_INCOMPATIBLE_CARD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
-    if T == 1 then -- minus 32 so image center (instead of the corner) lies on 524
-      Graphics.drawScaleImage(mi1, 524 - 32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
+    if T == 1 then
+      Graphics.drawScaleImage(mi1, MC2_CNTR-32, 180.0, 64, 64, Color.new(0x90, 0x90, 0x90, Q))
     else
-      Graphics.drawScaleImage(mi1, 524 - 32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      Graphics.drawScaleImage(mi1, MC2_CNTR-32, 180.0, 64, 64, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     end
 
     if A > 0 then A = A - 1 end
