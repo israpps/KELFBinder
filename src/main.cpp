@@ -467,8 +467,8 @@ int loadDEV9()
     {
         int ID, RET;
         ID = SifExecModuleBuffer(&ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &RET);
-        EPRINTF(" [DEV9.IRX]: ret=%d, ID=%d\n", RET, ID);
-        if (ID < 0 && RET == 0) // ID smaller than 0: issue reported from modload | RET != 0: driver returned no resident end
+        EPRINTF("[DEV9.IRX]: ret=%d, ID=%d\n", RET, ID);
+        if (ID < 0 && RET == 1) // ID smaller than 0: issue reported from modload | RET == 1: driver returned no resident end
             return 0;
         dev9_loaded = true;
     }
