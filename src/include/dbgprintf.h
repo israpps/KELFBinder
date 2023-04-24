@@ -45,7 +45,7 @@ extern "C" {
     #define DPRINTF_INIT()
 #endif
 
-#define EPRINTF(format, args...) printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
+#define EPRINTF(format, args...) sio_printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
 
 #ifndef DPRINTF_INIT
     #define DPRINTF_INIT(x...)
