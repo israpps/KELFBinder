@@ -12,7 +12,7 @@ extern "C" {
 extern char boot_path[255];
 
 #ifdef DEBUG
-#define dbgprintf(args...) scr_printf(args)
+#define dbgprintf(args...) DPRINTF(args)
 #else
 #define dbgprintf(args...) ;
 #endif
