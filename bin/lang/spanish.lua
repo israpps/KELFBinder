@@ -110,7 +110,12 @@
 	LNG_HDDBOOT_ENABLED = "El Arranque HDD fue habilitado"
 	LNG_HDDFORMAT_CONFIRM = "Estás a punto de formatear el disco duro interno"
 	LNG_HDDFORMAT_CONFIRM2 = "esto borrará toda información contenida dentro de el"
-	LNG_ROMPATCH_PATCH = "actualización de sistem (parche de ROM) = [%s]"
+	LNG_ROMPATCH_PATCH = "actualización de sistema (ROM especifica) = [%s]"
 	LNG_CALCULATING = "Calculando espacio requerido..."
-
+	LNG_HDD_STAT = "Estado del HDD = "
+	LNG_HDD_CON_AND_FORM = "Conectado y formateado"
+	LNG_HDD_UNF = "Sin formatear"
+	LNG_HDD_UNUSABLE = "Inutilizable"
+	LNG_HDD_DISCON = "No conecrado"
+	LNG_HDD_OTHER = "Estado desconocido! (%d)"
 -- TRADUCCION POR El_isra
