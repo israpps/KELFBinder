@@ -680,6 +680,36 @@ function NormalInstall(port, slot)
   System.AllowPowerOffButton(0)
   System.createDirectory(TARGET_FOLD)
   ReportProgress(1, tot)
+
+  if IS_PSX then
+    SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
+    KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
+  else
+    SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
+    KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
+  end
+
+  ReportProgress(2, tot)
+  if (ROMVERN == 100) or (ROMVERN == 101) then -- PROTOKERNEL NEEDS TWO UPDATES TO FUNCTION
+    Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, "BIEXEC-SYSTEM/osd130.elf")) -- SCPH-18000
+    if (ROMVERN == 100) then
+      RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/%s", port, SYSUPDATEPATH))
+      if RET < 0 then Secrerr(RET) return end
+    else
+      RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/%s", port, SYSUPDATEPATH))
+      if RET < 0 then Secrerr(RET) return end
+    end
+  elseif IS_PSX then -- PSX NEEDS SPECIAL PATH
+    ReportProgress(3, tot)
+    RET = Secrman.downloadfile(port, slot, SYSUPDATE_PSX, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
+    if RET < 0 then Secrerr(RET) return end
+  else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
+    ReportProgress(3, tot)
+    RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
+    if RET < 0 then Secrerr(RET) return end
+  end
+  -- KELF install finished! deal with extra files now!
+  ReportProgress(4, tot)
   if REG == 0 or IS_PSX then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
@@ -691,35 +721,6 @@ function NormalInstall(port, slot)
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
 
-  ReportProgress(2, tot)
-  if IS_PSX then
-    SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
-    KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
-  else
-    SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
-    KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
-  end
-
-  ReportProgress(3, tot)
-  if (ROMVERN == 100) or (ROMVERN == 101) then -- PROTOKERNEL NEEDS TWO UPDATES TO FUNCTION
-    Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, "BIEXEC-SYSTEM/osd130.elf")) -- SCPH-18000
-    if (ROMVERN == 100) then
-      RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-      if RET < 0 then Secrerr(RET) return end
-    else
-      RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-      if RET < 0 then Secrerr(RET) return end
-    end
-  elseif IS_PSX then -- PSX NEEDS SPECIAL PATH
-    ReportProgress(4, tot)
-    RET = Secrman.downloadfile(port, slot, SYSUPDATE_PSX, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
-    if RET < 0 then Secrerr(RET) return end
-  else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
-    ReportProgress(4, tot)
-    RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
-    if RET < 0 then Secrerr(RET) return end
-  end
-  -- KELF install finished! deal with extra files now!
   ReportProgress(5, tot)
   Screen.flip()
   RET = InstallExtraAssets(port, 5, tot)
