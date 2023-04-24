@@ -84,7 +84,7 @@ IMPORT_BIN2C(tty2sior_irx);
 #endif
 
 
-enum DEVID{NONE, MC0, MC1, MASS, MX4, ILK, HDD, XFROM, CDVD};
+enum DEVID{NONE, MC0, MC1, MASS, HOST, MX4, ILK, HDD, XFROM, CDVD};
 unsigned int BOOT_PATH_ID = DEVID::NONE;
 char boot_path[255];
 char ConsoleROMVER[17];
@@ -127,8 +127,13 @@ void setLuaBootPath(int argc, char **argv, int idx)
         BOOT_PATH_ID = DEVID::MASS;
         strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
     }
-
-    if ((!strncmp(boot_path, "hdd0:", 5)) && (strstr(boot_path, ":pfs:") != NULL)) // hdd path found
+    else if (!strncmp(boot_path, "mc0", 3) || !strncmp(boot_path, "mc1", 3)) {
+        BOOT_PATH_ID = (boot_path[2] == '0') ? DEVID::MC0 : DEVID::MC1;
+    }
+    else if (!strncmp(boot_path, "host", 4)) {
+        BOOT_PATH_ID = DEVID::HOST;
+    }
+    else if ((!strncmp(boot_path, "hdd0:", 5)) && (strstr(boot_path, ":pfs:") != NULL)) // hdd path found
     {
         if (getMountInfo(boot_path, NULL, MountPoint, newCWD)) // see if we can parse it
         {
