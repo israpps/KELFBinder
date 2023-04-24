@@ -38,6 +38,7 @@ HDD_INST_TABLE = {
 function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_TABLE)
   local tmp = System.listDirectory(SOURCEDIR)
   local COUNT = 0 -- Ammount of files that will be installed
+  local add_dir = true
   for x = 1, #tmp do
     if not tmp[x].directory and tmp[x].size > 0 then
         table.insert(SOURCE_TABLE, SOURCEDIR.."/"..tmp[x].name)
@@ -46,7 +47,14 @@ function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_
     end
   end
   if COUNT > 0 then --at least one file will be installed... append to mkdir struct
-    table.insert(MKDIR_TABLE, DESTNTDIR)
+    for x = 1, #MKDIR_TABLE do
+      if MKDIR_TABLE[x] == DESTNTDIR then
+        add_dir = false
+      end
+    end
+    if add_dir then
+      table.insert(MKDIR_TABLE, DESTNTDIR)
+    end
     System.log(string.format("Installation table: %d files listed to be moved from '%s' to target:/%s'\n", COUNT, SOURCEDIR, DESTNTDIR))
   end
   return COUNT
@@ -62,12 +70,12 @@ Update_InstTable("INSTALL/ASSETS/BOOT-HDD"  , "hdd0:__sysconf:pfs:/BOOT"  , HDD_
 
 Update_InstTable("INSTALL/ASSETS/FSCK"  , "hdd0:__system:pfs:/fsck/lang"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 
-System.log("file installation table:\n")
+System.log("MC installation table:\n")
 for x = 1, #MC_INST_TABLE.source do
   System.log(string.format("\t[%s] --> [%s]\n", MC_INST_TABLE.source[x], MC_INST_TABLE.target[x]))
 end
 
-System.log("folder creation table:\n")
-for x = 1, #MC_INST_TABLE.dirs do
-  System.log(string.format("\t[%s]\n", MC_INST_TABLE.dirs[x]))
+System.log("HDD installation table:\n")
+for x = 1, #HDD_INST_TABLE.source do
+  System.log(string.format("\t[%s] --> [%s]\n", HDD_INST_TABLE.source[x], HDD_INST_TABLE.target[x]))
 end
