@@ -111,6 +111,12 @@
 	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
 	LNG_ROMPATCH_PATCH = "System update ROM Patch = [%s]"
 	LNG_CALCULATING = "Calculating required space..."
+	LNG_HDD_STAT = "HDD Status = "
+	LNG_HDD_CON_AND_FORM = "Connected and formatted"
+	LNG_HDD_UNF = "Not formatted"
+	LNG_HDD_UNUSABLE = "Not usable"
+	LNG_HDD_DISCON = "Not connected"
+	LNG_HDD_OTHER = "Unknown status! (%d)"
 _ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()
@@ -136,8 +142,8 @@ end
 		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
 	end
 	Drawbar(352, 240, 20, Color.new(255, 255, 255))
-	BETANUM = "014"
-IS_NOT_PUBLIC_READY = false
+	BETANUM = "HDD-002"
+IS_NOT_PUBLIC_READY = true
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
   elseif System.doesFileExist("System/index.lua") then
