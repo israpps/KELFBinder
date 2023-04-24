@@ -5,6 +5,8 @@ Drawbar(X_MID, Y_MID, 60, Color.new(0, 255, 0)) -- THIS MUST ALWAYS BE THE FIRST
 -- IF YOU WANT TO DISABLE INSTALLATION OF EXTRA FILES press L1 on main menu (R1 Enables them back)
 System.log("declaring installation tables for PS2BBL\n")
 
+SYSUPDATE_ICON_SYS = "PS2BBL.icn" -- icon files for memory card update
+SYSUPDATE_ICON_SYS_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_SYS
 --- installation table for memory card.
 MC_INST_TABLE = {
   source = {}, --- holds file locations relative to KELFBinder CWD.
