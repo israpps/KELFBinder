@@ -13,6 +13,9 @@ System.log("KELFBinder.lua starts\n")
 Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
+--- __0:__ connected&formatted, __1:__ unformatted, __2:__ unusable, __3:__ not connected, __>3__ other errors
+HDD_STATUS = 4
+
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
@@ -46,9 +49,6 @@ TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 SYSUPDATE_HDD_MAIN  = "INSTALL/KELF/HSYSTEM.XLF"
 SYSUPDATE_HDD_BOOTSTRAP = "INSTALL/KELF/MBR.XLF"
 
-HDD_USABLE = KELFBinder.CheckHDDUsable()
-STR_HDD_USABLE = LNG_NO
-if HDD_USABLE then STR_HDD_USABLE = LNG_YES end
 
 
 
@@ -104,6 +104,7 @@ elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then do
 else
   System.log("unknown language ID ("..Language..")")
 end
+
 Drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
 if System.doesFileExist(FONTPATH) then
   Font.ftInit()
@@ -112,6 +113,18 @@ if System.doesFileExist(FONTPATH) then
 else
   Screen.clear(Color.new(128, 128, 0)) Screen.flip() while true do end
 end
+
+function Eval_HDDStatus()
+  HDD_STATUS = HDD.GetStatus()
+  if HDD_STATUS == 0 then STR_HDD_USABLE = LNG_HDD_CON_AND_FORM
+  elseif HDD_STATUS == 1 then STR_HDD_USABLE = LNG_HDD_UNF
+  elseif HDD_STATUS == 2 then STR_HDD_USABLE = LNG_HDD_UNUSABLE
+  elseif HDD_STATUS == 3 then STR_HDD_USABLE = LNG_HDD_DISCON
+  else
+    STR_HDD_USABLE = string.format(LNG_HDD_OTHER, HDD_STATUS)
+  end
+end
+Eval_HDDStatus() --we must call it at startup no matter what
 
 function ORBMAN(Q)
   R = R+RINCREMENT
@@ -413,12 +426,18 @@ function HDDMAN()
   local D = 15
   local A = 0x80
   local COL = 100
+  local COL2 = 100
   local PROMTPS = {
     LNG_HDDPROMPT,
     LNG_HDDPROMPT1,
     LNG_HDDPROMPT2,
   }
-  if HDD_USABLE then COL = 200 end
+  if HDD_STATUS == 0 then
+    COL = 200
+    COL2 = 200
+  elseif HDD_STATUS == 1 then
+    COL2 = 200
+  end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -429,7 +448,7 @@ function HDDMAN()
     end
     if T == 2 then
       Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
-      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(COL, COL, COL, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(COL2, COL2, COL2, 0x80 - A))
     end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_HDD_INSTOPT3, Color.new(0, 0xde, 0xff, 0x80 - A)) else
@@ -444,7 +463,7 @@ function HDDMAN()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
       D = 1
-      if HDD_USABLE then -- hdd usable means all features are available, else. only eeprom stuff
+      if (HDD_STATUS < 2 and T == 2) or (HDD_STATUS == 0 and T == 1) then -- hdd usable means all features are available, else. only eeprom stuff
         Screen.clear()
         break
       else
@@ -1704,7 +1723,7 @@ function SystemInfo()
   local D = 15
   local A = 0x50
   local UPDTPATH
-  if REAL_IS_PSX then 
+  if REAL_IS_PSX then
     UPDTPATH = "BIEXEC-SYSTEM/xosdmain.elf"
   else
     UPDTPATH = KELFBinder.calculateSysUpdatePath()
@@ -1727,7 +1746,7 @@ function SystemInfo()
       Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
 
     end
-    Font.ftPrint(LSANS, 50, 160, 0, 630, 32, "HDD Connected = "..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(LSANS, 50, 160, 0, 630, 32, LNG_HDD_STAT..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
 
     Promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
     if A > 0 then A = A - 1 end
@@ -1835,6 +1854,7 @@ while true do
     elseif (ACT == 2) then
       local continue = Report(200, false, true)
       if continue then System.log("\nUser asked to format HDD...\n\n") end
+      Eval_HDDStatus() --check again!
     elseif (ACT == 3) then
       local ret = HDD.EnableHDDBoot()
       ret = 100 + ret
