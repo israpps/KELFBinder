@@ -1,0 +1,29 @@
+{
+    "Lua.diagnostics.globals": [
+        "System",
+        "Font",
+        "Color",
+        "Screen",
+        "Secrman",
+        "Graphics",
+        "Pads",
+        "PAD_CROSS",
+        "PAD_CIRCLE",
+        "NONINTERLACED",
+        "INTERLACED",
+        "FREAD",
+        "KELFBinder",
+        "NTSC",
+        "PAL",
+        "CT24",
+        "FIELD",
+        "HDD",
+        "LINEAR",
+        "PAD_DOWN",
+        "PAD_UP"
+    ],
+    "files.associations": {
+        "*.make": "makefile",
+        "baexec-system_paths.h": "c"
+    }
+}
