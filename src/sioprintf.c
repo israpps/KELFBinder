@@ -8,4 +8,5 @@ void sio_printf(const char *fmt, ...)
     char str[256];
     vsnprintf(str, sizeof(str), fmt, args);
     sio_putsn(str);
+    va_end(args);
 }
