@@ -391,20 +391,8 @@ int main(int argc, char *argv[])
         ConsoleROMVER[16] = '\0';
         close(fd);
     }
-    // if no parameters are specified, use the default boot
-    if (argc < 2) {
-        // set boot path global variable based on the elf path
-        setLuaBootPath(argc, argv, 0);
-    } else // set path based on the specified script
-    {
-        if (!strchr(argv[1], ':')) // filename doesn't contain device
-                                   // set boot path global variable based on the elf path
-            setLuaBootPath(argc, argv, 0);
-        else
-            // set path global variable based on the given script path
-            setLuaBootPath(argc, argv, 1);
-    }
-
+    
+    setLuaBootPath(argc, argv, 0);
     // Lua init
     // init internals library
 
