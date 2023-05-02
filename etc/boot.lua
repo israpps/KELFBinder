@@ -109,7 +109,7 @@
 	LNG_HDDBOOT_ENABLED = "HDD Booting has been enabled"
 	LNG_HDDFORMAT_CONFIRM = "You are about to format the internal HDD"
 	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
-	LNG_ROMPATCH_PATCH = "System update ROM Patch = [%s]"
+	LNG_ROMPATCH_PATCH = "System Update Path (ROM specific) = [%s]"
 	LNG_CALCULATING = "Calculating required space..."
 	LNG_HDD_STAT = "HDD Status = "
 	LNG_HDD_CON_AND_FORM = "Connected and formatted"
