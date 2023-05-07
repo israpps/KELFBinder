@@ -300,7 +300,7 @@ function Greeting()
     Graphics.drawImage(LOGO, X_MID-256, 50.0, Color.new(128, 128, 128, Q))
     if IS_NOT_PUBLIC_READY then
       Font.ftPrint(LSANS, X_MID, 20, 8, 630, 16, "THIS IS NOT A PUBLIC-READY VERSION!", Color.new(128, 128, 128, Q))
-      Font.ftPrint(LSANS, X_MID, 40, 8, 630, 16, "Closed Release candidate - build "..BETANUM, Color.new(128, 128, 128, Q))
+      Font.ftPrint(LSANS, X_MID, 40, 8, 630, 16, BETANUM, Color.new(128, 128, 128, Q))
     end
     Font.ftPrint(LSANS, X_MID, 310, 8, 630, 16, LNG_CRDTS0, Color.new(128, 128, 128, Q))
     Font.ftPrint(LSANS, X_MID, 330, 8, 630, 16, LNG_CRDTS1, Color.new(128, 128, 128, Q))

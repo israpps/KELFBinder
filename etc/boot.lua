@@ -134,15 +134,15 @@ end
 	System.closeFile(temporaryVar)
 	KELFBinder.init(ROMVER)
 	local REGION = KELFBinder.getsystemregion()
-	if REGION == 3 then
-		System.log("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD\n")
-		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
-	else
-		System.log("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD\n")
-		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
+	local VMODE = NTSC
+	if REGION == 3 then VMODE = PAL end
+	if System.doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
+	elseif System.doesFileExist("INSTALL/CORE/720p.opt") then VMODE = _720p
+	elseif System.doesFileExist("INSTALL/CORE/1080i.opt") then VMODE = _1080i
 	end
+	Screen.setMode(VMODE, 704, 480, CT24, INTERLACED, FIELD)
 	Drawbar(352, 240, 20, Color.new(255, 255, 255))
-	BETANUM = "HDD-002"
+	BETANUM = "Early Access HDD-003 Beta"
 IS_NOT_PUBLIC_READY = true
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
