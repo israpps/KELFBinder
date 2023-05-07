@@ -124,12 +124,13 @@ all: $(EXT_LIBS) $(EE_BIN)
 
 	echo "Building $(EE_BIN)..."
 	$(EE_STRIP) $(EE_BIN)
-
+ifneq ($(DEBUG), 0)
 	echo "Compressing $(EE_BIN_PKD)...\n"
 ifeq ($(DEBUG),1)
 	ps2-packer -v $(EE_BIN) $(EE_BIN_PKD)
 else
 	ps2-packer $(EE_BIN) $(EE_BIN_PKD) > /dev/null
+endif
 endif
 	@echo "$$HEADER"
 #--------------------- Embedded ressources ------------------------#
