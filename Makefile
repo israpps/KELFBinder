@@ -182,6 +182,9 @@ update_deps:
 	wget -q https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
 	cp bin/INSTALL/CORE/BACKDOOR.ELF bin/INSTALL/ASSETS/BOOT/BOOT.ELF
 
+intellisense:
+	etc/update_lua_globals.sh
+
 .PHONY: reset run rclean debug
 
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.c | $(EE_OBJS_DIR)

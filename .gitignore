@@ -1,6 +1,6 @@
 
 .vscode/launch.json
-
+*.bak
 *.otf
 bin/img/bg0.png
 bin/img/bg1.png
