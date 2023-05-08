@@ -143,23 +143,12 @@ end
 	Screen.setMode(VMODE, 704, 480, CT24, INTERLACED, FIELD)
 	Drawbar(352, 240, 20, Color.new(255, 255, 255))
 	BETANUM = "Early Access HDD-003 Beta"
-IS_NOT_PUBLIC_READY = true
+	IS_NOT_PUBLIC_READY = true
+
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
-  elseif System.doesFileExist("System/index.lua") then
-	dofile("System/index.lua");
-  elseif System.doesFileExist("System/script.lua") then
-	dofile("System/script.lua");
-  elseif System.doesFileExist("System/system.lua") then
-	dofile("System/system.lua");
-  elseif System.doesFileExist("index.lua") then
-	dofile("index.lua");
-  elseif System.doesFileExist("script.lua") then
-	dofile("script.lua");
-  elseif System.doesFileExist("system.lua") then
-	dofile("system.lua");
 end
-
+System.sleep(5)
 Screen.clear(Color.new(0xff, 0xff, 0xff))
 Screen.flip()
 while true do end

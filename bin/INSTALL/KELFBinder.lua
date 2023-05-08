@@ -14,7 +14,7 @@ Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
 --- __0:__ connected&formatted, __1:__ unformatted, __2:__ unusable, __3:__ not connected, __>3__ other errors
-HDD_STATUS = 4
+HDD_STATUS = 3
 
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()
@@ -45,9 +45,6 @@ TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 
 SYSUPDATE_HDD_MAIN  = "INSTALL/KELF/HSYSTEM.XLF"
 SYSUPDATE_HDD_BOOTSTRAP = "INSTALL/KELF/MBR.XLF"
-
-
-
 
 Drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
 local circle = Graphics.loadImageEmbedded(5)
@@ -85,7 +82,7 @@ Graphics.setImageFilters(GREENCURSOR, LINEAR)
 Drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
 local REGION = KELFBinder.getsystemregion()
 --local REGIONSTR = KELFBinder.getsystemregionString(REGION)
-local R = 0.1
+local R = math.random(1,180)
 local RINCREMENT = 0.00018
 
 Language = KELFBinder.getsystemLanguage()
@@ -299,8 +296,8 @@ function Greeting()
     end
     Graphics.drawImage(LOGO, X_MID-256, 50.0, Color.new(128, 128, 128, Q))
     if IS_NOT_PUBLIC_READY then
-      Font.ftPrint(LSANS, X_MID, 20, 8, 630, 16, "THIS IS NOT A PUBLIC-READY VERSION!", Color.new(128, 128, 128, Q))
-      Font.ftPrint(LSANS, X_MID, 40, 8, 630, 16, BETANUM, Color.new(128, 128, 128, Q))
+      Font.ftPrint(LSANS, X_MID, 20, 8, 630, 16, "THIS IS NOT A PUBLIC-READY VERSION!", Color.new(200, 200, 0, Q))
+      Font.ftPrint(LSANS, X_MID, 40, 8, 630, 16, BETANUM, Color.new(200, 200, 0, Q))
     end
     Font.ftPrint(LSANS, X_MID, 310, 8, 630, 16, LNG_CRDTS0, Color.new(128, 128, 128, Q))
     Font.ftPrint(LSANS, X_MID, 330, 8, 630, 16, LNG_CRDTS1, Color.new(128, 128, 128, Q))
@@ -1721,6 +1718,7 @@ function SystemInfo()
   local D = 15
   local A = 0x50
   local UPDTPATH
+  local COL = 0
   if REAL_IS_PSX then
     UPDTPATH = "BIEXEC-SYSTEM/xosdmain.elf"
   else
@@ -1728,6 +1726,7 @@ function SystemInfo()
   end
   local COMPATIBLE_WITH_UPDATES = LNG_NO
   if SUPPORTS_UPDATES then COMPATIBLE_WITH_UPDATES = LNG_YES end
+  if HDD_STATUS == 0 or HDD_STATUS == 1 then COL = 220 end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -1742,9 +1741,8 @@ function SystemInfo()
     if SUPPORTS_UPDATES then
       Font.ftPrint(LSANS, 50, 120, 0, 630, 32, string.format(LNG_SUPATH, UPDTPATH), Color.new(220, 220, 220, 0x80 - A))
       Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
-
     end
-    Font.ftPrint(LSANS, 50, 160, 0, 630, 32, LNG_HDD_STAT..STR_HDD_USABLE, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(LSANS, 50, 160, 0, 630, 32, LNG_HDD_STAT..STR_HDD_USABLE, Color.new(220, 220, COL, 0x80 - A))
 
     Promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
     if A > 0 then A = A - 1 end

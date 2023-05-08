@@ -11,7 +11,7 @@
 static lua_State *L;
 
 const char * runScript(const char* script, bool isStringBuffer )
-{	
+{
     DPRINTF("Creating luaVM... \n");
 
   	L = luaL_newstate();
