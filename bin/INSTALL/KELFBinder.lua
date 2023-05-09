@@ -303,7 +303,8 @@ function Greeting()
     Font.ftPrint(LSANS, X_MID, 330, 8, 630, 16, LNG_CRDTS1, Color.new(128, 128, 128, Q))
     Font.ftPrint(LSANS, X_MID, 350, 8, 630, 16, LNG_CRDTS2, Color.new(128, 128, 128, Q))
     Font.ftPrint(LSANS, X_MID, 370, 8, 630, 16, LNG_CRDTS3, Color.new(128, 128, 128, Q))
-    Font.ftPrint(LSANS, X_MID, 390, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 240, Q))
+    Font.ftPrint(LSANS, X_MID, 390, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 10, Q))
+    Font.ftPrint(LSANS, X_MID, 410, 8, 630, 16, LNG_DOCSLINK, Color.new(240, 240, 10, Q))
     Screen.flip()
   end
 end
@@ -457,7 +458,7 @@ function HDDMAN()
 
     if Pads.check(pad, PAD_CROSS) and D == 0 then
       D = 1
-      if (HDD_STATUS < 2 and T == 2) or (HDD_STATUS == 0 and T == 1) then -- hdd usable means all features are available, else. only eeprom stuff
+      if ((HDD_STATUS == 0 or HDD_STATUS == 1) and T == 2) or (HDD_STATUS == 0 and T == 1) or T == 3 then -- hdd usable means all features are available, else. only eeprom stuff
         Screen.clear()
         break
       else
@@ -1774,6 +1775,7 @@ function Credits()
     Font.ftPrint(LSANS, X_MID, 340, 8, 630, 16, "sp193, Leo Oliveira", Color.new(200, 200, 200, Q))
     Graphics.drawRect(0, 370, SCR_X, 2, Color.new(255, 255, 255, Q))
     Font.ftPrint(LSANS, X_MID, 380, 8, 630, 16, LNG_CRDTS4, Color.new(240, 240, 10, Q))
+    Font.ftPrint(LSANS, X_MID, 400, 8, 630, 16, LNG_DOCSLINK, Color.new(240, 240, 10, Q))
     Screen.flip()
     if (Q ~= 0x80) then Q = Q + QINC end
     pad = Pads.get()
