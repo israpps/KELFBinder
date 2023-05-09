@@ -461,8 +461,6 @@ function HDDMAN()
       if ((HDD_STATUS == 0 or HDD_STATUS == 1) and T == 2) or (HDD_STATUS == 0 and T == 1) or T == 3 then -- hdd usable means all features are available, else. only eeprom stuff
         Screen.clear()
         break
-      else
-        if T ~= 3 then break end
       end
     end
 
