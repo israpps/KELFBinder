@@ -1613,7 +1613,7 @@ function ReportProgress(prog, total)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
-  DrawbarNbg(X_MID, Y_MID, 100, Color.new(100, 100, 100, 0x80))
+  DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, 0x30))
   DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
   Screen.flip()
 end
