@@ -137,7 +137,7 @@ end
 	ROMVER = string.sub(ROMVER, 0, 14)
 	System.closeFile(temporaryVar)
 	KELFBinder.init(ROMVER)
-	REGION = KELFBinder.getsystemregion()
+	local REGION = KELFBinder.getsystemregion()
 	local VMODE = NTSC
 	if REGION == 3 then VMODE = PAL end
 	if System.doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
