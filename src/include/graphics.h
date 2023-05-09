@@ -107,6 +107,7 @@ extern void UnloadTexture(GSTEXTURE *txt);
 extern void fntDrawQuad(rm_quad_t *q);
 
 extern GSFONT *loadFont(const char *path);
+// GSFONT* loadFontBuffer(unsigned char* ptr, unsigned int size);
 
 extern void printFontText(GSFONT *font, const char *text, float x, float y, float scale, Color color);
 

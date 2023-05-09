@@ -13,23 +13,25 @@ define HEADER
                                                                                 
 endef
 export HEADER
+REVISION = 0
+REVISION = $(shell expr $(shell git rev-list --count HEAD))
 
-#------------------------------------------------------------------#
-#----------------------- Configuration flags ----------------------#
-#------------------------------------------------------------------#
-#-------------------------- Reset the IOP -------------------------#
+#---------------------{ Configuration flags }---------------------#
+#------------------------{ Reset the IOP }------------------------#
 RESET_IOP ?= 1
-#---------------------- Serial port debugging ---------------------#
+#--------------------{ Serial port debugging }--------------------#
 EE_SIO ?= 1
-#------------------- Display IOP printf on EE_SIO -----------------#
+#-----------------{ Display IOP printf on EE_SIO }----------------#
 TTY2SIOR ?= 0
-#------------------------- printf over UDP ------------------------#
+#-----------------------{ printf over UDP }-----------------------#
 UDPTTY ?= 0
-#---------------------- enable DEBUGGING MODE ---------------------#
+#--------------------{ enable DEBUGGING MODE }--------------------#
 DEBUG ?= 0
-#----------------------- Set IP for PS2Client ---------------------#
+#---------------------{ Set IP for PS2Client }--------------------#
 PS2LINK_IP ?= 192.168.1.10
-#------------------------------------------------------------------#
+#-------{ add checks/behaviour intended for release build }-------#
+RELEASE ?= 1
+#-----------------------------------------------------------------#
 .SILENT:
 
 EE_BIN_DIR = bin/
@@ -45,24 +47,26 @@ EE_LIBS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib/ \
 EE_INCS += -Isrc/include -I$(PS2DEV)/gsKit/include -I$(PS2SDK)/ports/include -I$(PS2SDK)/ports/include/freetype2 -I$(PS2SDK)/ports/include/zlib
 EE_INCS += -Imodules/ds34bt/ee -Imodules/ds34usb/ee
 
-EE_CFLAGS   += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
-EE_CXXFLAGS += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2
+GLOBFLAGS += -Wno-sign-compare -fno-strict-aliasing -fno-exceptions -DLUA_USE_PS2 #flags passed to both C/C++ compiler
 
 ifeq ($(RESET_IOP),1)
-EE_CXXFLAGS += -DRESET_IOP
+GLOBFLAGS += -DRESET_IOP
 endif
 
-ifeq ($(DEBUG),1)
-EE_CXXFLAGS += -DDEBUG
-EE_CFLAGS += -DDEBUG
+ifneq ($(DEBUG),0)
+GLOBFLAGS += -DDEBUG=$(DEBUG)
 EE_CFLAGS += -O0 -g
 else
   EE_CFLAGS += -Os
   EE_LDFLAGS += -s
 endif
-
+ifneq ($(RELEASE),0)
+  GLOBFLAGS += -DRELEASE
+endif
 BIN2S = $(PS2SDK)/bin/bin2s
 
+EE_CXXFLAGS += $(GLOBFLAGS)
+EE_CFLAGS += $(GLOBFLAGS)
 #-------------------------- App Content ---------------------------#
 EXT_LIBS = modules/ds34usb/ee/libds34usb.a modules/ds34bt/ee/libds34bt.a
 
@@ -88,21 +92,21 @@ EMBEDDED_RSC = boot.o \
 
 #---------------- Conditions wich affectApp Content ---------------#
 ifeq ($(UDPTTY), 1)
-  EE_CXXFLAGS += -DUDPTTY
+  GLOBFLAGS += -DUDPTTY
   EE_CFLAGS += -DUDPTTY
   IOP_MODULES += udptty_irx.o ps2ip_irx.o
   ifeq ($(EE_SIO), 0) # only enable common printf if EE_SIO is disabled. this allows separating EE and IOP printf
-    EE_CXXFLAGS += -DCOMMON_PRINTF
+    GLOBFLAGS += -DCOMMON_PRINTF
     EE_CFLAGS += -DCOMMON_PRINTF
   endif
 endif
 
 ifeq ($(EE_SIO), 1)
-  EE_CXXFLAGS += -DSIO_PRINTF
+  GLOBFLAGS += -DSIO_PRINTF
   EE_CFLAGS += -DSIO_PRINTF
   EE_LIBS += -lsiocookie
   ifeq ($(TTY2SIOR), 1)
-    EE_CXXFLAGS += -DTTY2SIOR
+    GLOBFLAGS += -DTTY2SIOR
     EE_CFLAGS += -DTTY2SIOR
     IOP_MODULES += tty2sior_irx.o
     EE_LIBS += -lisra_sior
@@ -133,6 +137,7 @@ else
 endif
 endif
 	@echo "$$HEADER"
+	@echo  rev$(REVISION)
 #--------------------- Embedded ressources ------------------------#
 
 $(EE_ASM_DIR)boot.s: etc/boot.lua | $(EE_ASM_DIR)
@@ -188,21 +193,26 @@ intellisense:
 
 .PHONY: reset run rclean debug
 
+changelog:
+	@echo generating full changelog...
+	@git --no-pager log --name-only --oneline --pretty=format:"%n---------- commit %h: %B%n- Author: %an%n- date: %cd %n-- Changed files:"> bin/FULL_CHANGELOG.TXT
+	@sed -e "s/\[skip actions\]//g" -i bin/FULL_CHANGELOG.TXT
+
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.c | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo " CC  - $@"
+	@echo "\033[1m CC  - $@\033[0m"
 endif
 	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
 
 $(EE_OBJS_DIR)%.o: $(EE_ASM_DIR)%.s | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo " ASM - $@"
+	@echo "\033[1m ASM - $@\033[0m"
 endif
 	$(EE_AS) $(EE_ASFLAGS) $< -o $@
 
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.cpp | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo " CXX - $@"
+	@echo "\033[1m CXX - $@\033[0m"
 endif
 	$(EE_CXX) $(EE_CXXFLAGS) $(EE_INCS) -c $< -o $@
 
