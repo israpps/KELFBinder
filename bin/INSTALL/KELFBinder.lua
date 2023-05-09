@@ -1726,7 +1726,7 @@ function SystemInfo()
   end
   local COMPATIBLE_WITH_UPDATES = LNG_NO
   if SUPPORTS_UPDATES then COMPATIBLE_WITH_UPDATES = LNG_YES end
-  if HDD_STATUS == 0 or HDD_STATUS == 1 then COL = 220 end
+  if HDD_STATUS == 0 or HDD_STATUS == 1 or HDD_STATUS == 3 then COL = 220 end
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
