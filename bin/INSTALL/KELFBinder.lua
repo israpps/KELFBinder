@@ -1723,6 +1723,13 @@ function SystemInfo()
   else
     UPDTPATH = KELFBinder.calculateSysUpdatePath()
   end
+  local ROMPATCH_PATH = KELFBinder.calculateSysUpdateROMPatch()
+  if ROMVERN < 150 then ROMPATCH_PATH = LNG_UNSUPPORTED end
+
+  local SUPPORTS_HDD_UPDATES
+  if ROMVERN > 200 then SUPPORTS_HDD_UPDATES = LNG_NO
+  elseif KELFBinder.DoesConsoleNeedHDDLOAD() then SUPPORTS_HDD_UPDATES = string.format(LNG_YES.." (%s)", LNG_HDD_NEEDS_HDDLOAD) else SUPPORTS_HDD_UPDATES = LNG_YES end
+
   local COMPATIBLE_WITH_UPDATES = LNG_NO
   if SUPPORTS_UPDATES then COMPATIBLE_WITH_UPDATES = LNG_YES end
   if HDD_STATUS == 0 or HDD_STATUS == 1 or HDD_STATUS == 3 then COL = 220 end
@@ -1739,9 +1746,10 @@ function SystemInfo()
       Color.new(220, 220, 220, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(LSANS, 50, 120, 0, 630, 32, string.format(LNG_SUPATH, UPDTPATH), Color.new(220, 220, 220, 0x80 - A))
-      Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, KELFBinder.calculateSysUpdateROMPatch()), Color.new(220, 220, 220, 0x80 - A))
+      Font.ftPrint(LSANS, 50, 140, 0, 630, 32, string.format(LNG_ROMPATCH_PATCH, ROMPATCH_PATH), Color.new(220, 220, 220, 0x80 - A))
     end
     Font.ftPrint(LSANS, 50, 160, 0, 630, 32, LNG_HDD_STAT..STR_HDD_USABLE, Color.new(220, 220, COL, 0x80 - A))
+    Font.ftPrint(LSANS, 50, 180, 0, 630, 32, LNG_HDD_UPDATES_SUPPORT.." "..SUPPORTS_HDD_UPDATES, Color.new(220, 220, 220, 0x80 - A))
 
     Promptkeys(0, LNG_CT0, 1, LNG_CT4, 0, 0, A)
     if A > 0 then A = A - 1 end

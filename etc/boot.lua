@@ -1,8 +1,9 @@
 	LNG_CRDTS0 = "Coded by El_isra (aka: Matias Israelson)"
-	LNG_CRDTS1 = "Based on Enceladus by Daniel Santos"
-	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer"
-	LNG_CRDTS3 = "GFX by Berion"
+	LNG_CRDTS1 = "Based on Enceladus. by Daniel Santos"
+	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9. series installer by sp193"
+	LNG_CRDTS3 = "GFX made by Berion"
 	LNG_CRDTS4 = "Get me free at https://github.com/israpps/KELFBinder"
+	LNG_DOCSLINK = "Documentation available at https://israpps.github.io/KELFBinder/"
 	LNG_CRDTS5 = "Thanks to:"
 	LNG_MM1 = "Welcome to KELFBinder"
 	LNG_MM2 = "Manage System Updates"
@@ -117,6 +118,9 @@
 	LNG_HDD_UNUSABLE = "Not usable"
 	LNG_HDD_DISCON = "Not connected"
 	LNG_HDD_OTHER = "Unknown status! (%d)"
+	LNG_HDD_UPDATES_SUPPORT = "Supports HDD Updates:"
+	LNG_HDD_NEEDS_HDDLOAD = "Needs HDDLOAD"
+	LNG_UNSUPPORTED = "Unsupported"
 _ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()

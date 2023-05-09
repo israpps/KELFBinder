@@ -277,6 +277,13 @@ static int lua_getConsoleModel(lua_State *L)
     return 1;
 }
 
+static int lua_checkConsoleNeedsExtHDDLOAD(lua_State *L)
+{
+    bool needs_HDDLOAD = (ROMREGION == CONSOLE_REGIONS::JAPAN && ROMVERSION <= 120) || (ROMVERSION == 200); // PCMCIA or 70k unit
+    lua_pushboolean(L, needs_HDDLOAD);
+    return 1;
+}
+
 static const luaL_Reg KELFBinder_functions[] = {
     {"init", lua_KELFBinderInit},
     {"deinit", lua_KELFBinderDeInit},
@@ -292,6 +299,7 @@ static const luaL_Reg KELFBinder_functions[] = {
     {"InitConsoleModel", lua_initConsoleModel},
     {"getConsoleModel", lua_getConsoleModel},
     {"getDVDPlayerFolder",lua_getDVDPlayerUpdatefolder},
+    {"DoesConsoleNeedHDDLOAD", lua_checkConsoleNeedsExtHDDLOAD},
     {0, 0}
 };
 
