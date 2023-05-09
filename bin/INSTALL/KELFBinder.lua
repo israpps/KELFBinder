@@ -80,8 +80,6 @@ Graphics.setImageFilters(REDCURSOR, LINEAR)
 Graphics.setImageFilters(GREENCURSOR, LINEAR)
 
 Drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
-local REGION = KELFBinder.getsystemregion()
---local REGIONSTR = KELFBinder.getsystemregionString(REGION)
 local R = math.random(1,180)
 local RINCREMENT = 0.00018
 
@@ -649,7 +647,7 @@ function NormalInstall(port, slot)
       System.doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
 
   local RET
-  local REG = KELFBinder.getsystemregion()
+  local REG = REGION
   local TARGET_FOLD
   local FOLDCOUNT = 1 -- the system update folder that we'll be dealing with
   local FILECOUNT = 2 -- icons + whatever updates you push
@@ -863,7 +861,7 @@ function ExpertINSTprompt()
   local REGI = {LNG_JPN, LNG_USA, LNG_ASI, LNG_EUR, LNG_CHN}
   local SYSUP = KELFBinder.calculateSysUpdatePath()
   SYSUP = string.sub(SYSUP, 15)
-  SYSUP = REGI[KELFBinder.getsystemregion()+1].." - "..SYSUP
+  SYSUP = REGI[REGION+1].." - "..SYSUP
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
