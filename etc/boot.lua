@@ -121,6 +121,11 @@
 	LNG_HDD_UPDATES_SUPPORT = "Supports HDD Updates:"
 	LNG_HDD_NEEDS_HDDLOAD = "Needs HDDLOAD"
 	LNG_UNSUPPORTED = "Unsupported"
+	LNG_HDD_SMART_STATUS_FAILS_WARNING = "The HDD S.M.A.R.T Status is failing, the HDD will die soon"
+	LNG_HDD_SECTOR_ERROR_WARNING = "Damaged sectors have been detected on the HDD"
+	LNG_HDD_CORRUPTED_PART_WARNING = "Corrupted partition(s) detected"
+	LNG_HDD_RECOMMEND_FORMAT_OR_FSCK = "It is recommended to run HDDChecker or format the HDD to fix the issue."
+	LNG_HDD_RECOMMEND_HDD_REPLACE = "It is recommended to replace the HDD."
 _ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()

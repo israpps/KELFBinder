@@ -1188,8 +1188,16 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
         Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDDFORMAT_CONFIRM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_HDDFORMAT_CONFIRM2, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_CONTINUE.."?", Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == 300 then
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SMART_STATUS_FAILS_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0, 0x80 - A))
+      elseif RET == 301 then
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SECTOR_ERROR_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0, 0x80 - A))
+      elseif RET == 302 then
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_CORRUPTED_PART_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_FORMAT_OR_FSCK, Color.new(0x80, 0x80, 0, 0x80 - A))
       end
-
       if Pads.check(pad, PAD_CROSS) and A == 0 then
         ret = true
         QIN = -1
@@ -1204,7 +1212,6 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
     if Q > 0x7f then break end
     Screen.flip()
   end
-  OrbIntro(1)
   return ret
 end
 
@@ -1799,7 +1806,21 @@ while NEIN > 0 do
   NEIN = NEIN-2
 end
 Greeting()
-if SUPPORTS_UPDATES == false then WarnIncompatibleMachine() end
+if SUPPORTS_UPDATES == false then
+  WarnIncompatibleMachine()
+end
+if HDD_STATUS == 0 or HDD_STATUS == 1 then
+  if HDD.GetSMARTStatus() ~= 0 then
+    Report(300, false, false)
+  elseif HDD.CheckSectorError() ~= 0 then
+    Report(301, false, false)
+  elseif HDD.CheckDamagedPartition() ~= 0 and HDD_STATUS == 0 then --only check damaged partitions on formatted HDD
+    Report(302, false, false)
+  end
+end
+-- Report(300, false, false)
+-- Report(301, false, false)
+-- Report(302, false, false)
 OrbIntro(0)
 while true do
   local TT = MainMenu()
@@ -1859,10 +1880,12 @@ while true do
       local continue = Report(200, false, true)
       if continue then System.log("\nUser asked to format HDD...\n\n") end
       Eval_HDDStatus() --check again!
+      OrbIntro(1)
     elseif (ACT == 3) then
       local ret = HDD.EnableHDDBoot()
       ret = 100 + ret
       Report(ret, true, false)
+      OrbIntro(1)
     end
   elseif TT == 3 then -- DVDPLAYER
     local port = MemcardPickup()
