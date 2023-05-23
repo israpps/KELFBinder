@@ -185,7 +185,14 @@ void alternative_poweroff(void *arg)
         // As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
         if (HaveFileXio)
         {
-            DPRINTF("FileXio available! parking USB devices\n");
+            
+            if (dev9_loaded ) {
+                DPRINTF("pfs: PDIOC_CLOSEALL\n");
+                fileXioDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
+                DPRINTF("dev9x: DDIOC_OFF\n");
+                while (fileXioDevctl("dev9x:", DDIOC_OFF, NULL, 0, NULL, 0) < 0) {};
+            }
+            DPRINTF("mass: DEVCTL_STOP_ALL\n");
             fileXioDevctl("mass:", USBMASS_DEVCTL_STOP_ALL, NULL, 0, NULL, 0);
         }
 
