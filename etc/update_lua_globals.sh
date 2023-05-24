@@ -1,3 +1,4 @@
+#!/bin/bash
 if [ ! -f ".vscode/settings.json" ]; then
     echo settings.json is missing, creating blank one...
     echo "{">.vscode/settings.json
