@@ -102,6 +102,7 @@ ifeq ($(UDPTTY), 1)
 endif
 
 ifeq ($(EE_SIO), 1)
+  $(info --- EE_SIO enabled...)
   GLOBFLAGS += -DSIO_PRINTF
   EE_CFLAGS += -DSIO_PRINTF
   EE_LIBS += -lsiocookie

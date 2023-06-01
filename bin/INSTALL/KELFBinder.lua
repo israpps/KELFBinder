@@ -438,11 +438,11 @@ function HDDMAN()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
     if T == 1 then
-      Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(COL, COL, COL, 0x80 - A)) else
+      Font.ftPrint(LSANS, X_MID+1, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(0, 0xde, 0xff, 0x80 - A)) else
       Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_HDD_INSTOPT1, Color.new(COL, COL, COL, 0x80 - A))
     end
     if T == 2 then
-      Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(COL2, COL2, COL2, 0x80 - A)) else
+      Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(0, 0xde, 0xff, 0x80 - A)) else
       Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_HDD_INSTOPT2, Color.new(COL2, COL2, COL2, 0x80 - A))
     end
     if T == 3 then
