@@ -41,6 +41,7 @@ function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_
   local tmp = System.listDirectory(SOURCEDIR)
   local COUNT = 0 -- Ammount of files that will be installed
   local add_dir = true
+  if tmp == nil then return 0 end
   for x = 1, #tmp do
     if not tmp[x].directory and tmp[x].size > 0 then
         table.insert(SOURCE_TABLE, SOURCEDIR.."/"..tmp[x].name)
