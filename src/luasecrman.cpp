@@ -21,7 +21,7 @@ static int lua_initsecrman(lua_State *L)
     int argc = lua_gettop(L);
 #ifndef SKIP_ERROR_HANDLING
     if (argc != 0)
-        return luaL_error(L, "wrong number of arguments(%s:%d)", __FILE__, __LINE__);
+        return luaL_error(L, "wrong number of arguments(%s)", __func__);
 #endif
     int result = SecrInit();
     lua_pushinteger(L, result);
