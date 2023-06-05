@@ -94,24 +94,15 @@ static int lua_direxists(lua_State *L)
     int argc = lua_gettop(L);
     if (argc != 1)
         return luaL_error(L, "Argument error: lua_direxists takes one argument.");
-    const char *path = luaL_checkstring(L, 1);
-    struct stat info;
+    const char *folder = luaL_checkstring(L, 1);
+    DPRINTF("%s: %s\n", __func__, folder);
+    DIR *d = opendir(folder);
 
-        DPRINTF("%s: %s\n", __func__, path);
-    if (stat(path, &info) != 0)
-    {
-        lua_pushboolean(L, false);
-        DPRINTF("\tcant stat\n");
-    }
-    else if (info.st_mode & S_IFDIR)
+	if (d) 
     {
         lua_pushboolean(L, true);
-        DPRINTF("\tis a folder!\n");
-    }
-    else
-    {
+    } else {
         lua_pushboolean(L, false);
-        DPRINTF("\tthis is not a folder\n");
     }
     return 1;
 }
