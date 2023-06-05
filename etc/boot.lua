@@ -85,6 +85,8 @@
 	LNG_WARN_CONFLICT0 = "The selected Memory Card seems to have a system update\nalready installed"
 	LNG_WARN_CONFLICT1 = "clean the target folders before proceeding?"
 	LNG_WARN_CONFLICT2 = "Note: If you don't clean the folders, the update will \nbe installed anyways, but on a dirty enviroment"
+	LNG_WARN_CONFLICT3 = "We recommend cleaning unless you want to keep the previously installed updates"
+	LNG_WARN_CONFLICT4 = "Only the conflictive folders will be cleaned"
 	LNG_FMCBINST_CRAP0 = "FreeMcBoot Multi Installation detected!"
 	LNG_FMCBINST_CRAP1 = "The Memory Card must be formatted before installing."
 	LNG_FMCBINST_CRAP2 = "There is risk of FileSystem corruption if the card is not formatted"

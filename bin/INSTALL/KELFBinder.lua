@@ -1406,6 +1406,8 @@ function Ask2WipeSysUpdateDirs(NEEDS_JPN, NEEDS_USA, NEEDS_EUR, NEEDS_CHN, NEEDS
       Font.ftPrint(LSANS, 50, 100, 0, 630, 64, LNG_WARN_CONFLICT0, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       Font.ftPrint(LSANS, 50, 160, 0, 630, 64, LNG_WARN_CONFLICT1, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       Font.ftPrint(LSANS, 50, 260, 0, 630, 64, LNG_WARN_CONFLICT2, Color.new(0x70, 0x70, 0x70, 0x80 - A))
+      Font.ftPrint(LSANS, 50, 300, 0, 630, 64, LNG_WARN_CONFLICT3, Color.new(0x70, 0x70, 0x70, 0x80 - A))
+      Font.ftPrint(LSANS, 50, 320, 0, 630, 64, LNG_WARN_CONFLICT4, Color.new(0x70, 0x70, 0x70, 0x80 - A))
 
 
       if Pads.check(pad, PAD_CROSS) then
