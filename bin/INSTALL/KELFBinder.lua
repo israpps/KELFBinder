@@ -65,6 +65,7 @@ local CHK_ = Graphics.loadImageEmbedded(3)
 local CHKF = Graphics.loadImageEmbedded(4)
 
 if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
+  System.log("### Could not access INSTALL/EXTINST.lua\n")
   Screen.clear(Color.new(128, 0, 128))
   Screen.flip()
   while true do end
@@ -96,7 +97,7 @@ elseif Language == 5 then if System.doesFileExist("lang/italian.lua") then dofil
 elseif Language == 6 then if System.doesFileExist("lang/dutch.lua") then dofile("lang/dutch.lua") end
 elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then dofile("lang/portuguese.lua") end
 else
-  System.log("unknown language ID ("..Language..")")
+  System.log("### unknown language ID ("..Language..")")
 end
 
 Drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
@@ -1628,6 +1629,7 @@ function ReportProgress(prog, total)
 end
 
 function WriteDataToHDD()
+  System.log("Starting file transfer to HDD\n")
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
@@ -1649,6 +1651,7 @@ function WriteDataToHDD()
     if mountpath ~= current_mount then --different partition...
       System.log("partition change needed '"..mountpath.."'\n")
       if HDD.MountPartition(mountpath, 0, FIO_MT_RDWR) < 0 then -- ...mount needed one
+        System.log("### ERROR Mounting partition"..mountpath.."\n")
         return -5
       else --success
         current_mount = mountpath
@@ -1662,7 +1665,7 @@ function WriteDataToHDD()
     end
     ret = System.copyFile(HDD_INST_TABLE.source[i], pfs_path)
     if ret < 0 then
-       return ret
+      return ret
     end
   end
   HDD.UMountPartition(0)
@@ -1684,17 +1687,17 @@ function PerformHDDInst()
   Screen.flip()
   local __sysconf_freespace = HDD.GetPartitionSize("hdd0:__sysconf")
   local __sysconf_reqspace = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__sysconf")
-  System.log("Space needed for __sysconf is "..__sysconf_reqspace.."\n")
+  System.log("> Space needed for __sysconf is "..__sysconf_reqspace.."\n")
   if __sysconf_reqspace > __sysconf_freespace then InsufficientSpace(__sysconf_reqspace, __sysconf_freespace, LNG_PARTITION.." __sysconf") return end
 
   local __system_freespace  = HDD.GetPartitionSize("hdd0:__system")
   local __system_reqspace  = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__system")
-  System.log("Space needed for __system is "..__system_reqspace.."\n")
+  System.log("> Space needed for __system is "..__system_reqspace.."\n")
   if __system_reqspace > __system_freespace then InsufficientSpace(__system_reqspace, __system_freespace, LNG_PARTITION.." __system") return end
 
   local __common_freespace  = HDD.GetPartitionSize("hdd0:__common")
   local __common_reqspace  = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__common")
-  System.log("Space needed for __common is "..__common_reqspace.."\n")
+  System.log("> Space needed for __common is "..__common_reqspace.."\n")
   if __common_reqspace > __common_freespace then InsufficientSpace(__common_reqspace, __common_freespace, LNG_PARTITION.." __common") return end
   System.sleep(1)
   System.AllowPowerOffButton(0)
@@ -1820,9 +1823,7 @@ if HDD_STATUS == 0 or HDD_STATUS == 1 then
     Report(302, false, false)
   end
 end
--- Report(300, false, false)
--- Report(301, false, false)
--- Report(302, false, false)
+
 OrbIntro(0)
 while true do
   local TT = MainMenu()
@@ -1880,7 +1881,7 @@ while true do
       PerformHDDInst()
     elseif (ACT == 2) then
       local continue = Report(200, false, true)
-      if continue then System.log("\nUser asked to format HDD...\n\n") end
+      if continue then System.log("\n> User asked to format HDD...\n\n") end
       Eval_HDDStatus() --check again!
       OrbIntro(1)
     elseif (ACT == 3) then
