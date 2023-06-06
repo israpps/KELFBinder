@@ -210,51 +210,6 @@ void alternative_poweroff(void *arg)
 #include <string.h>
 #include <sio.h>
 
-// GLOBAL
-// char PRINTFBUG[64];
-#if 0
-FILE *EE_SIO;
-cookie_io_functions_t COOKIE_FNCTS;
-
-ssize_t cookie_sio_write(void *c, const char *buf, size_t size);
-ssize_t cookie_sio_read(void *c, char *buf, size_t size);
-// int cookie_sio_seek(void *c, _off64_t *offset, int whence);
-// int cookie_sio_close(void *c);
-
-int ee_sio_start(u32 baudrate, u8 lcr_ueps, u8 lcr_upen, u8 lcr_usbl, u8 lcr_umode)
-{
-    sio_init(baudrate, lcr_ueps, lcr_upen, lcr_usbl, lcr_umode);
-
-    COOKIE_FNCTS.read = cookie_sio_read;
-    COOKIE_FNCTS.close = NULL;
-    COOKIE_FNCTS.seek = NULL;
-    COOKIE_FNCTS.write = cookie_sio_write;
-    // fclose(stdout);
-    EE_SIO = fopencookie(NULL, "w+", COOKIE_FNCTS);
-    stdout = fopencookie(NULL, "w+", COOKIE_FNCTS); // fprintf does not replace format specifiers on C++. hook into stdout instead
-    // setbuf(stdout, NULL);
-    // setvbuf(EE_SIO, NULL, _IONBF, 0); // no buffering for this bad boy
-    //  setvbuf(stdout, NULL, _IONBF, 1); // no buffering for this bad boy
-    // fprintf(EE_SIO, "%s: finished\n", __func__);
-    printf("lol %d\r\n", baudrate);
-    fflush(stdout);
-    printf("lol %d\n", baudrate);
-    return EESIO_SUCESS;
-}
-
-
-ssize_t cookie_sio_write(void *c, const char *buf, size_t size)
-{
-    return sio_putsn(buf);
-}
-
-ssize_t cookie_sio_read(void *c, char *buf, size_t size)
-{
-    return sio_read(buf, size);
-}
-
-#endif
-
 int main(int argc, char *argv[])
 {
     int fd;
