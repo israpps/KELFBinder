@@ -47,7 +47,7 @@
 	LNG_REGS2 = "Europe / Oceania / Russia\nSCPH-XXX0[2/3/4/8]"
 	LNG_REGS3 = "China - SCPH-XXX09"
 	LNG_EIO = "I/O ERROR"
-	LNG_SECRMANERR = "SECRDOWNLOADFILE Failed! - Possible MagicGate error"
+	LNG_SECRMANERR = "KELF encryption Failed! - Possible 'MagicGate' error"
 	LNG_ENOMEM = "MEMORY ALLOCATION ERROR!"
 	LNG_SOURCE_KELF_GONE = "input KELF can't be opened"
 	LNG_EUNKNOWN = "Unknown error!"
@@ -141,6 +141,7 @@ end
 	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
 	local temporaryVar_size = System.sizeFile(temporaryVar)
 	ROMVER = System.readFile(temporaryVar, temporaryVar_size)
+	System.log("ROMVER\t"..ROMVER.."\n")
 	ROMVER = string.sub(ROMVER, 0, 14)
 	System.closeFile(temporaryVar)
 	KELFBinder.init(ROMVER)

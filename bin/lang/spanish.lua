@@ -48,7 +48,7 @@
 	LNG_REGS2 = "Europa/Oceania/Rusia\nSCPH-XXX0[2/3/4/8]"
 	LNG_REGS3 = "China - SCPH-XXX09"
 	LNG_EIO = "ERROR I/O"
-	LNG_SECRMANERR = "SECRDOWNLOADFILE Falló! - Posible error Magicgate"
+	LNG_SECRMANERR = "fallo al encriptar KELF! - Posible error Magicgate"
 	LNG_ENOMEM = "ERROR RESERVANDO MEMORIA!"
 	LNG_SOURCE_KELF_GONE = "no se puede acceder al KELF"
 	LNG_EUNKNOWN = "error desconocido!"
