@@ -96,13 +96,17 @@ static int lua_direxists(lua_State *L)
     const char *folder = luaL_checkstring(L, 1);
     DPRINTF("%s: %s\n", __func__, folder);
     DIR *d = opendir(folder);
-
+    bool ret = false;
 	if (d) 
     {
-        lua_pushboolean(L, true);
+        ret = true;
+        if (closedir(d) != 0)
+            DPRINTF("### ERROR: cannot close dir (%d)\n", errno);
     } else {
-        lua_pushboolean(L, false);
+        ret = false;
     }
+    DPRINTF("\t%s %s\n", folder, (ret)? "exists":"not found");
+    lua_pushboolean(L, ret);
     return 1;
 }
 
@@ -260,14 +264,14 @@ static int lua_removeDir(lua_State *L)
 //thanks to SP193 for all his work
 static int DeleteFolder(const char *folder)
 {
-    DPRINTF("\n%s: %s\n", __FUNCTION__, folder); 
+    DPRINTF("\n%s: '%s'\n", __FUNCTION__, folder); 
 	DIR *d = opendir(folder);
 	size_t path_len = strlen(folder);
 	int r = -1;
 
 	if (d)
 	{
-		DPRINTF("Detected [%s], deleting...\n",folder); 
+		DPRINTF("Folder exists. wiping...\n"); 
 		struct dirent *p;
 
 		r = 0;
