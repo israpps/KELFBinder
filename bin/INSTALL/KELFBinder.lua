@@ -1718,9 +1718,16 @@ function Ask2quit()
     Promptkeys(1, LNG_YES, 1, LNG_NO, 1, LNG_RWLE, 0)
     ORBMAN(0x80 - Q)
     local pad = Pads.get()
-    if Pads.check(pad, PAD_CROSS) then System.exitToBrowser() end
+    if Pads.check(pad, PAD_CROSS) then KELFBinder.DeinitLOG() System.exitToBrowser() end
     if Pads.check(pad, PAD_CIRCLE) then break end
-    if Pads.check(pad, PAD_TRIANGLE) then if System.doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then System.loadELF(System.getbootpath() .. "INSTALL/CORE/BACKDOOR.ELF") end end
+    if Pads.check(pad, PAD_TRIANGLE) then
+      if System.doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then
+        KELFBinder.DeinitLOG() 
+        System.loadELF(System.getbootpath() .. "INSTALL/CORE/BACKDOOR.ELF")
+      else
+        System.log("BACKDOOR ELF NOT ACCESIBLE\n")
+      end
+    end
     Screen.flip()
   end
 end
