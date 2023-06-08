@@ -283,6 +283,13 @@ static int lua_checkConsoleNeedsExtHDDLOAD(lua_State *L)
     lua_pushboolean(L, needs_HDDLOAD);
     return 1;
 }
+extern FILE* LOGFILE;
+static int lua_closelog(lua_State *L)
+{
+    DPRINTF("log file close requested\n");
+    fclose(LOGFILE);
+    return 0;
+}
 
 static const luaL_Reg KELFBinder_functions[] = {
     {"init", lua_KELFBinderInit},
@@ -300,6 +307,7 @@ static const luaL_Reg KELFBinder_functions[] = {
     {"getConsoleModel", lua_getConsoleModel},
     {"getDVDPlayerFolder",lua_getDVDPlayerUpdatefolder},
     {"DoesConsoleNeedHDDLOAD", lua_checkConsoleNeedsExtHDDLOAD},
+    {"DeinitLOG", lua_closelog},
     {0, 0}
 };
 

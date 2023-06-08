@@ -25,6 +25,8 @@ EE_SIO ?= 1
 TTY2SIOR ?= 0
 #-----------------------{ printf over UDP }-----------------------#
 UDPTTY ?= 0
+#---------------------{ printf to local file }--------------------#
+LOG2FILE ?= 0
 #--------------------{ enable DEBUGGING MODE }--------------------#
 DEBUG ?= 0
 #---------------------{ Set IP for PS2Client }--------------------#
@@ -62,6 +64,9 @@ else
 endif
 ifneq ($(RELEASE),0)
   GLOBFLAGS += -DRELEASE
+endif
+ifneq ($(LOG2FILE),0)
+  GLOBFLAGS += -DDPRINTF_LOG_TO_FILE
 endif
 BIN2S = $(PS2SDK)/bin/bin2s
 

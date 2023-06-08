@@ -78,12 +78,13 @@ IMPORT_BIN2C(ps2fs_irx);
 IMPORT_BIN2C(ps2ip_irx);
 IMPORT_BIN2C(udptty_irx);
 #endif
+
 #ifdef TTY2SIOR
 #include <sior_rpc.h>
 IMPORT_BIN2C(tty2sior_irx);
 #endif
 
-
+FILE* LOGFILE = NULL;
 enum DEVID{NONE, MC0, MC1, MASS, HOST, MX4, ILK, HDD, XFROM, CDVD};
 unsigned int BOOT_PATH_ID = DEVID::NONE;
 char boot_path[255];
@@ -181,6 +182,7 @@ void alternative_poweroff(void *arg)
     DPRINTF("%s: called\n", __func__);
     if (AllowPoweroff == 1) {
         DPRINTF("Poweroff is allowed!\n");
+        if (LOGFILE != NULL) fclose(LOGFILE);
         // If dev9.irx was loaded successfully, shut down DEV9.
         // As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
         if (HaveFileXio)
@@ -341,6 +343,7 @@ int main(int argc, char *argv[])
         }
         EPRINTF("FINISHED\n");
     }
+    LOG2FILE_INIT(LOGFILE);
     EPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
     EPRINTF("Hooking alternative poweroff\n");
