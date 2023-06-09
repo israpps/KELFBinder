@@ -85,10 +85,16 @@ $(EE_ASM_DIR)ps2fs_irx.s: $(PS2SDK)/iop/irx/ps2fs.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 #HDD
 
-$(EE_ASM_DIR)ps2ip_irx.s: $(PS2SDK)/iop/irx/ps2ip.irx | $(EE_ASM_DIR)
-	$(BIN2S) $< $@ $(IRXTAG)
+$(EE_ASM_DIR)ps2ip_irx.s: $(PS2SDK)/iop/irx/ps2ip-nm.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ ps2ip_irx
 
 $(EE_ASM_DIR)udptty_irx.s: $(PS2SDK)/iop/irx/udptty.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ $(IRXTAG)
+
+$(EE_ASM_DIR)netman_irx.s: $(PS2SDK)/iop/irx/netman.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ $(IRXTAG)
+
+$(EE_ASM_DIR)smap_irx.s: $(PS2SDK)/iop/irx/smap.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
 $(EE_ASM_DIR)tty2sior_irx.s: iop/tty2sior.irx | $(EE_ASM_DIR)

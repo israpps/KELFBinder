@@ -20,7 +20,7 @@ REVISION = $(shell expr $(shell git rev-list --count HEAD))
 #------------------------{ Reset the IOP }------------------------#
 RESET_IOP ?= 1
 #--------------------{ Serial port debugging }--------------------#
-EE_SIO ?= 1
+EE_SIO ?= 0
 #-----------------{ Display IOP printf on EE_SIO }----------------#
 TTY2SIOR ?= 0
 #-----------------------{ printf over UDP }-----------------------#
@@ -99,7 +99,7 @@ EMBEDDED_RSC = boot.o \
 ifeq ($(UDPTTY), 1)
   GLOBFLAGS += -DUDPTTY
   EE_CFLAGS += -DUDPTTY
-  IOP_MODULES += udptty_irx.o ps2ip_irx.o
+  IOP_MODULES += udptty_irx.o ps2ip_irx.o netman_irx.o smap_irx.o
   ifeq ($(EE_SIO), 0) # only enable common printf if EE_SIO is disabled. this allows separating EE and IOP printf
     GLOBFLAGS += -DCOMMON_PRINTF
     EE_CFLAGS += -DCOMMON_PRINTF

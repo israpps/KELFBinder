@@ -77,6 +77,8 @@ IMPORT_BIN2C(ps2fs_irx);
 #ifdef UDPTTY
 IMPORT_BIN2C(ps2ip_irx);
 IMPORT_BIN2C(udptty_irx);
+IMPORT_BIN2C(netman_irx);
+IMPORT_BIN2C(smap_irx);
 #endif
 
 #ifdef TTY2SIOR
@@ -188,7 +190,7 @@ void alternative_poweroff(void *arg)
         if (HaveFileXio)
         {
             
-            if (dev9_loaded ) {
+            if (dev9_loaded) {
                 DPRINTF("pfs: PDIOC_CLOSEALL\n");
                 fileXioDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
                 DPRINTF("dev9x: DDIOC_OFF\n");
@@ -412,6 +414,10 @@ static int CheckHDD(void) {
 void loadUDPTTY()
 {
     int ID, RET;
+    ID = SifExecModuleBuffer(&netman_irx, size_netman_irx, 0, NULL, &RET);
+    EPRINTF(" [NETMAN.IRX]: ret=%d, ID=%d\n", RET, ID);
+    ID = SifExecModuleBuffer(&smap_irx, size_smap_irx, 0, NULL, &RET);
+    EPRINTF(" [SMAP.IRX]: ret=%d, ID=%d\n", RET, ID);
     ID = SifExecModuleBuffer(&ps2ip_irx, size_ps2ip_irx, 0, NULL, &RET);
     EPRINTF(" [PS2IP.IRX]: ret=%d, ID=%d\n", RET, ID);
     ID = SifExecModuleBuffer(&udptty_irx, size_udptty_irx, 0, NULL, &RET);
