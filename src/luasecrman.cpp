@@ -83,7 +83,6 @@ static int lua_secrdownloadfile(lua_State *L)
 
     if (argc == 5) {
         flags = luaL_checkinteger(L, 5);
-        DPRINTF("%s: Flags are %%d=%d or %%x=%x\n", __FUNCTION__, flags, flags); 
     }
 
     DPRINTF("--------------------\n%s: Starting with %d argumments:\n"
@@ -91,7 +90,7 @@ static int lua_secrdownloadfile(lua_State *L)
             "[Slot]: %d\n"
             "[input KELF]: %s\n"
             "[output KELF]: %s\n"
-            "[flags]: %x\n",
+            "[flags]: 0x%x\n",
             __func__, argc,
             port, slot, file_tbo, dest, flags); 
     void *buf;
@@ -125,13 +124,18 @@ static int lua_secrdownloadfile(lua_State *L)
                 if (flags == 0) {
                     DPRINTF("flags was empty, performing normal install!\n"); 
                     int McFileFD = open(dest, O_WRONLY | O_CREAT | O_TRUNC);
-                    DPRINTF("%s: [%s] fd is (%d)\n", __func__, dest, McFileFD); 
-                    int written = write(McFileFD, buf, size);
-                    if (written != size) {
+                    DPRINTF("%s: [%s] fd is (%d)\n", __func__, dest, McFileFD);
+                    if (McFileFD >= 0)
+                    {
+                        int written = write(McFileFD, buf, size);
+                        if (written != size) {
+                            result = -EIO;
+                        }
+                        DPRINTF("%s: written %d\n", __func__, written); 
+                        close(McFileFD);
+                    } else {
                         result = -EIO;
                     }
-                    DPRINTF("%s: written %d\n", __func__, written); 
-                    close(McFileFD);
                 } else {
                     DPRINTF("%s: flags was not empty, performing multiple installation\n", __func__); 
                     int x = 0, TF = 0;
