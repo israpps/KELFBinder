@@ -288,7 +288,7 @@ static int getpartitionsizeKB(lua_State *L)
         umnt(pfs_index);
         lua_pushinteger(L, AvailableSpace);
     } else {
-        DPRINTF("%s: impossible to mount '%s' into %s:, returning %d\n", partition, PFS, -ENOENT);
+        DPRINTF("%s: impossible to mount '%s' into %s:, returning %d\n", __func__, partition, PFS, -ENOENT);
         lua_pushinteger(L, -ENOENT);
     }
     return 1;
