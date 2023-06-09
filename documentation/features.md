@@ -52,3 +52,8 @@ The DVDPlayer updates are region specific, just like System Updates.
 However, unlike system updates. every console looks for the same path to update the DVDPlayer
 
 the DVDPLayer update menu will ask you to select the target region for the update
+
+
+## Encryption process
+
+Unlike FreeMcBoot Installer, KELFBinder will always bind the KELF using the traditional method (making the console MECHACON do the dirty job), instead of trying to replicate the binding from an already installed update. this ensures no mixtures happen in case you have both DEX and CEX KELFs on the same card.
