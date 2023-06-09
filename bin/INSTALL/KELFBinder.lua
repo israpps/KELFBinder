@@ -743,7 +743,7 @@ function MemcardPickup()
   local mi1
   local mcinfo0 = System.getMCInfo(0)
   local mcinfo1 = System.getMCInfo(1)
-  local MC2_CNTR = SCR_X - 160 - 64
+  local MC2_CNTR = SCR_X - 160 - 32
   while true do
     local HC = ((mcinfo0.type == 2) or (mcinfo1.type == 2))
     if mcinfo0.type == 2 then mi0 = MC2
