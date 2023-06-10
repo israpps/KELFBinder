@@ -75,10 +75,10 @@ Update_InstTable("INSTALL/ASSETS/FSCK"  , "hdd0:__system:pfs:/fsck/lang"  , HDD_
 
 System.log("MC installation table:\n")
 for x = 1, #MC_INST_TABLE.source do
-  System.log(string.format("\t[%s] --> [%s]\n", MC_INST_TABLE.source[x], MC_INST_TABLE.target[x]))
+  System.log(string.format("\t[%s] > [%s]\n", MC_INST_TABLE.source[x], MC_INST_TABLE.target[x]))
 end
 
 System.log("HDD installation table:\n")
 for x = 1, #HDD_INST_TABLE.source do
-  System.log(string.format("\t[%s] --> [%s]\n", HDD_INST_TABLE.source[x], HDD_INST_TABLE.target[x]))
+  System.log(string.format("\t[%s] > [%s]\n", HDD_INST_TABLE.source[x], HDD_INST_TABLE.target[x]))
 end
