@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
     SIOR_Init(0x20);
     EPRINTF("Loading TTY2SIOR.IRX\n");
     ret = SifExecModuleBuffer(&tty2sior_irx, size_tty2sior_irx, 0, NULL, &STAT);
-    EPRINTF("[TTY2SIOR.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[TTY2SIOR]: ret=%d, stat=%d\n", ret, STAT);
 #endif
 
 #ifdef UDPTTY
@@ -262,9 +262,9 @@ int main(int argc, char *argv[])
     if (directorytoverify == NULL) {
 #endif
         ret = SifExecModuleBuffer(&iomanX_irx, size_iomanX_irx, 0, NULL, &STAT);
-        EPRINTF("[IOMANX.IRX]: ret=%d, stat=%d\n", ret, STAT);
+        EPRINTF("[IOMANX]: ret=%d, stat=%d\n", ret, STAT);
         ret = SifExecModuleBuffer(&fileXio_irx, size_fileXio_irx, 0, NULL, &STAT);
-        EPRINTF("[FILEXIO.IRX]: ret=%d, stat=%d\n", ret, STAT);
+        EPRINTF("[FILEXIO]: ret=%d, stat=%d\n", ret, STAT);
 #ifdef NO_FILEXIO_ON_HOST
     }
     if (directorytoverify == NULL) {
@@ -281,51 +281,51 @@ int main(int argc, char *argv[])
 #endif
 
     ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
-    EPRINTF("[SIO2MAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[SIO2MAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcman_irx, size_mcman_irx, 0, NULL, &STAT);
-    EPRINTF("[MCMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[MCMAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcserv_irx, size_mcserv_irx, 0, NULL, &STAT);
-    EPRINTF("[MCSERV.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[MCSERV]: ret=%d, stat=%d\n", ret, STAT);
     initMC();
 
     ret = SifExecModuleBuffer(&padman_irx, size_padman_irx, 0, NULL, &STAT);
-    EPRINTF("[PADMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[PADMAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&libsd_irx, size_libsd_irx, 0, NULL, &STAT);
-    EPRINTF("[LIBSD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[LIBSD]: ret=%d, stat=%d\n", ret, STAT);
 
     // load USB modules
     ret = SifExecModuleBuffer(&usbd_irx, size_usbd_irx, 0, NULL, &STAT);
-    EPRINTF("[USBD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[USBD]: ret=%d, stat=%d\n", ret, STAT);
 
 
     int ds3pads = 1;
     ret = SifExecModuleBuffer(&ds34usb_irx, size_ds34usb_irx, 4, (char *)&ds3pads, &STAT);
-    EPRINTF("[DS34USB.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[DS34USB]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&ds34bt_irx, size_ds34bt_irx, 4, (char *)&ds3pads, &STAT);
-    EPRINTF("[DS34BT.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[DS34BT]: ret=%d, stat=%d\n", ret, STAT);
     ds34usb_init();
     ds34bt_init();
 
     ret = SifExecModuleBuffer(&bdm_irx, size_bdm_irx, 0, NULL, &STAT);
-    EPRINTF("[BDM.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[BDM]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &STAT);
-    EPRINTF("[BDMFS_FATFS.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[BDMFS_FATFS]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &STAT);
-    EPRINTF("[USBMASS_BD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[USBMASS_BD]: ret=%d, stat=%d\n", ret, STAT);
 
     ret = SifExecModuleBuffer(&cdfs_irx, size_cdfs_irx, 0, NULL, &STAT);
-    EPRINTF("[CDFS.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[CDFS]: ret=%d, stat=%d\n", ret, STAT);
 
     // ret = SifExecModuleBuffer(&audsrv_irx, size_audsrv_irx, 0, NULL, &STAT);
-    // EPRINTF("[AUDSRV.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    // EPRINTF("[AUDSRV]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &STAT);
-    EPRINTF("[POWEROFF.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[POWEROFF]: ret=%d, stat=%d\n", ret, STAT);
 #ifndef RESET_IOP
     ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
-    EPRINTF("[SECRMAN_SPECIAL.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[SECRMAN_SPECIAL]: ret=%d, stat=%d\n", ret, STAT);
 #endif
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
-    EPRINTF("[SECRSIF.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[SECRSIF]: ret=%d, stat=%d\n", ret, STAT);
 
     if (HaveFileXio)
         LoadHDDIRX();
@@ -425,13 +425,13 @@ void loadUDPTTY()
 {
     int ID, RET;
     ID = SifExecModuleBuffer(&netman_irx, size_netman_irx, 0, NULL, &RET);
-    EPRINTF(" [NETMAN.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [NETMAN]: ret=%d, ID=%d\n", RET, ID);
     ID = SifExecModuleBuffer(&smap_irx, size_smap_irx, 0, NULL, &RET);
-    EPRINTF(" [SMAP.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [SMAP]: ret=%d, ID=%d\n", RET, ID);
     ID = SifExecModuleBuffer(&ps2ip_irx, size_ps2ip_irx, 0, NULL, &RET);
-    EPRINTF(" [PS2IP.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [PS2IP]: ret=%d, ID=%d\n", RET, ID);
     ID = SifExecModuleBuffer(&udptty_irx, size_udptty_irx, 0, NULL, &RET);
-    EPRINTF(" [UDPTTY.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [UDPTTY]: ret=%d, ID=%d\n", RET, ID);
 }
 #endif
 
@@ -441,7 +441,7 @@ int loadDEV9()
     {
         int ID, RET;
         ID = SifExecModuleBuffer(&ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &RET);
-        EPRINTF("[DEV9.IRX]: ret=%d, ID=%d\n", RET, ID);
+        EPRINTF("[DEV9]: ret=%d, ID=%d\n", RET, ID);
         if (ID < 0 && RET == 1) // ID smaller than 0: issue reported from modload | RET == 1: driver returned no resident end
             return 0;
         dev9_loaded = true;
@@ -461,13 +461,13 @@ int LoadHDDIRX(void)
 
     /* PS2ATAD.IRX */
     ID = SifExecModuleBuffer(&ps2atad_irx, size_ps2atad_irx, 0, NULL, &RET);
-    EPRINTF(" [ATAD.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [ATAD]: ret=%d, ID=%d\n", RET, ID);
     if (ID < 0)
         return -2;
 
     /* PS2HDD.IRX */
     ID = SifExecModuleBuffer(&ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &RET);
-    EPRINTF(" [PS2HDD.IRX]: ret=%d, ID=%d\n", RET, ID);
+    EPRINTF(" [PS2HDD]: ret=%d, ID=%d\n", RET, ID);
     if (ID < 0)
         return -3;
 
@@ -479,7 +479,7 @@ int LoadHDDIRX(void)
     if (HDD_USABLE)
     {
         ID = SifExecModuleBuffer(&ps2fs_irx, size_ps2fs_irx, sizeof(pfsarg), pfsarg,  &RET);
-        EPRINTF(" [PS2FS.IRX]: ret=%d, ID=%d\n", RET, ID);
+        EPRINTF("  [PS2FS]: ret=%d, ID=%d\n", RET, ID);
         if (ID < 0)
             return -5;
     }
