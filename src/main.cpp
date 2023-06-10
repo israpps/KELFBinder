@@ -327,8 +327,6 @@ int main(int argc, char *argv[])
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
     EPRINTF("[SECRSIF]: ret=%d, stat=%d\n", ret, STAT);
 
-    if (HaveFileXio)
-        LoadHDDIRX();
 
     EPRINTF("FINISHED LOADING IRX FILES\n");
     // waitUntilDeviceIsReady by fjtrujy
@@ -355,6 +353,12 @@ int main(int argc, char *argv[])
         LOG2FILE_INIT(LOGFILE);
         printf("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
     }
+
+    if (!file_exist("INSTALL/CORE/nohdd.opt"))
+    {
+        if (HaveFileXio)
+            LoadHDDIRX();
+    } else {DPRINTF("Skipping HDD functionality");}
 
     EPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
