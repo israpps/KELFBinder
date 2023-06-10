@@ -11,13 +11,14 @@
 extern "C" {
 #include "modelname.h"
 }
+#define NEXT_MULTIPLE(VALUE, BASE) (VALUE + (BASE - VALUE % BASE))
 
 static int KELFBinderHelperFunctionsInited = false;
 static unsigned long int ROMVERSION;
 static unsigned int MACHINETYPE;
 // static int ROMYEAR, ROMMONTH, ROMDAY;
 static char ROMREGION;
-
+extern bool HDD_USABLE;
 #define ROMVER_LEN 16
 #define GET_MACHINE_TYPE(X)          \
     (X == 'C') ? MACHINETYPE::CEX :  \
@@ -218,6 +219,15 @@ static int lua_getromversion(lua_State *L)
     return 1;
 }
 
+static int lua_getsysupdateROMPatch(lua_State *L)
+{
+    char PATH[32];
+    const char REG_PREF[5] = {'I', 'A', 'A', 'E', 'C'};
+    sprintf(PATH, "B%cEXEC-SYSTEM/osd%03ld.elf", REG_PREF[ROMREGION], NEXT_MULTIPLE(ROMVERSION, 10));
+    lua_pushstring(L, PATH);
+    return 1;
+}
+
 static int lua_getosdconfigLNG(lua_State *L)
 {
     DPRINTF("%s: start\n", __func__);
@@ -228,7 +238,6 @@ static int lua_getosdconfigLNG(lua_State *L)
 
 static int lua_setsysupdatefoldprops(lua_State *L)
 {
-    DPRINTF("%s: start\n", __func__); 
     int argc = lua_gettop(L);
 	if (argc != 3) 
         return luaL_error(L, "lua_createsysupdatefolder takes 3 argumments\n");
@@ -236,22 +245,28 @@ static int lua_setsysupdatefoldprops(lua_State *L)
     int port = luaL_checkinteger(L, 1);
     int slot = luaL_checkinteger(L, 2);
     const char* path = luaL_checkstring(L, 3);
-    DPRINTF("\tadding copy protection to %d:/%s\n", port, path); 
+    DPRINTF("adding copy protection to mc%d:/%s\n", port, path); 
     sceMcTblGetDir table;
     // Set desired file attributes.
     table.AttrFile = sceMcFileAttrReadable | sceMcFileAttrWriteable | sceMcFileAttrExecutable | sceMcFileAttrDupProhibit | sceMcFileAttrSubdir | sceMcFile0400;
     if ((result = mcSetFileInfo(port, slot, path, &table, sceMcFileInfoAttr)) == 0) {
-        DPRINTF("\tmcSetFileInfo: result was %d\n", result); 
         mcSync(0, NULL, &result);
     }
-
-    return result;
+    DPRINTF("\tresult was %d\n", result);
+    lua_pushinteger(L, result);
+    return 1;
 }
 
 static int lua_initConsoleModel(lua_State *L)
 {
     DPRINTF("%s: starts\n", __func__); 
     ModelNameInit();
+    return 1;
+}
+
+static int lua_getHDDSTATUS(lua_State *L)
+{
+    lua_pushboolean(L, HDD_USABLE);
     return 1;
 }
 
@@ -262,10 +277,26 @@ static int lua_getConsoleModel(lua_State *L)
     return 1;
 }
 
+static int lua_checkConsoleNeedsExtHDDLOAD(lua_State *L)
+{
+    bool needs_HDDLOAD = (ROMREGION == CONSOLE_REGIONS::JAPAN && ROMVERSION <= 120) || (ROMVERSION == 200); // PCMCIA or 70k unit
+    lua_pushboolean(L, needs_HDDLOAD);
+    return 1;
+}
+extern FILE* LOGFILE;
+static int lua_closelog(lua_State *L)
+{
+    DPRINTF("log file close requested\n");
+    fclose(LOGFILE);
+    return 0;
+}
+
 static const luaL_Reg KELFBinder_functions[] = {
     {"init", lua_KELFBinderInit},
     {"deinit", lua_KELFBinderDeInit},
+    {"CheckHDDUsable", lua_getHDDSTATUS},
     {"calculateSysUpdatePath", lua_calcsysupdatepath},
+    {"calculateSysUpdateROMPatch", lua_getsysupdateROMPatch},
     {"setSysUpdateFoldProps", lua_setsysupdatefoldprops},
     {"getsysupdatefolder", lua_getsystemupdatefolder},
     {"getsystemregion", lua_getsystemregion},
@@ -275,6 +306,8 @@ static const luaL_Reg KELFBinder_functions[] = {
     {"InitConsoleModel", lua_initConsoleModel},
     {"getConsoleModel", lua_getConsoleModel},
     {"getDVDPlayerFolder",lua_getDVDPlayerUpdatefolder},
+    {"DoesConsoleNeedHDDLOAD", lua_checkConsoleNeedsExtHDDLOAD},
+    {"DeinitLOG", lua_closelog},
     {0, 0}
 };
 

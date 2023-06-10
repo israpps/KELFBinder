@@ -21,7 +21,7 @@ static int lua_initsecrman(lua_State *L)
     int argc = lua_gettop(L);
 #ifndef SKIP_ERROR_HANDLING
     if (argc != 0)
-        return luaL_error(L, "wrong number of arguments(%s:%d)", __FILE__, __LINE__);
+        return luaL_error(L, "wrong number of arguments(%s)", __func__);
 #endif
     int result = SecrInit();
     lua_pushinteger(L, result);
@@ -83,7 +83,6 @@ static int lua_secrdownloadfile(lua_State *L)
 
     if (argc == 5) {
         flags = luaL_checkinteger(L, 5);
-        DPRINTF("%s: Flags are %%d=%d or %%x=%x\n", __FUNCTION__, flags, flags); 
     }
 
     DPRINTF("--------------------\n%s: Starting with %d argumments:\n"
@@ -91,7 +90,7 @@ static int lua_secrdownloadfile(lua_State *L)
             "[Slot]: %d\n"
             "[input KELF]: %s\n"
             "[output KELF]: %s\n"
-            "[flags]: %x\n",
+            "[flags]: 0x%x\n",
             __func__, argc,
             port, slot, file_tbo, dest, flags); 
     void *buf;
@@ -118,35 +117,40 @@ static int lua_secrdownloadfile(lua_State *L)
         } else {
             close(fd);
             if ((result = SignKELF(buf, size, port, slot)) < 0) {
-                free(buf);
+                //free(buf); //dont free twice
                 DPRINTF("%s: SignKELF failed with value %d\n", __func__, result); 
             } else {
                 DPRINTF("%s: SignKELF returns %d\n", __func__, result); 
                 if (flags == 0) {
                     DPRINTF("flags was empty, performing normal install!\n"); 
                     int McFileFD = open(dest, O_WRONLY | O_CREAT | O_TRUNC);
-                    DPRINTF("%s: [%s] fd is (%d)\n", __func__, dest, McFileFD); 
-                    int written = write(McFileFD, buf, size);
-                    if (written != size) {
+                    DPRINTF("%s: [%s] fd is (%d)\n", __func__, dest, McFileFD);
+                    if (McFileFD >= 0)
+                    {
+                        int written = write(McFileFD, buf, size);
+                        if (written != size) {
+                            result = -EIO;
+                        }
+                        DPRINTF("%s: written %d\n", __func__, written); 
+                        close(McFileFD);
+                    } else {
                         result = -EIO;
                     }
-                    DPRINTF("%s: written %d\n", __func__, written); 
-                    close(McFileFD);
                 } else {
-                    DPRINTF("%s:flags was not empty, performing multiple installation\n", __func__); 
+                    DPRINTF("%s: flags was not empty, performing multiple installation\n", __func__); 
                     int x = 0, TF = 0;
                     char output[64];
                     for (x = 2; x < SYSTEM_UPDATE_COUNT; x++) // start from index 2, since 0 and 1 are kernel patches, wich require different value for file_tbo
                     {
                         TF = (1 << (x + 1));
-                        DPRINTF("%s: trying with %s ", __func__, sysupdate_paths[BSM2AI(TF)]); 
+                        DPRINTF("\ttrying with %s: ", sysupdate_paths[BSM2AI(TF)]); 
                         if (flags & TF) {
                             sprintf(output, "mc%d:/%s", port, sysupdate_paths[BSM2AI(TF)]);
-                            DPRINTF("\tIT IS FLAGGED\n"); 
+                            DPRINTF("Installing...\n"); 
                             int McFileFD = open(output, O_WRONLY | O_CREAT | O_TRUNC);
-                            DPRINTF("%s: [%s] fd is (%d)\n", __func__, sysupdate_paths[BSM2AI(TF)], McFileFD); 
+                            DPRINTF("\t fd is (%d)\n", McFileFD); 
                             int written = write(McFileFD, buf, size);
-                            DPRINTF("%s: written %d\n", __func__, written); 
+                            DPRINTF("\t written %d bytes\n", written); 
                             close(McFileFD);
                             if (written != size) {
                                 result = -EIO;
@@ -154,14 +158,14 @@ static int lua_secrdownloadfile(lua_State *L)
                             }
                         } else
                             {
-                                DPRINTF("NOT FLAGGED\n"); 
+                                DPRINTF("not marked for install.\n"); 
                             }
                     }
                 }
             }
         }
     } else {
-        DPRINTF("%s: memory allocation of %d bytesfailed\n", __func__, size); 
+        DPRINTF("%s: memory allocation of %d bytes failed\n", __func__, size); 
         result = -ENOMEM;
         close(fd);
     }
@@ -212,7 +216,7 @@ static int lua_secrdownloadfileTest(lua_State *L)
         } else {
             close(fd);
             if ((result = SignKELF(buf, size, port, slot)) < 0) {
-                free(buf);
+                //free(buf); //dont free twice
                 DPRINTF("%s: SignKELF failed with value %d\n", __func__, result); 
             } else {
                 DPRINTF("%s: SignKELF returns %d\n", __func__, result); 

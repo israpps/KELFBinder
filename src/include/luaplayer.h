@@ -12,7 +12,7 @@ extern "C" {
 extern char boot_path[255];
 
 #ifdef DEBUG
-#define dbgprintf(args...) scr_printf(args)
+#define dbgprintf(args...) DPRINTF(args)
 #else
 #define dbgprintf(args...) ;
 #endif
@@ -40,5 +40,6 @@ extern void luaRender_init(lua_State *L);
 extern void stackDump(lua_State *L);
 extern void luaSecrMan_init(lua_State *L);
 extern void luaKELFBinder_init(lua_State *L);
+extern void luaHDD_init(lua_State *L);
 
 #endif

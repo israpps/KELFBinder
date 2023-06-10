@@ -14,6 +14,7 @@
 #include <usbhdfsd-common.h>
 #include <libpwroff.h>
 // #include <audsrv.h>
+#include <hdd-ioctl.h>
 #include <sys/stat.h>
 
 #include <dirent.h>
@@ -25,6 +26,7 @@
 // #include "include/sound.h"
 #include "include/luaplayer.h"
 #include "include/pad.h"
+#include "include/strUtils.h"
 
 #define NEWLIB_PORT_AWARE
 #include <fileXio_rpc.h>
@@ -66,11 +68,43 @@ IMPORT_BIN2C(secrman_irx);
 IMPORT_BIN2C(IOPRP);
 IMPORT_BIN2C(poweroff_irx);
 
+IMPORT_BIN2C(poweroff_irx);
+IMPORT_BIN2C(ps2dev9_irx);
+IMPORT_BIN2C(ps2atad_irx);
+IMPORT_BIN2C(ps2hdd_irx);
+IMPORT_BIN2C(ps2fs_irx);
+
+#ifdef UDPTTY
+IMPORT_BIN2C(ps2ip_irx);
+IMPORT_BIN2C(udptty_irx);
+IMPORT_BIN2C(netman_irx);
+IMPORT_BIN2C(smap_irx);
+#endif
+
+#ifdef TTY2SIOR
+#include <sior_rpc.h>
+IMPORT_BIN2C(tty2sior_irx);
+#endif
+
+FILE* LOGFILE = NULL;
+enum DEVID{NONE, MC0, MC1, MASS, HOST, MX4, ILK, HDD, XFROM, CDVD};
+unsigned int BOOT_PATH_ID = DEVID::NONE;
 char boot_path[255];
 char ConsoleROMVER[17];
+bool HDD_USABLE = false;
+bool dev9_loaded = false;
+int file_exist(const char* path);
+int LoadHDDIRX(void);
+#ifdef UDPTTY
+void loadUDPTTY();
+#endif
+int loadDEV9();
+extern int mnt(const char* path, int index, int openmod);
 
 void setLuaBootPath(int argc, char **argv, int idx)
 {
+    char MountPoint[32+6+1]; // max partition name + 'hdd0:/' = '\0' 
+    char newCWD[255];
     if (argc >= (idx + 1)) {
 
         char *p;
@@ -94,10 +128,32 @@ void setLuaBootPath(int argc, char **argv, int idx)
 
     // check if path needs patching
     if (!strncmp(boot_path, "mass:/", 6) && (strlen(boot_path) > 6)) {
+        BOOT_PATH_ID = DEVID::MASS;
         strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
     }
+    else if (!strncmp(boot_path, "mc0", 3) || !strncmp(boot_path, "mc1", 3)) {
+        BOOT_PATH_ID = (boot_path[2] == '0') ? DEVID::MC0 : DEVID::MC1;
+    }
+    else if (!strncmp(boot_path, "host", 4)) {
+        BOOT_PATH_ID = DEVID::HOST;
+    }
+    else if ((!strncmp(boot_path, "hdd0:", 5)) && (strstr(boot_path, ":pfs:") != NULL)) // hdd path found
+    {
+        if (getMountInfo(boot_path, NULL, MountPoint, newCWD)) // see if we can parse it
+        {
+            if (mnt(MountPoint, 0, FIO_MT_RDWR)==0) //mount the partition
+            {
+                strcpy(boot_path, newCWD); // replace boot path with mounted pfs path
+                BOOT_PATH_ID = DEVID::HDD;
+#ifdef RESERVE_PFS0
+                bootpath_is_on_HDD = 1;
+#endif
+            }
 
-    DPRINTF("%s: boot_path=%s\n", __func__, boot_path);
+        }
+    }
+
+    EPRINTF("%s: boot_path=%s\n", __func__, boot_path);
 }
 
 
@@ -108,14 +164,14 @@ void initMC(void)
     int mc_Type, mc_Free, mc_Format;
 
 
-    DPRINTF("initMC: Initializing Memory Card\n");
+    EPRINTF("initMC: Initializing Memory Card\n");
 
     ret = mcInit(MC_TYPE_XMC);
 
     if (ret < 0) {
-        DPRINTF("initMC: failed to initialize memcard server.\n");
+        EPRINTF("initMC: failed to initialize memcard server.\n");
     } else {
-        DPRINTF("initMC: memcard server started successfully.\n");
+        EPRINTF("initMC: memcard server started successfully.\n");
     }
 
     // Since this is the first call, -1 should be returned.
@@ -129,11 +185,19 @@ void alternative_poweroff(void *arg)
     DPRINTF("%s: called\n", __func__);
     if (AllowPoweroff == 1) {
         DPRINTF("Poweroff is allowed!\n");
+        if (LOGFILE != NULL) fclose(LOGFILE);
         // If dev9.irx was loaded successfully, shut down DEV9.
         // As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
         if (HaveFileXio)
         {
-            DPRINTF("FileXio available! parking USB devices\n");
+            
+            if (dev9_loaded) {
+                DPRINTF("pfs: PDIOC_CLOSEALL\n");
+                fileXioDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
+                DPRINTF("dev9x: DDIOC_OFF\n");
+                while (fileXioDevctl("dev9x:", DDIOC_OFF, NULL, 0, NULL, 0) < 0) {};
+            }
+            DPRINTF("mass: DEVCTL_STOP_ALL\n");
             fileXioDevctl("mass:", USBMASS_DEVCTL_STOP_ALL, NULL, 0, NULL, 0);
         }
 
@@ -151,49 +215,6 @@ void alternative_poweroff(void *arg)
 #include <string.h>
 #include <sio.h>
 
-// GLOBAL
-// char PRINTFBUG[64];
-FILE *EE_SIO;
-cookie_io_functions_t COOKIE_FNCTS;
-
-ssize_t cookie_sio_write(void *c, const char *buf, size_t size);
-ssize_t cookie_sio_read(void *c, char *buf, size_t size);
-// int cookie_sio_seek(void *c, _off64_t *offset, int whence);
-// int cookie_sio_close(void *c);
-
-int ee_sio_start(u32 baudrate, u8 lcr_ueps, u8 lcr_upen, u8 lcr_usbl, u8 lcr_umode)
-{
-    sio_init(baudrate, lcr_ueps, lcr_upen, lcr_usbl, lcr_umode);
-
-    COOKIE_FNCTS.read = cookie_sio_read;
-    COOKIE_FNCTS.close = NULL;
-    COOKIE_FNCTS.seek = NULL;
-    COOKIE_FNCTS.write = cookie_sio_write;
-    // fclose(stdout);
-    EE_SIO = fopencookie(NULL, "w+", COOKIE_FNCTS);
-    stdout = fopencookie(NULL, "w+", COOKIE_FNCTS); // fprintf does not replace format specifiers on C++. hook into stdout instead
-    // setbuf(stdout, NULL);
-    // setvbuf(EE_SIO, NULL, _IONBF, 0); // no buffering for this bad boy
-    //  setvbuf(stdout, NULL, _IONBF, 1); // no buffering for this bad boy
-    // fprintf(EE_SIO, "%s: finished\n", __func__);
-    printf("lol %d\r\n", baudrate);
-    fflush(stdout);
-    printf("lol %d\n", baudrate);
-    return EESIO_SUCESS;
-}
-
-
-ssize_t cookie_sio_write(void *c, const char *buf, size_t size)
-{
-    return sio_putsn(buf);
-}
-
-ssize_t cookie_sio_read(void *c, char *buf, size_t size)
-{
-    return sio_read(buf, size);
-}
-
-
 int main(int argc, char *argv[])
 {
     int fd;
@@ -201,32 +222,51 @@ int main(int argc, char *argv[])
     const char *errMsg;
     int ret = -1, STAT;
     DPRINTF_INIT();
+#ifdef EPRINTF
+    for (fd = 0; fd < argc; fd++)
+        EPRINTF("\targv[%d] = '%s'\n", fd, argv[fd]);
+#endif
+    EPRINTF("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
 #ifdef RESET_IOP
     SifInitRpc(0);
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
     // while (!SifIopReset("", 0)){}; // common IOP Reset
-    SifIopRebootBuffer(IOPRP, size_IOPRP); DPRINTF("Flashing SECRMAN image\n");// use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are loaded.
+    SifIopRebootBuffer(IOPRP, size_IOPRP); EPRINTF("Flashing SECRMAN image\n");// use IOPRP image with SECRMAN_special inside. ensures only the minimal and necessary IRXes are loaded.
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
     while (!SifIopSync()) {};
     SifInitRpc(0);
 #endif
 
     // install sbv patch fix
-    DPRINTF("Installing SBV Patches...\n");
+    EPRINTF("Installing SBV Patches...\n");
     sbv_patch_enable_lmb();
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
 
+#ifdef TTY2SIOR
+    EPRINTF("Starting SIOR thread with 0x20 priority\n");
+    SIOR_Init(0x20);
+    EPRINTF("Loading TTY2SIOR.IRX\n");
+    ret = SifExecModuleBuffer(&tty2sior_irx, size_tty2sior_irx, 0, NULL, &STAT);
+    EPRINTF("[TTY2SIOR]: ret=%d, stat=%d\n", ret, STAT);
+#endif
+
+#ifdef UDPTTY
+    if (loadDEV9())
+        loadUDPTTY();
+#endif
+
+#ifdef NO_FILEXIO_ON_HOST
     DIR *directorytoverify;
     directorytoverify = opendir("host:.");
     if (directorytoverify == NULL) {
+#endif
         ret = SifExecModuleBuffer(&iomanX_irx, size_iomanX_irx, 0, NULL, &STAT);
-        DPRINTF("[IOMANX.IRX]: ret=%d, stat=%d\n", ret, STAT);
+        EPRINTF("[IOMANX]: ret=%d, stat=%d\n", ret, STAT);
         ret = SifExecModuleBuffer(&fileXio_irx, size_fileXio_irx, 0, NULL, &STAT);
-        DPRINTF("[FILEXIO.IRX]: ret=%d, stat=%d\n", ret, STAT);
+        EPRINTF("[FILEXIO]: ret=%d, stat=%d\n", ret, STAT);
+#ifdef NO_FILEXIO_ON_HOST
     }
-    ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
-    DPRINTF("[SIO2MAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
     if (directorytoverify == NULL) {
         fileXioInit();
         HaveFileXio = 1;
@@ -235,70 +275,95 @@ int main(int argc, char *argv[])
     if (directorytoverify != NULL) {
         closedir(directorytoverify);
     }
+#else
+        fileXioInit();
+        HaveFileXio = 1;
+#endif
+
+    ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
+    EPRINTF("[SIO2MAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcman_irx, size_mcman_irx, 0, NULL, &STAT);
-    DPRINTF("[MCMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[MCMAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&mcserv_irx, size_mcserv_irx, 0, NULL, &STAT);
-    DPRINTF("[MCSERV.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[MCSERV]: ret=%d, stat=%d\n", ret, STAT);
     initMC();
 
     ret = SifExecModuleBuffer(&padman_irx, size_padman_irx, 0, NULL, &STAT);
-    DPRINTF("[PADMAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[PADMAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&libsd_irx, size_libsd_irx, 0, NULL, &STAT);
-    DPRINTF("[LIBSD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[LIBSD]: ret=%d, stat=%d\n", ret, STAT);
 
     // load USB modules
     ret = SifExecModuleBuffer(&usbd_irx, size_usbd_irx, 0, NULL, &STAT);
-    DPRINTF("[USBD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[USBD]: ret=%d, stat=%d\n", ret, STAT);
 
 
     int ds3pads = 1;
     ret = SifExecModuleBuffer(&ds34usb_irx, size_ds34usb_irx, 4, (char *)&ds3pads, &STAT);
-    DPRINTF("[DS34USB.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[DS34USB]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&ds34bt_irx, size_ds34bt_irx, 4, (char *)&ds3pads, &STAT);
-    DPRINTF("[DS34BT.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[DS34BT]: ret=%d, stat=%d\n", ret, STAT);
     ds34usb_init();
     ds34bt_init();
 
     ret = SifExecModuleBuffer(&bdm_irx, size_bdm_irx, 0, NULL, &STAT);
-    DPRINTF("[BDM.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[BDM]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&bdmfs_fatfs_irx, size_bdmfs_fatfs_irx, 0, NULL, &STAT);
-    DPRINTF("[BDMFS_FATFS.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[BDMFS_FATFS]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&usbmass_bd_irx, size_usbmass_bd_irx, 0, NULL, &STAT);
-    DPRINTF("[USBMASS_BD.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[USBMASS_BD]: ret=%d, stat=%d\n", ret, STAT);
 
     ret = SifExecModuleBuffer(&cdfs_irx, size_cdfs_irx, 0, NULL, &STAT);
-    DPRINTF("[CDFS.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[CDFS]: ret=%d, stat=%d\n", ret, STAT);
 
     // ret = SifExecModuleBuffer(&audsrv_irx, size_audsrv_irx, 0, NULL, &STAT);
-    // DPRINTF("[AUDSRV.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    // EPRINTF("[AUDSRV]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &STAT);
-    DPRINTF("[POWEROFF.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[POWEROFF]: ret=%d, stat=%d\n", ret, STAT);
 #ifndef RESET_IOP
     ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
-    DPRINTF("[SECRMAN_SPECIAL.IRX]: ret=%d, stat=%d\n", ret, STAT);
+    EPRINTF("[SECRMAN_SPECIAL]: ret=%d, stat=%d\n", ret, STAT);
 #endif
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
-    DPRINTF("[SECRSIF.IRX]: ret=%d, stat=%d\n", ret, STAT);
-    DPRINTF("\n\n\nFINISHED LOADING IRX FILES\n");
+    EPRINTF("[SECRSIF]: ret=%d, stat=%d\n", ret, STAT);
+
+
+    EPRINTF("FINISHED LOADING IRX FILES\n");
     // waitUntilDeviceIsReady by fjtrujy
 
     struct stat buffer;
     ret = -1;
     int retries = 50;
+    if (BOOT_PATH_ID == DEVID::MASS)
+    {
+        EPRINTF("WAITING FOR USB DEVICE READY\n");
+        while (ret != 0 && retries > 0) {
+            ret = stat("mass:/", &buffer);
+            /* Wait until the device is ready */
+            nopdelay();
 
-    while (ret != 0 && retries > 0) {
-        ret = stat("mass:/", &buffer);
-        /* Wait until the device is ready */
-        nopdelay();
-
-        retries--;
+            retries--;
+        }
+        EPRINTF("FINISHED\n");
     }
-    DPRINTF("FINISHED WAITING FOR USB DEVICE READY\n");
 
-    DPRINTF("INITIALIZING POWEROFF\n");
+    if (file_exist("INSTALL/CORE/txtlog.opt"))
+    {
+        EPRINTF("> WRITING PRINTF TO LOG...\n");
+        LOG2FILE_INIT(LOGFILE);
+        printf("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
+    }
+
+    if (!file_exist("INSTALL/CORE/nohdd.opt"))
+    {
+        if (HaveFileXio)
+            LoadHDDIRX();
+    } else {DPRINTF("Skipping HDD functionality");}
+
+    EPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
-    DPRINTF("Hooking alternative poweroff\n");
-    AllowPoweroff = 0;
+    EPRINTF("Hooking alternative poweroff\n");
+    AllowPoweroff = 1;
     poweroffSetCallback(alternative_poweroff, NULL);
 
     if ((fd = open("rom0:ROMVER", O_RDONLY)) > 0) // Reading ROMVER
@@ -307,37 +372,25 @@ int main(int argc, char *argv[])
         ConsoleROMVER[16] = '\0';
         close(fd);
     }
-    // if no parameters are specified, use the default boot
-    if (argc < 2) {
-        // set boot path global variable based on the elf path
-        setLuaBootPath(argc, argv, 0);
-    } else // set path based on the specified script
-    {
-        if (!strchr(argv[1], ':')) // filename doesn't contain device
-                                   // set boot path global variable based on the elf path
-            setLuaBootPath(argc, argv, 0);
-        else
-            // set path global variable based on the given script path
-            setLuaBootPath(argc, argv, 1);
-    }
-
+    
+    setLuaBootPath(argc, argv, 0);
     // Lua init
     // init internals library
 
     // graphics (gsKit)
     initGraphics();
-    DPRINTF("initGraphics() Finished\n");
+    EPRINTF("initGraphics() Finished\n");
 
     pad_init();
-    DPRINTF("pad_init() Finished\n");
+    EPRINTF("pad_init() Finished\n");
 
     // set base path luaplayer
     chdir(boot_path);
 
-    DPRINTF("boot path : %s\n", boot_path);
+    EPRINTF("boot path : %s\n", boot_path);
 
     while (1) {
-        DPRINTF("running bootstring\n");
+        EPRINTF("running bootstring\n");
         errMsg = runScript(bootString, true);
 
         if (errMsg != NULL) {
@@ -356,6 +409,83 @@ int main(int argc, char *argv[])
             while (!isButtonPressed(PAD_START)) {
             }
         }
+    }
+
+    return 0;
+}
+
+
+static int CheckHDD(void) {
+    int ret = fileXioDevctl("hdd0:", HDIOC_STATUS, NULL, 0, NULL, 0);
+    /* 0 = HDD connected and formatted, 1 = not formatted, 2 = HDD not usable, 3 = HDD not connected. */
+    DPRINTF("%s: HDD status is %d\n", __func__, ret);
+    if ((ret >= 3) || (ret < 0))
+        return -1;
+    return ret;
+}
+
+#ifdef UDPTTY
+void loadUDPTTY()
+{
+    int ID, RET;
+    ID = SifExecModuleBuffer(&netman_irx, size_netman_irx, 0, NULL, &RET);
+    EPRINTF(" [NETMAN]: ret=%d, ID=%d\n", RET, ID);
+    ID = SifExecModuleBuffer(&smap_irx, size_smap_irx, 0, NULL, &RET);
+    EPRINTF(" [SMAP]: ret=%d, ID=%d\n", RET, ID);
+    ID = SifExecModuleBuffer(&ps2ip_irx, size_ps2ip_irx, 0, NULL, &RET);
+    EPRINTF(" [PS2IP]: ret=%d, ID=%d\n", RET, ID);
+    ID = SifExecModuleBuffer(&udptty_irx, size_udptty_irx, 0, NULL, &RET);
+    EPRINTF(" [UDPTTY]: ret=%d, ID=%d\n", RET, ID);
+}
+#endif
+
+int loadDEV9()
+{
+    if (!dev9_loaded)
+    {
+        int ID, RET;
+        ID = SifExecModuleBuffer(&ps2dev9_irx, size_ps2dev9_irx, 0, NULL, &RET);
+        EPRINTF("[DEV9]: ret=%d, ID=%d\n", RET, ID);
+        if (ID < 0 && RET == 1) // ID smaller than 0: issue reported from modload | RET == 1: driver returned no resident end
+            return 0;
+        dev9_loaded = true;
+    }
+    return 1;
+}
+
+int LoadHDDIRX(void)
+{
+    int ID, RET, HDDSTAT;
+    static const char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
+        static const char pfsarg[] = "-m" "\0" "4" "\0" "-o" "\0" "10" "\0" "-n" "\0" "40";
+
+    /* PS2DEV9.IRX */
+    if (!loadDEV9())
+        return -1;
+
+    /* PS2ATAD.IRX */
+    ID = SifExecModuleBuffer(&ps2atad_irx, size_ps2atad_irx, 0, NULL, &RET);
+    EPRINTF(" [ATAD]: ret=%d, ID=%d\n", RET, ID);
+    if (ID < 0)
+        return -2;
+
+    /* PS2HDD.IRX */
+    ID = SifExecModuleBuffer(&ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &RET);
+    EPRINTF(" [PS2HDD]: ret=%d, ID=%d\n", RET, ID);
+    if (ID < 0)
+        return -3;
+
+    /* Check if HDD is formatted and ready to be used */
+    HDDSTAT = CheckHDD();
+    HDD_USABLE = (HDDSTAT == 0 || HDDSTAT == 1); // ONLY if HDD is usable. as we will offer HDD Formatting operation
+
+    /* PS2FS.IRX */
+    if (HDD_USABLE)
+    {
+        ID = SifExecModuleBuffer(&ps2fs_irx, size_ps2fs_irx, sizeof(pfsarg), pfsarg,  &RET);
+        EPRINTF("  [PS2FS]: ret=%d, ID=%d\n", RET, ID);
+        if (ID < 0)
+            return -5;
     }
 
     return 0;

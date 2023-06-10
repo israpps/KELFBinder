@@ -1,8 +1,9 @@
 	LNG_CRDTS0 = "Coded by El_isra (aka: Matias Israelson)"
-	LNG_CRDTS1 = "Based on Enceladus by Daniel Santos"
-	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer"
-	LNG_CRDTS3 = "GFX by Berion"
+	LNG_CRDTS1 = "Based on Enceladus. by Daniel Santos"
+	LNG_CRDTS2 = "SECRMAN and SECRSIF taken from Free McBoot 1.9 series installer. by sp193"
+	LNG_CRDTS3 = "GFX made by Berion"
 	LNG_CRDTS4 = "Get me free at https://github.com/israpps/KELFBinder"
+	LNG_DOCSLINK = "Documentation available at https://israpps.github.io/KELFBinder/"
 	LNG_CRDTS5 = "Thanks to:"
 	LNG_MM1 = "Welcome to KELFBinder"
 	LNG_MM2 = "Manage System Updates"
@@ -10,6 +11,7 @@
 	LNG_MM4 = "System Information"
 	LNG_MM5 = "Exit"
 	LNG_MM6 = "Credits"
+	LNG_MM7 = "Manage HDD Updates"
 	LNG_CT0 = "Select"
 	LNG_CT1 = "Cancel"
 	LNG_CT2 = "Refresh"
@@ -35,8 +37,8 @@
 	LNG_SUC4 = "American release model\nSCPH-30001 with B chassis"
 	LNG_SUC5 = "American release model\nSCPH-30001 with C chassis"
 	LNG_SUC6 = "Any American and Asian models\nexcluding American release models"
-	LNG_SUC7 = "European release model\nSCPH-3000(2/3/4/8) with C chassis"
-	LNG_SUC8 = "Any European model excluding release models"
+	LNG_SUC7 = "PAL release model\nSCPH-3000(2/3/4/8) with C chassis"
+	LNG_SUC8 = "Any PAL model excluding release models"
 	LNG_SUC9 = "The rare Chinese models"
 	LNG_EXPERTINST_PROMPT = "Select the system update executables"
 	LNG_EXPERTINST_PROMPT1 = "This console uses:"
@@ -45,7 +47,7 @@
 	LNG_REGS2 = "Europe / Oceania / Russia\nSCPH-XXX0[2/3/4/8]"
 	LNG_REGS3 = "China - SCPH-XXX09"
 	LNG_EIO = "I/O ERROR"
-	LNG_SECRMANERR = "SECRDOWNLOADFILE Failed! - Possible MagicGate error"
+	LNG_SECRMANERR = "KELF encryption Failed! - Possible 'MagicGate' error"
 	LNG_ENOMEM = "MEMORY ALLOCATION ERROR!"
 	LNG_SOURCE_KELF_GONE = "input KELF can't be opened"
 	LNG_EUNKNOWN = "Unknown error!"
@@ -69,7 +71,7 @@
 	LNG_USA = "USA"
 	LNG_ASI = "Asia"
 	LNG_USANASIA = "USA & Asia"
-	LNG_EUR = "Europe"
+	LNG_EUR = "Europe / Oceania / Russia"
 	LNG_CHN = "China"
 	LNG_AI_CROSS_MODEL = "Cross Model"
 	LNG_AI_CROSS_REGION = "Cross Region"
@@ -83,11 +85,16 @@
 	LNG_WARN_CONFLICT0 = "The selected Memory Card seems to have a system update\nalready installed"
 	LNG_WARN_CONFLICT1 = "clean the target folders before proceeding?"
 	LNG_WARN_CONFLICT2 = "Note: If you don't clean the folders, the update will \nbe installed anyways, but on a dirty enviroment"
+	LNG_WARN_CONFLICT3 = "We recommend cleaning unless you want to keep the previously installed updates"
+	LNG_WARN_CONFLICT4 = "Only the conflictive folders will be cleaned"
 	LNG_FMCBINST_CRAP0 = "FreeMcBoot Multi Installation detected!"
 	LNG_FMCBINST_CRAP1 = "The Memory Card must be formatted before installing."
 	LNG_FMCBINST_CRAP2 = "There is risk of FileSystem corruption if the card is not formatted"
 	LNG_ERROR = "Error!"
-	LNG_NOT_ENOUGH_SPACE0 = "There is not enough space on the selected Memory Card"
+	LNG_MEMORY_CARD = "Memory card"
+	LNG_HDD = "Hard Drive"
+	LNG_PARTITION = "Partition"
+	LNG_NOT_ENOUGH_SPACE0 = "There is not enough space on %s"
 	LNG_NOT_ENOUGH_SPACE1 = "Needed space  %.1f Kb - Available Space %.1f Kb"
 	LNG_INCOMPATIBLE_CARD = "incompatible device!"
 	LNG_INSTALLING_EXTRA = "Installing aditional files..."
@@ -95,47 +102,65 @@
 	LNG_EXTRA_INSTALL_ENABLE = "Extra files will be installed"
 	LNG_EXTRA_INSTALL_DISABLE = "Extra files will not be installed"
 	LNG_KELF_HEAD = "KELF Header:"
-
-function drawbar(x, y, prog, col)
+    LNG_HDDPROMPT = "Installs a Bootloader into the Internal HDD"
+    LNG_HDDPROMPT1 = "Formats the internal HDD into APA"
+    LNG_HDDPROMPT2 = "Enables EEPROM Configuration to allow expansion bay models\nTo automatically boot the HDD MBR program"
+	LNG_HDD_INSTOPT1 = "Install BootLoader"
+	LNG_HDD_INSTOPT2 = "Format HDD"
+	LNG_HDD_INSTOPT3 = "Enable HDDBoot"
+	LNG_HDDBOOT_ALREADY_ENABLED = "HDD Booting configuration is already enabled"
+	LNG_HDDBOOT_ENABLED = "HDD Booting has been enabled"
+	LNG_HDDFORMAT_CONFIRM = "You are about to format the internal HDD"
+	LNG_HDDFORMAT_CONFIRM2 = "This will wipe all the data currently stored inside"
+	LNG_ROMPATCH_PATCH = "System Update Path (ROM specific) = [%s]"
+	LNG_CALCULATING = "Calculating required space..."
+	LNG_HDD_STAT = "HDD Status = "
+	LNG_HDD_CON_AND_FORM = "Connected and formatted"
+	LNG_HDD_UNF = "Not formatted"
+	LNG_HDD_UNUSABLE = "Not usable"
+	LNG_HDD_DISCON = "Not connected"
+	LNG_HDD_OTHER = "Unknown status! (%d)"
+	LNG_HDD_UPDATES_SUPPORT = "Supports HDD Updates:"
+	LNG_HDD_NEEDS_HDDLOAD = "Needs HDDLOAD"
+	LNG_UNSUPPORTED = "Unsupported"
+	LNG_HDD_SMART_STATUS_FAILS_WARNING = "The HDD S.M.A.R.T Status is failing, the HDD will die soon"
+	LNG_HDD_SECTOR_ERROR_WARNING = "Damaged sectors have been detected on the HDD"
+	LNG_HDD_CORRUPTED_PART_WARNING = "Corrupted partition(s) detected"
+	LNG_HDD_RECOMMEND_FORMAT_OR_FSCK = "It is recommended to run HDDChecker or format the HDD to fix the issue."
+	LNG_HDD_RECOMMEND_HDD_REPLACE = "It is recommended to replace the HDD."
+_ = "" -- garbage placeholder
+function Drawbar(x, y, prog, col)
 	Screen.clear()
-	Graphics.drawRect(x-(prog), y, prog*2, 5, col)
+	Graphics.drawRect(x-(prog*2), y, prog*4, 5, col)
 	Screen.flip()
 end
 
+function DrawbarNbg(x, y, prog, col)
+	Graphics.drawRect(x-(prog*2), y, prog*4, 5, col)
+end
 	local temporaryVar = System.openFile("rom0:ROMVER", FREAD)
 	local temporaryVar_size = System.sizeFile(temporaryVar)
 	ROMVER = System.readFile(temporaryVar, temporaryVar_size)
+	System.log("ROMVER\t"..ROMVER.."\n")
 	ROMVER = string.sub(ROMVER, 0, 14)
 	System.closeFile(temporaryVar)
 	KELFBinder.init(ROMVER)
 	local REGION = KELFBinder.getsystemregion()
-	if REGION == 3 then
-		System.printf("changing vmode to PAL, 704, 480, CT24, INTERLACED, FIELD")
-		Screen.setMode(PAL, 704, 480, CT24, INTERLACED, FIELD)
-	else
-		System.printf("changing vmode to NTSC, 704, 480, CT24, INTERLACED, FIELD")
-		Screen.setMode(NTSC, 704, 480, CT24, INTERLACED, FIELD)
+	local VMODE = NTSC
+	if REGION == 3 then VMODE = PAL end
+	if System.doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
+	elseif System.doesFileExist("INSTALL/CORE/720p.opt") then VMODE = _720p
+	elseif System.doesFileExist("INSTALL/CORE/1080i.opt") then VMODE = _1080i
 	end
-	drawbar(352, 240, 20, Color.new(255, 255, 255))
-	System.sleep(5)
-	BETANUM = "014"
-IS_NOT_PUBLIC_READY = false
+	Screen.setMode(VMODE, 704, 480, CT24, INTERLACED, FIELD)
+	Drawbar(352, 240, 20, Color.new(255, 255, 255))
+	BETANUM = "Early Access HDD-003 Beta"
+	IS_NOT_PUBLIC_READY = true
+
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
-  elseif System.doesFileExist("System/index.lua") then
-	dofile("System/index.lua");
-  elseif System.doesFileExist("System/script.lua") then
-	dofile("System/script.lua");
-  elseif System.doesFileExist("System/system.lua") then
-	dofile("System/system.lua");
-  elseif System.doesFileExist("index.lua") then
-	dofile("index.lua");
-  elseif System.doesFileExist("script.lua") then
-	dofile("script.lua");
-  elseif System.doesFileExist("system.lua") then
-	dofile("system.lua");
 end
-
+System.sleep(5)
 Screen.clear(Color.new(0xff, 0xff, 0xff))
 Screen.flip()
 while true do end

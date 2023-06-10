@@ -865,6 +865,24 @@ GSFONT* loadFont(const char* path){
 
 	return font;
 }
+/*
+GSFONT* loadFontBuffer(unsigned char* ptr, unsigned int size){
+	uint16_t magic;
+	memcpy(&magic, ptr, 2);
+	GSFONT* font = NULL;
+	if (magic == 0x4D42) {
+		font = gsKit_init_font_raw(GSKIT_FTYPE_BMP_DAT, ptr, size);
+		gsKit_font_upload_raw(gsGlobal, font);
+	} else if (magic == 0x4246) {
+		font = gsKit_init_font_raw(GSKIT_FTYPE_FNT, ptr, size);
+		gsKit_font_upload_raw(gsGlobal, font);
+	} else if (magic == 0x5089) { 
+		font = gsKit_init_font_raw(GSKIT_FTYPE_PNG_DAT, ptr, size);
+		gsKit_font_upload_raw(gsGlobal, font);
+	}
+
+	return font;
+}*/
 
 void printFontText(GSFONT* font, const char* text, float x, float y, float scale, Color color)
 {

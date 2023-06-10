@@ -1,6 +1,7 @@
 #include <unistd.h>
 #include <libmc.h>
 #include <malloc.h>
+#include <errno.h>
 #include <sys/fcntl.h>
 #include <dirent.h>
 #include <sys/stat.h>
@@ -13,6 +14,8 @@
 
 #define MAX_DIR_FILES 512
 extern int AllowPoweroff;
+
+void recursive_mkdir(char *dir);
 
 static int lua_getCurrentDirectory(lua_State *L)
 {
@@ -65,7 +68,6 @@ static int lua_setCurrentDirectory(lua_State *L)
     return 1;
 }
 
-
 static int lua_AllowPowerOFF(lua_State *L)
 {
     int argc = lua_gettop(L);
@@ -91,15 +93,20 @@ static int lua_direxists(lua_State *L)
     int argc = lua_gettop(L);
     if (argc != 1)
         return luaL_error(L, "Argument error: lua_direxists takes one argument.");
-    const char *path = luaL_checkstring(L, 1);
-    struct stat info;
-
-    if (stat(path, &info) != 0)
-        lua_pushboolean(L, false);
-    else if (info.st_mode & S_IFDIR)
-        lua_pushboolean(L, true);
-    else
-        lua_pushboolean(L, false);
+    const char *folder = luaL_checkstring(L, 1);
+    DPRINTF("%s: %s\n", __func__, folder);
+    DIR *d = opendir(folder);
+    bool ret = false;
+	if (d) 
+    {
+        ret = true;
+        if (closedir(d) != 0)
+            DPRINTF("### ERROR: cannot close dir (%d)\n", errno);
+    } else {
+        ret = false;
+    }
+    DPRINTF("\t%s %s\n", folder, (ret)? "exists":"not found");
+    lua_pushboolean(L, ret);
     return 1;
 }
 
@@ -113,7 +120,6 @@ static int lua_dir(lua_State *L)
     char path[255];
 
     getcwd((char *)path, 256);
-    DPRINTF("current dir %s\n", (char *)path); 
 
     if (argc != 0) {
         temp_path = luaL_checkstring(L, 1);
@@ -202,7 +208,6 @@ static int lua_dir(lua_State *L)
     if (d) {
         while ((dir = readdir(d)) != NULL) {
             lua_pushnumber(L, i++); // push key for file entry
-            DPRINTF("%s\n", dir->d_name); 
             lua_newtable(L);
             lua_pushstring(L, "name");
             lua_pushstring(L, dir->d_name);
@@ -231,8 +236,17 @@ static int lua_createDir(lua_State *L)
     const char *path = luaL_checkstring(L, 1);
     if (!path)
         return luaL_error(L, "Argument error: System.createDirectory(directory) takes a directory name as string as argument.");
-    mkdir(path, 0777);
+    int ret = mkdir(path, 0777);
+    DPRINTF("\tmkdir: path '%s'. result = %d\n", path, ret);
+    return 0;
+}
 
+static int lua_recursivemkdir(lua_State *L)
+{
+    if (lua_gettop(L) != 1)
+        return luaL_error(L, "%s: one argumment expected with path.", __func__);
+    char* path = (char*)luaL_checkstring(L, 1);
+    recursive_mkdir(path);
     return 0;
 }
 
@@ -250,14 +264,14 @@ static int lua_removeDir(lua_State *L)
 //thanks to SP193 for all his work
 static int DeleteFolder(const char *folder)
 {
-    DPRINTF("\n%s: START!\n", __FUNCTION__); 
+    DPRINTF("\n%s: '%s'\n", __FUNCTION__, folder); 
 	DIR *d = opendir(folder);
 	size_t path_len = strlen(folder);
 	int r = -1;
 
 	if (d)
 	{
-		DPRINTF("Detected [%s], deleting...\n",folder); 
+		DPRINTF("Folder exists. wiping...\n"); 
 		struct dirent *p;
 
 		r = 0;
@@ -298,7 +312,6 @@ static int DeleteFolder(const char *folder)
 
 	return r;
 }
-//=============================================================
 
 static int lua_wipedir(lua_State *L)
 {
@@ -309,7 +322,6 @@ static int lua_wipedir(lua_State *L)
 
     return 0;
 }
-
 
 static int lua_movefile(lua_State *L)
 {
@@ -379,22 +391,37 @@ static int lua_copyfile(lua_State *L)
     const char *ogfile = luaL_checkstring(L, 1);
     const char *newfile = luaL_checkstring(L, 2);
     if (!ogfile || !newfile)
-        return luaL_error(L, "Argument error: System.copyFile(source, destination) takes two filenames as strings as arguments.");
+        return luaL_error(L, "%s expected two strings as arguments.", __func__);
     DPRINTF("%s: Copying [%s] to [%s]\n", __func__, ogfile, newfile); 
     char buf[BUFSIZ];
     size_t size;
 
     int source = open(ogfile, O_RDONLY, 0);
     int dest = open(newfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-
-    while ((size = read(source, buf, BUFSIZ)) > 0) {
-        write(dest, buf, size);
+    int ret = 0;
+    if ((dest < 0) || (source < 0)) 
+    {
+        ret = (source < 0) ? source : dest; //source not accessible is ENOENT. else I/O ERR
+        DPRINTF("### CANT OPEN %s (%d)\n", (source < 0) ? "source" : "destination", ret);
+    } 
+    else
+    {
+        while ((size = read(source, buf, BUFSIZ)) > 0) {
+            if (write(dest, buf, size) != size)
+                {
+                    DPRINTF("### CANT WRITE %d bytes to destination\n", size);
+                    ret = -EIO;
+                    goto err;
+                }
+        }
     }
-
-    close(source);
-    close(dest);
-
-    return 0;
+err:
+    if (source >= 0)
+        close(source);
+    if (dest >= 0)
+        close(dest);
+    lua_pushinteger(L, ret);
+    return 1;
 }
 
 static char modulePath[256];
@@ -430,7 +457,7 @@ static int lua_md5sum(lua_State *L)
 static int lua_sleep(lua_State *L)
 {
     if (lua_gettop(L) != 1)
-        return luaL_error(L, "milliseconds expected.");
+        return luaL_error(L, "seconds expected.");
     int sec = luaL_checkinteger(L, 1);
     sleep(sec);
     return 0;
@@ -458,7 +485,6 @@ static int lua_exit(lua_State *L)
         "nop;");
     return 0;
 }
-
 
 void recursive_mkdir(char *dir)
 {
@@ -524,7 +550,6 @@ static int lua_openfile(lua_State *L)
     return 1;
 }
 
-
 static int lua_readfile(lua_State *L)
 {
     int argc = lua_gettop(L);
@@ -539,7 +564,6 @@ static int lua_readfile(lua_State *L)
     free(buffer);
     return 1;
 }
-
 
 static int lua_writefile(lua_State *L)
 {
@@ -575,7 +599,6 @@ static int lua_seekfile(lua_State *L)
     return 0;
 }
 
-
 static int lua_sizefile(lua_State *L)
 {
     int argc = lua_gettop(L);
@@ -589,23 +612,30 @@ static int lua_sizefile(lua_State *L)
     return 1;
 }
 
+int file_exist(const char* path)
+{
+    int fd = -ENOENT;
+    fd = open(path, O_RDONLY, 0777);
+    if (fd < 0) 
+    {
+        return false;
+    } else
+    {
+        close(fd);
+        return true;
+    }
+}
 
 static int lua_checkexist(lua_State *L)
 {
     int argc = lua_gettop(L);
     if (argc != 1)
         return luaL_error(L, "wrong number of arguments");
-    const char *file_tbo = luaL_checkstring(L, 1);
-    int fileHandle = open(file_tbo, O_RDONLY, 0777);
-    if (fileHandle < 0)
-        lua_pushboolean(L, false);
-    else {
-        close(fileHandle);
-        lua_pushboolean(L, true);
-    }
+    const char *file = luaL_checkstring(L, 1);
+
+    lua_pushboolean(L, file_exist(file));
     return 1;
 }
-
 
 static int lua_loadELF(lua_State *L)
 {
@@ -739,7 +769,6 @@ static int copyThread(void *data)
     return 0;
 }
 
-
 static int lua_copyasync(lua_State *L)
 {
     int argc = lua_gettop(L);
@@ -765,7 +794,6 @@ static int lua_copyasync(lua_State *L)
     StartThread(thread, (void *)copypaths);
     return 0;
 }
-
 
 static int lua_getfileprogress(lua_State *L)
 {
@@ -794,12 +822,12 @@ static int lua_getbootpath(lua_State *L)
 
 static int lua_printf(lua_State *L)
 {
-    DPRINTF("%s\n", luaL_checkstring(L, 1)); 
+    DPRINTF(luaL_checkstring(L, 1)); 
     return 0;
 }
 
 static const luaL_Reg System_functions[] = {
-    {"printf",          lua_printf},
+    {"log",          lua_printf},
     {"getbootpath", lua_getbootpath},
     {"AllowPowerOffButton", lua_AllowPowerOFF},
     {"openFile", lua_openfile},
@@ -813,6 +841,7 @@ static const luaL_Reg System_functions[] = {
     {"currentDirectory", lua_curdir},
     {"listDirectory", lua_dir},
     {"createDirectory", lua_createDir},
+    {"createDirectoryRecursive", lua_recursivemkdir},
     {"removeDirectory", lua_removeDir},
     {"WipeDirectory", lua_wipedir},
     {"moveFile", lua_movefile},
