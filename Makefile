@@ -26,7 +26,7 @@ TTY2SIOR ?= 0
 #-----------------------{ printf over UDP }-----------------------#
 UDPTTY ?= 0
 #---------------------{ printf to local file }--------------------#
-LOG2FILE ?= 0
+LOG2FILE ?= 1
 #--------------------{ enable DEBUGGING MODE }--------------------#
 DEBUG ?= 0
 #---------------------{ Set IP for PS2Client }--------------------#
