@@ -16,9 +16,10 @@ SYSTEM/KELF/
 
 Here you will find the following files files:
 
-- `SYSTEM.XLF`: System Update for Common PS2
-- `XSYSTEM.XLF`: System update for PSX DESR
-- `DVDPLAYER.XLF`: DVDPlayer update
+- `SYSTEM.XLF`: System Update for Common PS2 (via Memory card)
+- `HSYSTEM.XLF`: System Update for Common PS2 (via Internal HDD)
+- `XSYSTEM.XLF`: System update for PSX DESR (via Memory card)
+- `DVDPLAYER.XLF`: DVDPlayer update (via Memory card)
 - `OSDSYS.KERNEL`: Kernel Patch for early SCPH-10000. __DON'T TOUCH THIS__
 - `OSD110.KERNEL`: Kernel Patch for Late SCPH-10000 and SCPH-15000  __DON'T TOUCH THIS__
 
@@ -26,27 +27,40 @@ Here you will find the following files files:
 
 Under the `INSTALL` folder you will find a file called `EXINST.lua`
 
-This is the file that holds the extra files installation tables
+This is the file that calculates the installation tables
+inside you will find the functions involved on the table creation
 
-There are 3 tables and 2 variables:
+example:
+```lua
+Update_InstTable("INSTALL/ASSETS/PS2BBL", "PS2BBL", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+```
+this function defined that all files contained inside `INSTALL/ASSETS/PS2BBL` will be copied to `mc?:/PS2BBL`
+all that you see after that should not be changed, unless you know what youre doing
 
-the two variables are:
-
-```note
-to disable the installation of extra files press L1 on main menu (R1 enables again).
-
-To forcibly disable it change the value of the following variables to 0, dont comment the install tables or leave them empty, or installer will crash...
+For defining an extra folder for Memory card install:
+```lua
+Update_InstTable("SOURCE FROM USB" "DESTINATION FOLDER", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 ```
 
-- `EXTRA_INST_COUNT`: the ammount of items inside the `EXTRA_INST_SRC` table
-- `EXTRA_INST_FOLDE`: the ammount of items inside the `EXTRA_INST_MKD` table
+For defining an extra folder for HDD install:
+```lua
+Update_InstTable("SOURCE FROM USB" "DESTINATION FULL HDD QUALIFIED PATH", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+```
+A full HDD Qualified path looks like this:
+```bash
+hdd0:PARTITION:pfs:/PATH_INSIDE_PARTITION
+```
 
-the three tables are:
-- `EXTRA_INST_SRC`: location of files to install, paths must be written as relative paths (relative to installer location)
-- `EXTRA_INST_MKD`: names of the folders to create inside memory card before proceeding to installation of files
-- `EXTRA_INST_DST`: destination paths for the files declared on `EXTRA_INST_SRC`, it must be in this form: `FOLDER/FILE` the memory card port is added to the string by the program. also, remember that subfolders are forbidden on $ony documentation! adding a subfolder will make it impossible to fully delete from OSDSYS/HDDOSD
+Under the dault script, these are the folders transferred on install.
 
-### obvious things that are worth mentioning
+### Memory card Default
+- `INSTALL/ASSETS/PS2BBL` > `mc?:/PS2BBL`
+- `INSTALL/ASSETS/APPS` > `mc?:/APPS`  
+- `INSTALL/ASSETS/BOOT` > `mc?:/BOOT` 
 
-- `EXTRA_INST_SRC` and `EXTRA_INST_DST` must have the same ammount of strings, and that ammount must be reflected on `EXTRA_INST_COUNT`
-- make sure to put into `EXTRA_INST_MKD` the needed folders to avoid issues when copying the extra files to card
+### HDD Default
+- `INSTALL/ASSETS/PS2BBL-HDD` > `hdd0:__sysconf:pfs:/PS2BBL`
+- `INSTALL/ASSETS/APPS-HDD` > `hdd0:__common:pfs:/APPS`
+- `INSTALL/ASSETS/BOOT-HDD` > `hdd0:__sysconf:pfs:/BOOT`
+- `INSTALL/ASSETS/FSCK` > `hdd0:__system:pfs:/fsck/lang`
+DONT TOUCH THE FSCK RELATED FILES. THEY CORRESPOND TO THE HDD DIAGNOSIS TOOL
