@@ -177,6 +177,9 @@ clean:
 	$(MAKE) -C modules/ds34usb clean
 	$(MAKE) -C modules/ds34bt clean
 
+cleansrc:
+	@rm -f $(APP_CORE:%=$(EE_OBJS_DIR)%) $(LUA_LIBS:%=$(EE_OBJS_DIR)%)
+
 cleanasm:
 	@echo "rm - asm dir"
 	@rm -rf $(EE_ASM_DIR)
