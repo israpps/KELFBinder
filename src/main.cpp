@@ -93,6 +93,7 @@ char boot_path[255];
 char ConsoleROMVER[17];
 bool HDD_USABLE = false;
 bool dev9_loaded = false;
+int file_exist(const char* path);
 int LoadHDDIRX(void);
 #ifdef UDPTTY
 void loadUDPTTY();
@@ -278,8 +279,6 @@ int main(int argc, char *argv[])
         fileXioInit();
         HaveFileXio = 1;
 #endif
-    if (HaveFileXio)
-        LoadHDDIRX();
 
     ret = SifExecModuleBuffer(&sio2man_irx, size_sio2man_irx, 0, NULL, &STAT);
     EPRINTF("[SIO2MAN.IRX]: ret=%d, stat=%d\n", ret, STAT);
@@ -327,6 +326,10 @@ int main(int argc, char *argv[])
 #endif
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
     EPRINTF("[SECRSIF.IRX]: ret=%d, stat=%d\n", ret, STAT);
+
+    if (HaveFileXio)
+        LoadHDDIRX();
+
     EPRINTF("FINISHED LOADING IRX FILES\n");
     // waitUntilDeviceIsReady by fjtrujy
 
@@ -345,7 +348,14 @@ int main(int argc, char *argv[])
         }
         EPRINTF("FINISHED\n");
     }
-    LOG2FILE_INIT(LOGFILE);
+
+    if (file_exist("INSTALL/CORE/txtlog.opt"))
+    {
+        EPRINTF("> WRITING PRINTF TO LOG...\n");
+        LOG2FILE_INIT(LOGFILE);
+        printf("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
+    }
+
     EPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
     EPRINTF("Hooking alternative poweroff\n");

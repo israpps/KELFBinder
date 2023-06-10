@@ -612,19 +612,28 @@ static int lua_sizefile(lua_State *L)
     return 1;
 }
 
+int file_exist(const char* path)
+{
+    int fd = -ENOENT;
+    fd = open(path, O_RDONLY, 0777);
+    if (fd < 0) 
+    {
+        return false;
+    } else
+    {
+        close(fd);
+        return true;
+    }
+}
+
 static int lua_checkexist(lua_State *L)
 {
     int argc = lua_gettop(L);
     if (argc != 1)
         return luaL_error(L, "wrong number of arguments");
-    const char *file_tbo = luaL_checkstring(L, 1);
-    int fileHandle = open(file_tbo, O_RDONLY, 0777);
-    if (fileHandle < 0)
-        lua_pushboolean(L, false);
-    else {
-        close(fileHandle);
-        lua_pushboolean(L, true);
-    }
+    const char *file = luaL_checkstring(L, 1);
+
+    lua_pushboolean(L, file_exist(file));
     return 1;
 }
 
