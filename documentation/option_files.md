@@ -15,7 +15,7 @@ As of today. the following option files are supported:
 
 ### `720p.opt`
 > Changes the video mode to 720p
-> 
+
 ### `1080i.opt`
 > Changes the video mode to 1080i
 
