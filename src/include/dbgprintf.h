@@ -6,10 +6,10 @@ extern "C" {
 #endif
 
 #ifdef SIO_PRINTF
-    void sio_printf(const char *fmt, ...);
     #include <SIOCookie.h>
     #include <sio.h>
 #endif
+void sio_printf(const char *fmt, ...);
 
 #ifdef __cplusplus
 }
@@ -52,7 +52,7 @@ extern "C" {
     #define DPRINTF_INIT()
 #endif
 
-#define EPRINTF(format, args...) printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
+#define EPRINTF(format, args...) DPRINTF(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
 
 #ifndef DPRINTF_INIT
     #define DPRINTF_INIT(x...)
