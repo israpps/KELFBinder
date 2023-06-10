@@ -5,6 +5,7 @@ sort: 3
 # Troubleshooting
 To discover why the program is not functioning properly
 
+For deeper testing. take a look at the [debug log feature](./option_files.md#txtlogopt)
 
 ## debug colors
 under certain scenarios, the program will change the screen color and freeze.
