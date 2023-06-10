@@ -88,7 +88,8 @@ static int lua_CheckDamagedPartitions(lua_State *L)
 {
     char ErrorPartName[64] = "";
     int ret = fileXioDevctl("hdd0:", HDIOC_GETERRORPARTNAME, NULL, 0, ErrorPartName, sizeof(ErrorPartName));
-    DPRINTF("HDIOC_GETERRORPARTNAME: %d - [%s]\n", ret, ErrorPartName);
+    DPRINTF("HDIOC_GETERRORPARTNAME: %d\n", ret);
+    if (ret != 0) DPRINTF("\tCorrupted partition: %s\n", ErrorPartName);
     lua_pushinteger(L, ret);
     lua_pushstring(L, ErrorPartName);
     return 2;
