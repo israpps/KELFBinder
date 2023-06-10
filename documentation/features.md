@@ -9,7 +9,7 @@ KELFBinder is capable of binding PS2 KELFs and installing them as system updates
 The program was made to be used as PS2BBL installer
 However it was also designed to be easily reusable by other projects... such as XEB+, FreeMcBoot and any other program that you might want to install.
 
-## System Updates
+## Memory Card System Updates
 
 ### Installation modes
 
@@ -45,7 +45,7 @@ Allows the user to cherry pick wich updates will be installed into the console.
 
 Each option includes a brief description of wich consoles will be soported by including that file
 
-## DVDPlayer Updates
+## Memory Card DVDPlayer Updates
 
 The DVDPlayer updates are region specific, just like System Updates.
 
@@ -53,6 +53,10 @@ However, unlike system updates. every console looks for the same path to update 
 
 the DVDPLayer update menu will ask you to select the target region for the update
 
+## Internal HDD System Updates
+KELFBinder is also capable of loading a full bootloader setup into the internal HDD. imitating the sony design.
+
+This includes an HDD Diagnosis tool wich is executed by the MBR program to warn you if something is not OK on the HDD...
 
 ## Encryption process
 
