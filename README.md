@@ -1,7 +1,7 @@
 
 
 <br />
-<p align="center">
+<p align="center" class="anim-fade-in">
   <a href="https://github.com/israpps/KELFBinder">
     <img src="./logo.png" alt="Logo" width="100%" height="auto">
   </a>
