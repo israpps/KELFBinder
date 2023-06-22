@@ -143,7 +143,7 @@ static int lua_secrdownloadfile(lua_State *L)
                     for (x = 2; x < SYSTEM_UPDATE_COUNT; x++) // start from index 2, since 0 and 1 are kernel patches, wich require different value for file_tbo
                     {
                         TF = (1 << (x + 1));
-                        DPRINTF("\ttrying with %s: ", sysupdate_paths[BSM2AI(TF)]); 
+                        DPRINTF("\t%s: ", sysupdate_paths[BSM2AI(TF)]); 
                         if (flags & TF) {
                             sprintf(output, "mc%d:/%s", port, sysupdate_paths[BSM2AI(TF)]);
                             DPRINTF("Installing...\n"); 
