@@ -126,10 +126,11 @@ void setLuaBootPath(int argc, char **argv, int idx)
         }
     }
 
-    // check if path needs patching
-    if (!strncmp(boot_path, "mass:/", 6) && (strlen(boot_path) > 6)) {
+    
+    if (!strncmp(boot_path, "mass:/", 6)) {
         BOOT_PATH_ID = DEVID::MASS;
-        strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
+        if (strlen(boot_path) > 6) // path needs patching
+            strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
     }
     else if (!strncmp(boot_path, "mc0", 3) || !strncmp(boot_path, "mc1", 3)) {
         BOOT_PATH_ID = (boot_path[2] == '0') ? DEVID::MC0 : DEVID::MC1;
@@ -328,9 +329,7 @@ int main(int argc, char *argv[])
     EPRINTF("[SECRSIF]: ret=%d, stat=%d\n", ret, STAT);
 
 
-    EPRINTF("FINISHED LOADING IRX FILES\n");
     // waitUntilDeviceIsReady by fjtrujy
-
     struct stat buffer;
     ret = -1;
     int retries = 50;
@@ -358,8 +357,9 @@ int main(int argc, char *argv[])
     {
         if (HaveFileXio)
             LoadHDDIRX();
-    } else {DPRINTF("Skipping HDD functionality");}
+    } else {DPRINTF("Skipping HDD functionality\n");}
 
+    EPRINTF("FINISHED LOADING IRX FILES\n");
     EPRINTF("INITIALIZING POWEROFF\n");
     poweroffInit();
     EPRINTF("Hooking alternative poweroff\n");
