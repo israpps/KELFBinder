@@ -127,10 +127,10 @@ void setLuaBootPath(int argc, char **argv, int idx)
     }
 
     
-    if (!strncmp(boot_path, "mass:/", 6)) {
+    if (!strncmp(boot_path, "mass", 4))
         BOOT_PATH_ID = DEVID::MASS;
-        if (strlen(boot_path) > 6) // path needs patching
-            strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
+    if ((!strncmp(boot_path, "mass:/", 6)) && (strlen(boot_path) > 6)) {
+        strcpy((char *)&boot_path[5], (const char *)&boot_path[6]);
     }
     else if (!strncmp(boot_path, "mc0", 3) || !strncmp(boot_path, "mc1", 3)) {
         BOOT_PATH_ID = (boot_path[2] == '0') ? DEVID::MC0 : DEVID::MC1;
@@ -142,15 +142,15 @@ void setLuaBootPath(int argc, char **argv, int idx)
     {
         if (getMountInfo(boot_path, NULL, MountPoint, newCWD)) // see if we can parse it
         {
-            if (mnt(MountPoint, 0, FIO_MT_RDWR)==0) //mount the partition
+            strcpy(boot_path, newCWD); // replace boot path with mounted pfs path
+            /*if (mnt(MountPoint, 0, FIO_MT_RDWR)==0) //mount the partition
             {
-                strcpy(boot_path, newCWD); // replace boot path with mounted pfs path
                 BOOT_PATH_ID = DEVID::HDD;
 #ifdef RESERVE_PFS0
                 bootpath_is_on_HDD = 1;
 #endif
             }
-
+        */
         }
     }
 
@@ -321,13 +321,11 @@ int main(int argc, char *argv[])
     // EPRINTF("[AUDSRV]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&poweroff_irx, size_poweroff_irx, 0, NULL, &STAT);
     EPRINTF("[POWEROFF]: ret=%d, stat=%d\n", ret, STAT);
-#ifndef RESET_IOP
-    ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
-    EPRINTF("[SECRMAN_SPECIAL]: ret=%d, stat=%d\n", ret, STAT);
-#endif
+
     ret = SifExecModuleBuffer(&secrsif_debug_irx, size_secrsif_debug_irx, 0, NULL, &STAT);
     EPRINTF("[SECRSIF]: ret=%d, stat=%d\n", ret, STAT);
 
+    setLuaBootPath(argc, argv, 0);
 
     // waitUntilDeviceIsReady by fjtrujy
     struct stat buffer;
@@ -372,8 +370,6 @@ int main(int argc, char *argv[])
         ConsoleROMVER[16] = '\0';
         close(fd);
     }
-    
-    setLuaBootPath(argc, argv, 0);
     // Lua init
     // init internals library
 
