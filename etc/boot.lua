@@ -155,7 +155,7 @@ end
 	Screen.setMode(VMODE, 704, 480, CT24, INTERLACED, FIELD)
 	Drawbar(352, 240, 20, Color.new(255, 255, 255))
 	BETANUM = "Early Access HDD-003 Beta"
-	IS_NOT_PUBLIC_READY = true
+	IS_NOT_PUBLIC_READY = false
 
 if System.doesFileExist("INSTALL/KELFBinder.lua") then
 	dofile("INSTALL/KELFBinder.lua");
