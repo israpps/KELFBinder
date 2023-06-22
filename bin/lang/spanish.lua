@@ -1,6 +1,6 @@
 	LNG_CRDTS0 = "Codificado Por El_isra (Matias Israelson)"
 	LNG_CRDTS1 = "Basado en Enceladus. por Daniel Santos"
-	LNG_CRDTS2 = "SECRMAN y SECRSIF tomados de FreeMcBoot 1.9. por sp193"
+	LNG_CRDTS2 = "SECRMAN y SECRSIF tomados de FreeMcBoot 1.9, por sp193."
 	LNG_CRDTS3 = "Imagenes hechas por Berion"
 	LNG_CRDTS4 = "obteneme gratis en https://github.com/israpps/KELFBinder"
 	LNG_DOCSLINK = "Documentacion disponible en https://israpps.github.io/KELFBinder/"
