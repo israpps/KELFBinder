@@ -45,6 +45,16 @@ Allows the user to cherry pick wich updates will be installed into the console.
 
 Each option includes a brief description of wich consoles will be soported by including that file
 
+### MagicGate Test
+
+This feature will attempt to bind a KELF file to the card without writing anything to the card.
+
+then it just reports back if the update was encrypted properly.
+
+In adition, the binary data of the _kbit_ and _Kc_ fields of the file are printed on screen.
+
+very useful to test if the card supports updates without even writing a single byte to the card.
+
 ## Memory Card DVDPlayer Updates
 
 The DVDPlayer updates are region specific, just like System Updates.
