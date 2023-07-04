@@ -57,7 +57,7 @@ the number is calculated by rounding the ROM version to the nearest ten.  for ex
 Path | Console
 --------------------------- | ----------------------------------
 `BIEXEC-SYSTEM/osdsys.elf`  | `SCPH-10000` (early ones)
-`BIEXEC-SYSTEM/osd110.elf`  | Early `SCPH-10000` & `SCPH-15000`
+`BIEXEC-SYSTEM/osd110.elf`  | Late  `SCPH-10000` & `SCPH-15000`
 `BIEXEC-SYSTEM/osd120.elf`  | `SCPH-18000`
 `BIEXEC-SYSTEM/osdmain.elf` | any `SCPH-xxx00` excluding the 3 previous models
 `BAEXEC-SYSTEM/osd120.elf`  | Early USA release model `SCPH-30001`
