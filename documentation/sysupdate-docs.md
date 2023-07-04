@@ -37,7 +37,7 @@ __Japan__      | `SCPH-15000` |    `A`    | `1.01 J` |   `osd110.elf` [^3] |
 __Japan__      | `SCPH-18000` |  `A+/AB`  | `1.20 J` |	`osd130.elf`  |
 __America__    | `SCPH-30001` |   `B/B'`  | `1.10 A` |   `osd120.elf`  |
 __America__    | `SCPH-30001` |   `C/C'`  | `1.20 A` |	`osd130.elf`	|
-__Europe__     | `SCPH-30002`/`3`/`4` | `C/C'` | `1.20 E` | `osd130.elf` |
+__Europe__     | `SCPH-30002`/`3`/`4`/`8` | `C/C'` | `1.20 E` | `osd130.elf` |
 __All__        | Most models  | `D` and newer | `1.50` and newer | `osdXXX.elf`[^4] or `osdmain.elf` (in that order)
 __Japan__      | PSX (`DESR`)| - |  `1.80` or `2.10` | `xosdmain.elf`
 
@@ -47,3 +47,23 @@ note: early PS2 models such as protokernels search for system updates first on `
 
 [^4]: `osdXXX.elf` is a specific ROM update. The XXX represents a 3 digit number calculated based on the ROM version of your console.
 the number is calculated by rounding the ROM version to the nearest ten.  for example: if your console has ROMVER `0220` (`2.20`) the name of the specific update will be `osd230.elf`
+
+<div class="Subhead">
+  <h2 class="Subhead-heading">System Update Paths to cover all models</h2>
+  <div class="Subhead-description">Explanation of wich models use each of the 9(or 10) paths covered in an 'universal' system update setup</div>
+</div>
+
+
+Path | Console
+--------------------------- | ----------------------------------
+`BIEXEC-SYSTEM/osdsys.elf`  | `SCPH-10000` (early ones)
+`BIEXEC-SYSTEM/osd110.elf`  | Early `SCPH-10000` & `SCPH-15000`
+`BIEXEC-SYSTEM/osd120.elf`  | `SCPH-18000`
+`BIEXEC-SYSTEM/osdmain.elf` | any `SCPH-xxx00` excluding the 3 previous models
+`BAEXEC-SYSTEM/osd120.elf`  | Early USA release model `SCPH-30001`
+`BAEXEC-SYSTEM/osd130.elf`  | Late USA release model  `SCPH-30001`
+`BAEXEC-SYSTEM/osdmain.elf` | Any USA model excluding the previous two models
+`BEEXEC-SYSTEM/osd130.elf`  | PAL Release models (Europe / Oceania / Russia / England) (`SCPH-3000#` `#`=`2`/`3`/`4`/`8`)
+`BEEXEC-SYSTEM/osdmain.elf` | Any PAL model excluding the previous one
+`BCEXEC-SYSTEM/osdmain.elf` | Any Chinese PS2 (`SCPH-xxx09`)
+`BIEXEC-SYSTEM/xosdmain.elf`| Any PSX-DESR
