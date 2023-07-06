@@ -97,7 +97,9 @@ static int lua_CheckDamagedPartitions(lua_State *L)
 
 static int lua_FormatHDD(lua_State *L)
 {
-    if (hddFormat() != 0)
+    int RET = hddFormat();
+    DPRINTF("%s: ret %d\n", __func__, RET);
+    if (RET != 0)
         lua_pushboolean(L, false);
     else
         lua_pushboolean(L, true);
@@ -132,7 +134,7 @@ static int lua_installMBRKELF(lua_State *L)
     DPRINTF("%s: input fd is %d\n", __func__, fd); 
     if (fd < 0) {
             result = -201;
-            DPRINTF("CANNOT OPEN INPUT KELF: %d error\n", fd);
+            DPRINTF("### CANNOT OPEN INPUT KELF: %d error\n", fd);
     } 
     else
     {
@@ -149,12 +151,12 @@ static int lua_installMBRKELF(lua_State *L)
         lseek(fd, 0, SEEK_SET);
         if ((buffer = ( unsigned char * )malloc(size)) != NULL) {
             if ((read(fd, buffer, size)) != size) {
-                DPRINTF("ERROR: Could not read %d bytes from file\n", size);
+                DPRINTF("### ERROR: Could not read %d bytes from file\n", size);
                 result = -EIO;
             }
             close(fd);
         } else {
-            DPRINTF("ERROR: failed to malloc %d bytes for MBR\n", size);
+            DPRINTF("### ERROR: failed to malloc %d bytes for MBR\n", size);
             result = -ENOMEM;
         }
     }
@@ -185,7 +187,7 @@ static int lua_installMBRKELF(lua_State *L)
 	    			((hddAtaTransfer_t *)IOBuffer)->size = 1;
 	    			if ((result = fileXioDevctl("hdd0:", APA_DEVCTL_ATA_READ, IOBuffer, sizeof(hddAtaTransfer_t), IOBuffer + sizeof(hddAtaTransfer_t), 512)) < 0)
 	    		    {
-                        DPRINTF("ERROR: failed to read final sector on MBR install (%d)\n", result);
+                        DPRINTF("### ERROR: failed to read final sector on MBR install (%d)\n", result);
                     	break;
                     }
 	    		}
@@ -197,7 +199,7 @@ static int lua_installMBRKELF(lua_State *L)
 
 	    		if ((result = fileXioDevctl("hdd0:", APA_DEVCTL_ATA_WRITE, IOBuffer, 512 + sizeof(hddAtaTransfer_t), NULL, 0)) < 0)
 	    		{
-                    DPRINTF("ERROR: failed to write MBR program (%d) while writing to sector %d\n", result, sector + i);
+                    DPRINTF("### ERROR: failed to write MBR program (%d) while writing to sector %d\n", result, sector + i);
                 	break;
                 }
 	    	}
@@ -209,12 +211,12 @@ static int lua_installMBRKELF(lua_State *L)
 	    		fileXioDevctl("hdd0:", APA_DEVCTL_SET_OSDMBR, &MBRInfo, sizeof(MBRInfo), NULL, 0);
 	    	}
 	    } else {
-            DPRINTF("ERROR: Cannot stat __mbr\n");
+            DPRINTF("### ERROR: Cannot stat __mbr\n");
         }
     }
     if (buffer != NULL)
         free(buffer);
-    DPRINTF("MBR INSTALL: finished with result %d\n", result);
+    DPRINTF("> MBR INSTALL: finished with result %d\n", result);
     lua_pushinteger(L, result);
 //
     return 1;

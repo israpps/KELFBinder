@@ -54,7 +54,7 @@
 	LNG_INSTERR = "Installation failed! (%d)"
 	LNG_TESTTERR = "Test failed! (%d)"
 	LNG_TESTSUCC = "Test succeeded!"
-	LNG_INSTALLING = "Installing System Updates..."
+	LNG_INSTALLING = "Installing..."
 	LNG_INSTFINISH = "Installation finished!"
 	LNG_WANNAQUIT = "Exit application?"
 	LNG_YES = "Yes"

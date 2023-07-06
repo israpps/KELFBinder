@@ -209,14 +209,14 @@ function HEXDUMP(DATA)
   return MESSAGE
 end
 
-function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
+function PreExtraAssetsInstall(TBL, FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   if MUST_INSTALL_EXTRA_FILES then
-    FOLDERCOUNT = FOLDERCOUNT + #MC_INST_TABLE.dirs
+    FOLDERCOUNT = FOLDERCOUNT + #TBL.dirs
   end
-  if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
-    for i = 1, #MC_INST_TABLE.source do
-      if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
-        SIZECOUNT = SIZECOUNT + GetFileSizeX(MC_INST_TABLE.source[i])
+  if #TBL.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #TBL.source do
+      if System.doesFileExist(TBL.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        SIZECOUNT = SIZECOUNT + GetFileSizeX(TBL.source[i])
         FILECOUNT = FILECOUNT + 1 -- only add the confirmed files
       end
     end
@@ -225,7 +225,7 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   return FILECOUNT, FOLDERCOUNT, SIZECOUNT
 end
 function InstallExtraAssets(port, cur, total)
-  ReportProgress(cur, total)
+  ReportProgress(LNG_INSTALLING_EXTRA, cur, total)
   local ret = 0
   if #MC_INST_TABLE.dirs > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.dirs do
@@ -236,7 +236,7 @@ function InstallExtraAssets(port, cur, total)
   end
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
-      ReportProgress(cur+i, total)
+      ReportProgress(LNG_INSTALLING_EXTRA, cur+i, total)
       if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         ret = System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
         if ret < 0 then return ret end
@@ -628,6 +628,7 @@ function DVDPlayerINST(port, slot, target_region)
   local TARGET_KELF = string.format("mc%d:/%s/dvdplayer.elf", port, TARGET_FOLD)
 
   if System.doesFileExist(DVDPLAYERUPDATE) then
+    local DVDPLAYER_SIZE = GetFileSizeX(DVDPLAYERUPDATE)
     System.AllowPowerOffButton(0)
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -665,7 +666,7 @@ function NormalInstall(port, slot)
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_MAIN)
     TARGET_FOLD = string.format("mc%d:/%s", port, KELFBinder.getsysupdatefolder())
   end
-  FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
+  FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(MC_INST_TABLE, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   AvailableSpace, NEEDED_SPACE = CalculateRequiredSpace(port, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   if AvailableSpace < NEEDED_SPACE then InsufficientSpace(NEEDED_SPACE, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
   local tot = FILECOUNT + 3
@@ -673,10 +674,10 @@ function NormalInstall(port, slot)
   if System.doesDirExist(TARGET_FOLD) then
     Ask2WipeSysUpdateDirs(false, false, false, false, true, port)
   end
-  ReportProgress(0, tot)
+  ReportProgress(LNG_INSTALLING, 0, tot)
   System.AllowPowerOffButton(0)
   System.createDirectory(TARGET_FOLD)
-  ReportProgress(1, tot)
+  ReportProgress(LNG_INSTALLING, 1, tot)
 
   if IS_PSX then
     SYSUPDATEPATH = "BIEXEC-SYSTEM/xosdmain.elf"
@@ -686,7 +687,7 @@ function NormalInstall(port, slot)
     KELFBinder.setSysUpdateFoldProps(port, slot, KELFBinder.getsysupdatefolder())
   end
 
-  ReportProgress(2, tot)
+  ReportProgress(LNG_INSTALLING, 2, tot)
   if (ROMVERN == 100) or (ROMVERN == 101) then -- PROTOKERNEL NEEDS TWO UPDATES TO FUNCTION
     Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, "BIEXEC-SYSTEM/osd130.elf")) -- SCPH-18000
     if (ROMVERN == 100) then
@@ -697,16 +698,16 @@ function NormalInstall(port, slot)
       if RET < 0 then Secrerr(RET) return end
     end
   elseif IS_PSX then -- PSX NEEDS SPECIAL PATH
-    ReportProgress(3, tot)
+    ReportProgress(LNG_INSTALLING, 3, tot)
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_PSX, string.format("mc%d:/BIEXEC-SYSTEM/xosdmain.elf", port))
     if RET < 0 then Secrerr(RET) return end
   else -- ANYTHING ELSE FOLLOWS WHATEVER IS WRITTEN INTO 'SYSUPDATEPATH'
-    ReportProgress(3, tot)
+    ReportProgress(LNG_INSTALLING, 3, tot)
     RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH))
     if RET < 0 then Secrerr(RET) return end
   end
   -- KELF install finished! deal with extra files now!
-  ReportProgress(4, tot)
+  ReportProgress(LNG_INSTALLING, 4, tot)
   if REG == 0 or IS_PSX then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
@@ -718,7 +719,7 @@ function NormalInstall(port, slot)
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
 
-  ReportProgress(5, tot)
+  ReportProgress(LNG_INSTALLING_EXTRA, 5, tot)
   Screen.flip()
   RET = InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
@@ -1546,7 +1547,7 @@ function PerformExpertINST(port, slot, UPDT)
     end
   end
 
-  FILECOUNT, FOLDERCOUNT, SIZE_NEED = PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZE_NEED)
+  FILECOUNT, FOLDERCOUNT, SIZE_NEED = PreExtraAssetsInstall(MC_INST_TABLE, FILECOUNT, FOLDERCOUNT, SIZE_NEED)
   AvailableSpace, SIZE_NEED2 = CalculateRequiredSpace(port, FILECOUNT, FOLDERCOUNT, SIZE_NEED)
   local total = FILECOUNT+3
   local cur=0
@@ -1555,7 +1556,7 @@ function PerformExpertINST(port, slot, UPDT)
 
   System.AllowPowerOffButton(0)
 
-  ReportProgress(0, total)
+  ReportProgress(LNG_INSTALLING, 0, total)
 
   if NEEDS_JPN then System.createDirectory(JPN_FOLD) end
   if NEEDS_USA then System.createDirectory(USA_FOLD) end
@@ -1564,13 +1565,13 @@ function PerformExpertINST(port, slot, UPDT)
 
   if UPDT[0] == 1 then
     cur = cur+1
-    ReportProgress(cur, total)
+    ReportProgress(LNG_INSTALLING, cur, total)
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/BIEXEC-SYSTEM/osdsys.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
   if UPDT[1] == 1 then
     cur = cur+1
-    ReportProgress(cur, total)
+    ReportProgress(LNG_INSTALLING, cur, total)
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/BIEXEC-SYSTEM/osd110.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
@@ -1580,29 +1581,29 @@ function PerformExpertINST(port, slot, UPDT)
   if RET < 0 then Secrerr(RET) return end
 
   cur = cur+1
-  ReportProgress(cur, total)
+  ReportProgress(LNG_INSTALLING, cur, total)
 
   if NEEDS_JPN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(LNG_INSTALLING, cur, total)
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("mc%d:/%s/icon.sys", port, "BIEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_USA then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BAEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(LNG_INSTALLING, cur, total)
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("mc%d:/%s/icon.sys", port, "BAEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_EUR then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BEEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(LNG_INSTALLING, cur, total)
     System.copyFile("INSTALL/ASSETS/EUR.sys", string.format("mc%d:/%s/icon.sys", port, "BEEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_CHN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BCEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(LNG_INSTALLING, cur, total)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("mc%d:/%s/icon.sys", port, "BCEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
@@ -1619,10 +1620,10 @@ function PerformExpertINST(port, slot, UPDT)
   Secrerr(RET)
 end
 
-function ReportProgress(prog, total)
+function ReportProgress(STR, prog, total)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, STR)
   DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, 0x30))
   DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
   Screen.flip()
@@ -1638,15 +1639,15 @@ function WriteDataToHDD()
   local total = 2 + #HDD_INST_TABLE.source
   local pfs_path
   local pfs_mkdir
-  ReportProgress(1, total)
+  ReportProgress(LNG_INSTALLING, 1, total)
   HDD.EnableHDDBoot()
   local ret = HDD.InstallBootstrap(SYSUPDATE_HDD_BOOTSTRAP)
-  ReportProgress(1, total)
+  ReportProgress(LNG_INSTALLING, 1, total)
   if ret < 0 then
     return ret
   end
   for i = 1, #HDD_INST_TABLE.source do
-    ReportProgress(2+i, total)
+    ReportProgress(LNG_INSTALLING_EXTRA, 2+i, total)
     mountpath, _, pfs_path = GetMountData(HDD_INST_TABLE.target[i]) -- calculate needed paths
     if mountpath ~= current_mount then --different partition...
       System.log("partition change needed '"..mountpath.."'\n")
