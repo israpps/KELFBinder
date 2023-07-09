@@ -137,6 +137,7 @@ function ORBMANex(IMG, Q, X, Z, POW)
 end
 
 function WaitWithORBS(NN)
+  RINCREMENT = 4
   N = NN
   while N > 1 do
     Screen.clear()
@@ -145,9 +146,11 @@ function WaitWithORBS(NN)
     Screen.flip()
     N = N - 1
   end
+  RINCREMENT = 2
 end
 
 function FadeWIthORBS()
+  RINCREMENT = 3
   local A = 0x80
   while A > 0 do
     Screen.clear()
@@ -156,6 +159,7 @@ function FadeWIthORBS()
     Screen.flip()
     A = A - 1
   end
+  RINCREMENT = 2
 end
 --- Processes a HDD full path into its components. (eg: `hdd0:__system:pfs:/osd110/hosdsys.elf`)
 ---@param PATH string
@@ -300,6 +304,7 @@ function Greeting()
 end
 
 function OrbIntro(BGQ)
+  RINCREMENT = 4
   local A = 0x70
   local X = 0x90
   local Q = 0x80
@@ -316,6 +321,7 @@ function OrbIntro(BGQ)
     if X > 0 then X = X - 1 end
     Screen.flip()
   end
+  RINCREMENT = 2
 end
 
 function MainMenu()
