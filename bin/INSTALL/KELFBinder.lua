@@ -9,6 +9,7 @@ SCR_X = 704
 SCR_Y = 480
 X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
+LightsSeed = math.random()/2345 + 3456;
 System.log("KELFBinder.lua starts\n")
 Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
@@ -84,7 +85,7 @@ Drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
 local REGION = KELFBinder.getsystemregion()
 --local REGIONSTR = KELFBinder.getsystemregionString(REGION)
 local R = math.random(1,180)
-local RINCREMENT = 0.00018
+local RINCREMENT = 2
 
 Language = KELFBinder.getsystemLanguage()
 if System.doesFileExist("lang/global.lua") then dofile("lang/global.lua")
@@ -122,29 +123,17 @@ end
 Eval_HDDStatus() --we must call it at startup no matter what
 
 function ORBMAN(Q)
-  R = R+RINCREMENT
-  if R > 200 and RINCREMENT > 0 then RINCREMENT = -0.00018 end
-  if R < 0   and RINCREMENT < 0 then RINCREMENT =  0.00018 end
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.1))), 180+(80*math.sin(math.deg(R*2.1+1.1))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.2))), 180+(80*math.sin(math.deg(R*2.1+1.2))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.3))), 180+(80*math.sin(math.deg(R*2.1+1.3))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.4))), 180+(80*math.sin(math.deg(R*2.1+1.4))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.7))), 180+(80*math.sin(math.deg(R*2.1+1.7))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.8))), 180+(80*math.sin(math.deg(R*2.1+1.8))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.9))), 180+(80*math.sin(math.deg(R*2.1+1.9))), Color.new(128, 128, 128, Q))
+  ORBMANex(CURSOR, Q, 180, 180, 80)
 end
 
 function ORBMANex(IMG, Q, X, Z, POW)
   R = R+RINCREMENT
-  if R > 200 and RINCREMENT > 0 then RINCREMENT = -0.00018 end
-  if R < 0   and RINCREMENT < 0 then RINCREMENT =  0.00018 end
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.1))), Z+(POW*math.sin(math.deg(R*2.1+1.1))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.2))), Z+(POW*math.sin(math.deg(R*2.1+1.2))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.3))), Z+(POW*math.sin(math.deg(R*2.1+1.3))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.4))), Z+(POW*math.sin(math.deg(R*2.1+1.4))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.7))), Z+(POW*math.sin(math.deg(R*2.1+1.7))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.8))), Z+(POW*math.sin(math.deg(R*2.1+1.8))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.9))), Z+(POW*math.sin(math.deg(R*2.1+1.9))), Color.new(128, 128, 128, Q))
+  for l = 1, 7 do
+		local C = math.cos(((R + LightsSeed + l*17)*0.01 *(l+10)*0.1)) -- THANKS to AAP for the math from his OSDSYS reversal
+		local S = math.sin(((R + LightsSeed + l*15)*0.005*(l+10)*0.1))
+    --Graphics.drawCircle(180+(80*math.cos((S+l))), 180+(80*math.sin((S+l))), 4.0, Color.new(255, 0, 0, Q))
+    Graphics.drawImage(IMG, X+(POW*math.cos((S+l))), Z+(POW*math.sin((S+l))), Color.new(128, 128, 128, Q))
+  end
 end
 
 function WaitWithORBS(NN)
