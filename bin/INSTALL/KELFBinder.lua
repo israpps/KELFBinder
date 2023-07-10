@@ -1229,7 +1229,6 @@ function MagicGateTest(port, slot)
     Screen.flip()
   end
   local RET
-  local LOL = 0
   local HEADER
   local KBIT
   local KCONT
@@ -1237,7 +1236,8 @@ function MagicGateTest(port, slot)
   local MESSAGE1 = ""
   local MESSAGE2 = ""
   if System.doesFileExist(TEST_KELF) then
-    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) else
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+  else
     RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
   MESSAGE = HEXDUMP(HEADER)
