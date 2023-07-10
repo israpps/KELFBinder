@@ -124,4 +124,9 @@
 	LNG_HDD_UPDATES_SUPPORT = "Soporta actualizaciones por HDD:"
 	LNG_HDD_NEEDS_HDDLOAD = "Necesita HDDLOAD"
 	LNG_UNSUPPORTED = "No Soportado"
+	LNG_HDD_SMART_STATUS_FAILS_WARNING = "El Estado S.M.A.R.T del HDD está fallando, El HDD morirá pronto"
+	LNG_HDD_SECTOR_ERROR_WARNING = "Sectores dañados detectados"
+	LNG_HDD_CORRUPTED_PART_WARNING = "Partición(es) Corrupta(s) detectada(s)"
+	LNG_HDD_RECOMMEND_FORMAT_OR_FSCK = "Se recomienda ejecutar el HDDChecker para reparar los daños"
+	LNG_HDD_RECOMMEND_HDD_REPLACE = "Se recomienda reemplazar el disco duro"
 -- TRADUCCION POR El_isra
