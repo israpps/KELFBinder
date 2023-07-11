@@ -149,15 +149,21 @@ function WaitWithORBS(NN)
   RINCREMENT = 2
 end
 
-function FadeWIthORBS()
+function FadeWIthORBS(EXPAND)
   RINCREMENT = 3
   local A = 0x80
+  local B = 0
   while A > 0 do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    ORBMAN(A)
+    if EXPAND then
+      ORBMANex(CURSOR, A, 180, 180, 80+B)
+    else
+      ORBMAN(A)
+    end
     Screen.flip()
     A = A - 1
+    B = B + 1
   end
   RINCREMENT = 2
 end
@@ -863,7 +869,7 @@ function ExpertINSTprompt()
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    ORBMAN(0x70)
+
     Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(LSANS, X_MID, 60, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
@@ -1836,7 +1842,7 @@ while true do
     if TTT == 1 then -- NORMAL INST
       local port = MemcardPickup()
       if port ~= -1 then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         NormalInstall(port, 0)
         WaitWithORBS(50)
       end
@@ -1849,7 +1855,7 @@ while true do
         port = MemcardPickup()
         if port ~= -1 then
           WaitWithORBS(30)
-          FadeWIthORBS()
+          FadeWIthORBS(false)
           if UPDT[10] == 1 then -- IF PSX mode was selected
             IS_PSX = true -- simulate runner console is a PSX to reduce code duplication
             NormalInstall(port, 0)
@@ -1862,17 +1868,17 @@ while true do
     elseif TTT == 3 then -- EXPERT INST
       local port = MemcardPickup()
       if port ~= -1 then
-        WaitWithORBS(30)
+        FadeWIthORBS(true)
         local UPDT = ExpertINSTprompt()
         if UPDT["x"] == true then
-          FadeWIthORBS()
+          FadeWIthORBS(false)
           PerformExpertINST(port, 0, UPDT)
         else WaitWithORBS(20) end
       end
     elseif TTT == 4 then -- MAGICGATE TEST
       local port = MemcardPickup()
       if port ~= -1 then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         MagicGateTest(port, 0)
         WaitWithORBS(50)
       end
@@ -1898,7 +1904,7 @@ while true do
     if (port >= 0) then
       local target_region = DVDPlayerRegionPicker()
       if (target_region >= 0) then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         DVDPlayerINST(port, 0, target_region)
       end
     end
