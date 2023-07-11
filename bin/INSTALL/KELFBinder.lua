@@ -872,7 +872,7 @@ function ExpertINSTprompt()
     Font.ftPrint(LSANS, 110, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 110, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 292, 120, 0, 630, 32, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(LSANS, 292, 220, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(LSANS, 292, 240, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 104, 340, 0, 600, 32, UPDTT[T] , Color.new(200, 200, 200, 0x80 - A))
 
     if UPDT[0] == 1 then Graphics.drawImage(CHKF, 110, 142) else Graphics.drawImage(CHK_, 110, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
@@ -884,7 +884,7 @@ function ExpertINSTprompt()
     if UPDT[6] == 1 then Graphics.drawImage(CHKF, 110, 302) else Graphics.drawImage(CHK_, 110, 302, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if UPDT[7] == 1 then Graphics.drawImage(CHKF, 292, 162) else Graphics.drawImage(CHK_, 292, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if UPDT[8] == 1 then Graphics.drawImage(CHKF, 292, 182) else Graphics.drawImage(CHK_, 292, 182, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 292, 242) else Graphics.drawImage(CHK_, 292, 242, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 292, 262) else Graphics.drawImage(CHK_, 292, 262, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if T == JAP_ROM_100 then
       Font.ftPrint(LSANS, 139, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x80 - A))
     else
@@ -931,9 +931,9 @@ function ExpertINSTprompt()
       Font.ftPrint(LSANS, X_MID-40, 180, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == CHN_STANDARD then
-      Font.ftPrint(LSANS, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID-40, 260, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(LSANS, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(LSANS, X_MID-40, 260, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if A > 0 then A = A - 1 end
     Promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT3, A)
