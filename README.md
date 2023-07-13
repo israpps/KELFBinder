@@ -6,7 +6,7 @@
     <img src="./logo.png" alt="Logo" width="100%" height="auto">
   </a>
 
-  <p align="center">
+  <p align="center" class="anim-fade-up">
     A powerfull System and DVDPlayer Updates installer for PlayStation 2™
     <br />
   </p>
