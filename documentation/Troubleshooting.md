@@ -13,13 +13,13 @@ under certain scenarios, the program will change the screen color and freeze.
 here is the list of those colors and their meaning:
 
 ### Purple
-- The exact color is: ![purple](https://img.shields.io/badge/%20-%20-800080)
+- The exact color is: ![purple](https://img.shields.io/badge/%20-%20-800080?style=for-the-badge)
 - meaning: KELFBinder could not find the installation table manifest.
 
 The expected location of this script is `INSTALL/EXTINST.lua`
 
 ### White
-- The exact color is: ![white](https://img.shields.io/badge/%20%20%20%20%20%20-%20%20%20%20%20-ffffff)
+- The exact color is: ![white](https://img.shields.io/badge/%20%20%20-FFFFFF?style=for-the-badge)
 - meaning: KELFBinder could not find the main script file
 
 The expected location of this script is `INSTALL/KELFBinder.lua`
@@ -36,7 +36,7 @@ The expected location of this script is `INSTALL/KELFBinder.lua`
 - __NOTE:__ since extra installation table is an external file wich every user can customize. issue reports related to this will not be accepted if they can't be reproduced with the original copy of that script
 
 ### Yellow
-- the exact color is: ![yellow](https://img.shields.io/badge/%20%20%20%20%20%20-%20%20%20%20%20-ffff00)
+- the exact color is: ![yellow](https://img.shields.io/badge/%20%20%20%20%20%20-%20%20%20%20%20-ffff00?style=for-the-badge)
 - meaning: KELFBinder could not open a resource file of importance
 
 ## Crashes
