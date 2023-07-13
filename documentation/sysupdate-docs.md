@@ -54,8 +54,8 @@ Path | Console
 `BIEXEC-SYSTEM/osd110.elf`  | Late  `SCPH-10000` & `SCPH-15000`
 `BIEXEC-SYSTEM/osd120.elf`  | `SCPH-18000`
 `BIEXEC-SYSTEM/osdmain.elf` | any `SCPH-xxx00` excluding the 3 previous models
-`BAEXEC-SYSTEM/osd120.elf`  | Early USA release model `SCPH-30001`
-`BAEXEC-SYSTEM/osd130.elf`  | Late USA release model  `SCPH-30001`
+`BAEXEC-SYSTEM/osd120.elf`  | Early North america release model `SCPH-30001`
+`BAEXEC-SYSTEM/osd130.elf`  | Late North america release model  `SCPH-30001`
 `BAEXEC-SYSTEM/osdmain.elf` | Any USA model excluding the previous two models
 `BEEXEC-SYSTEM/osd130.elf`  | PAL Release models (Europe / Oceania / Russia / England) (`SCPH-3000#` `#`=`2`/`3`/`4`/`8`)
 `BEEXEC-SYSTEM/osdmain.elf` | Any PAL model excluding the previous one
