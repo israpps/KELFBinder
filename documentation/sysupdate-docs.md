@@ -5,10 +5,8 @@ sort: 10
 # System Update documentation
 
 
-<div class="Subhead">
-  <h2 class="Subhead-heading">System Folders</h2>
-  <div class="Subhead-description">the directories where PS2 looks for updates and local settings</div>
-</div>
+## System Folders
+> the directories where PS2 looks for updates and local settings
 
 
 __Region__   |__System update__ | __Data folder__ [^2] | __DVD Player Update__ [^1]|
@@ -23,10 +21,8 @@ __Chinese__   | `BCEXEC-SYSTEM` | `BCDATA-SYSTEM` |  `BCEXEC-DVDPLAYER`   |
 [^2]: __Data Folder:__ seen on the console browser as "Your System Configuration" this folder hold the play history file (a file that holds a record of played games, used to generate the towers on the console start animation), also, `TITLE.DB` is held on this folder, a file used by the PS1 retrocompatibility systems
 
 
-<div class="Subhead">
-  <h2 class="Subhead-heading">System executables</h2>
-  <div class="Subhead-description">The filenames of the system updates depending on the console model</div>
-</div>
+## System executables
+> The filenames of the system updates depending on the console model
 
 
 __Region__| __Model__  |__Chassis__| __ROM__|__ELF filename__|
@@ -48,10 +44,8 @@ note: early PS2 models such as protokernels search for system updates first on `
 [^4]: `osdXXX.elf` is a specific ROM update. The XXX represents a 3 digit number calculated based on the ROM version of your console.
 the number is calculated by rounding the ROM version to the nearest ten.  for example: if your console has ROMVER `0220` (`2.20`) the name of the specific update will be `osd230.elf`
 
-<div class="Subhead">
-  <h2 class="Subhead-heading">System Update Paths to cover all models</h2>
-  <div class="Subhead-description">Explanation of wich models use each of the 9(or 10) paths covered in an 'universal' system update setup</div>
-</div>
+## System Update Paths to cover all models
+> Explanation of wich models use each of the 9(or 10) paths covered in an 'universal' system update setup
 
 
 Path | Console
