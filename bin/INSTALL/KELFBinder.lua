@@ -9,6 +9,7 @@ SCR_X = 704
 SCR_Y = 480
 X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
+LightsSeed = math.random()/2345 + 3456;
 System.log("KELFBinder.lua starts\n")
 Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
@@ -84,7 +85,7 @@ Drawbar(X_MID, Y_MID, 80, Color.new(255, 255, 255))
 local REGION = KELFBinder.getsystemregion()
 --local REGIONSTR = KELFBinder.getsystemregionString(REGION)
 local R = math.random(1,180)
-local RINCREMENT = 0.00018
+local RINCREMENT = 2
 
 Language = KELFBinder.getsystemLanguage()
 if System.doesFileExist("lang/global.lua") then dofile("lang/global.lua")
@@ -122,32 +123,21 @@ end
 Eval_HDDStatus() --we must call it at startup no matter what
 
 function ORBMAN(Q)
-  R = R+RINCREMENT
-  if R > 200 and RINCREMENT > 0 then RINCREMENT = -0.00018 end
-  if R < 0   and RINCREMENT < 0 then RINCREMENT =  0.00018 end
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.1))), 180+(80*math.sin(math.deg(R*2.1+1.1))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.2))), 180+(80*math.sin(math.deg(R*2.1+1.2))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.3))), 180+(80*math.sin(math.deg(R*2.1+1.3))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.4))), 180+(80*math.sin(math.deg(R*2.1+1.4))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.7))), 180+(80*math.sin(math.deg(R*2.1+1.7))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.8))), 180+(80*math.sin(math.deg(R*2.1+1.8))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(CURSOR, 180+(80*math.cos(math.deg(R*2.1+1.9))), 180+(80*math.sin(math.deg(R*2.1+1.9))), Color.new(128, 128, 128, Q))
+  ORBMANex(CURSOR, Q, 180, 180, 80)
 end
 
 function ORBMANex(IMG, Q, X, Z, POW)
   R = R+RINCREMENT
-  if R > 200 and RINCREMENT > 0 then RINCREMENT = -0.00018 end
-  if R < 0   and RINCREMENT < 0 then RINCREMENT =  0.00018 end
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.1))), Z+(POW*math.sin(math.deg(R*2.1+1.1))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.2))), Z+(POW*math.sin(math.deg(R*2.1+1.2))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.3))), Z+(POW*math.sin(math.deg(R*2.1+1.3))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.4))), Z+(POW*math.sin(math.deg(R*2.1+1.4))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.7))), Z+(POW*math.sin(math.deg(R*2.1+1.7))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.8))), Z+(POW*math.sin(math.deg(R*2.1+1.8))), Color.new(128, 128, 128, Q))
-  Graphics.drawImage(IMG, X+(POW*math.cos(math.deg(R*2.1+1.9))), Z+(POW*math.sin(math.deg(R*2.1+1.9))), Color.new(128, 128, 128, Q))
+  for l = 1, 7 do
+		local C = math.cos(((R + LightsSeed + l*17)*0.01 *(l+10)*0.1)) -- THANKS to AAP for the math from his OSDSYS reversal
+		local S = math.sin(((R + LightsSeed + l*15)*0.005*(l+10)*0.1))
+    --Graphics.drawCircle(180+(80*math.cos((S+l))), 180+(80*math.sin((S+l))), 4.0, Color.new(255, 0, 0, Q))
+    Graphics.drawImage(IMG, X+(POW*math.cos((S+l))), Z+(POW*math.sin((S+l))), Color.new(128, 128, 128, Q))
+  end
 end
 
 function WaitWithORBS(NN)
+  RINCREMENT = 4
   N = NN
   while N > 1 do
     Screen.clear()
@@ -156,17 +146,26 @@ function WaitWithORBS(NN)
     Screen.flip()
     N = N - 1
   end
+  RINCREMENT = 2
 end
 
-function FadeWIthORBS()
+function FadeWIthORBS(EXPAND)
+  RINCREMENT = 3
   local A = 0x80
+  local B = 0
   while A > 0 do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    ORBMAN(A)
+    if EXPAND then
+      ORBMANex(CURSOR, A, 180, 180, 80+B)
+    else
+      ORBMAN(A)
+    end
     Screen.flip()
     A = A - 1
+    B = B + 1
   end
+  RINCREMENT = 2
 end
 --- Processes a HDD full path into its components. (eg: `hdd0:__system:pfs:/osd110/hosdsys.elf`)
 ---@param PATH string
@@ -311,6 +310,7 @@ function Greeting()
 end
 
 function OrbIntro(BGQ)
+  RINCREMENT = 4
   local A = 0x70
   local X = 0x90
   local Q = 0x80
@@ -327,6 +327,7 @@ function OrbIntro(BGQ)
     if X > 0 then X = X - 1 end
     Screen.flip()
   end
+  RINCREMENT = 2
 end
 
 function MainMenu()
@@ -868,7 +869,7 @@ function ExpertINSTprompt()
   while true do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    ORBMAN(0x70)
+
     Font.ftPrint(LSANS, X_MID, 40, 8, 630, 32, LNG_EXPERTINST_PROMPT, Color.new(0x80, 0x80, 0x80, 0x80 - A))
     if SUPPORTS_UPDATES then
       Font.ftPrint(LSANS, X_MID, 60, 8, 630, 32, LNG_EXPERTINST_PROMPT1, Color.new(0x80, 0x80, 0, 0x80 - A))
@@ -877,7 +878,7 @@ function ExpertINSTprompt()
     Font.ftPrint(LSANS, 110, 120, 0, 630, 16, LNG_REGS0, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 110, 240, 0, 630, 16, LNG_REGS1, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 292, 120, 0, 630, 32, LNG_REGS2, Color.new(0x80, 0x80, 0, 0x80 - A))
-    Font.ftPrint(LSANS, 292, 220, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
+    Font.ftPrint(LSANS, 292, 240, 0, 630, 16, LNG_REGS3, Color.new(0x80, 0x80, 0, 0x80 - A))
     Font.ftPrint(LSANS, 104, 340, 0, 600, 32, UPDTT[T] , Color.new(200, 200, 200, 0x80 - A))
 
     if UPDT[0] == 1 then Graphics.drawImage(CHKF, 110, 142) else Graphics.drawImage(CHK_, 110, 142, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
@@ -889,7 +890,7 @@ function ExpertINSTprompt()
     if UPDT[6] == 1 then Graphics.drawImage(CHKF, 110, 302) else Graphics.drawImage(CHK_, 110, 302, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if UPDT[7] == 1 then Graphics.drawImage(CHKF, 292, 162) else Graphics.drawImage(CHK_, 292, 162, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if UPDT[8] == 1 then Graphics.drawImage(CHKF, 292, 182) else Graphics.drawImage(CHK_, 292, 182, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
-    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 292, 242) else Graphics.drawImage(CHK_, 292, 242, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
+    if UPDT[9] == 1 then Graphics.drawImage(CHKF, 292, 262) else Graphics.drawImage(CHK_, 292, 262, Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
     if T == JAP_ROM_100 then
       Font.ftPrint(LSANS, 139, 140, 0, 400, 16, "osdsys.elf", Color.new(0x80, 0x80, 0x80, 0x80 - A))
     else
@@ -936,9 +937,9 @@ function ExpertINSTprompt()
       Font.ftPrint(LSANS, X_MID-40, 180, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if T == CHN_STANDARD then
-      Font.ftPrint(LSANS, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
+      Font.ftPrint(LSANS, X_MID-40, 260, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x80 - A))
     else
-      Font.ftPrint(LSANS, X_MID-40, 240, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
+      Font.ftPrint(LSANS, X_MID-40, 260, 0, 400, 16, "osdmain.elf", Color.new(0x80, 0xde, 0xff, 0x50 - A))
     end
     if A > 0 then A = A - 1 end
     Promptkeys(1, LNG_CT0, 1, LNG_CT1, 1, LNG_CT3, A)
@@ -1841,7 +1842,7 @@ while true do
     if TTT == 1 then -- NORMAL INST
       local port = MemcardPickup()
       if port ~= -1 then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         NormalInstall(port, 0)
         WaitWithORBS(50)
       end
@@ -1854,7 +1855,7 @@ while true do
         port = MemcardPickup()
         if port ~= -1 then
           WaitWithORBS(30)
-          FadeWIthORBS()
+          FadeWIthORBS(false)
           if UPDT[10] == 1 then -- IF PSX mode was selected
             IS_PSX = true -- simulate runner console is a PSX to reduce code duplication
             NormalInstall(port, 0)
@@ -1867,17 +1868,17 @@ while true do
     elseif TTT == 3 then -- EXPERT INST
       local port = MemcardPickup()
       if port ~= -1 then
-        WaitWithORBS(30)
+        FadeWIthORBS(true)
         local UPDT = ExpertINSTprompt()
         if UPDT["x"] == true then
-          FadeWIthORBS()
+          FadeWIthORBS(false)
           PerformExpertINST(port, 0, UPDT)
         else WaitWithORBS(20) end
       end
     elseif TTT == 4 then -- MAGICGATE TEST
       local port = MemcardPickup()
       if port ~= -1 then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         MagicGateTest(port, 0)
         WaitWithORBS(50)
       end
@@ -1903,7 +1904,7 @@ while true do
     if (port >= 0) then
       local target_region = DVDPlayerRegionPicker()
       if (target_region >= 0) then
-        FadeWIthORBS()
+        FadeWIthORBS(false)
         DVDPlayerINST(port, 0, target_region)
       end
     end
