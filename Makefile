@@ -21,8 +21,6 @@ REVISION = $(shell expr $(shell git rev-list --count HEAD))
 RESET_IOP ?= 1
 #--------------------{ Serial port debugging }--------------------#
 EE_SIO ?= 0
-#-----------------{ Display IOP printf on EE_SIO }----------------#
-TTY2SIOR ?= 0
 #-----------------------{ printf over UDP }-----------------------#
 UDPTTY ?= 0
 #---------------------{ printf to local file }--------------------#
@@ -34,7 +32,9 @@ PS2LINK_IP ?= 192.168.1.10
 #-------{ add checks/behaviour intended for release build }-------#
 RELEASE ?= 1
 #-----------------------------------------------------------------#
+ifeq ($(DEBUG), 0)
 .SILENT:
+endif
 
 EE_BIN_DIR = bin/
 EE_BIN = $(EE_BIN_DIR)KELFBinder.elf
@@ -77,7 +77,7 @@ EXT_LIBS = modules/ds34usb/ee/libds34usb.a modules/ds34bt/ee/libds34bt.a
 
 APP_CORE = main.o libcdvd_add.o modelname.o system.o pad.o graphics.o render.o \
 		   calc_3d.o gsKit3d_sup.o atlas.o fntsys.o md5.o \
-		   libsecr.o baexec-system_paths.o strUtils.o sioprintf.o # sound.o 
+		   libsecr.o baexec-system_paths.o strUtils.o # sound.o 
 
 LUA_LIBS =	luaplayer.o luacontrols.o \
 			luatimer.o luaScreen.o luagraphics.o \
@@ -103,6 +103,7 @@ ifeq ($(UDPTTY), 1)
   ifeq ($(EE_SIO), 0) # only enable common printf if EE_SIO is disabled. this allows separating EE and IOP printf
     GLOBFLAGS += -DCOMMON_PRINTF
     EE_CFLAGS += -DCOMMON_PRINTF
+    EE_OBJS += sioprintf.o
   endif
 endif
 
@@ -110,13 +111,7 @@ ifeq ($(EE_SIO), 1)
   $(info --- EE_SIO enabled...)
   GLOBFLAGS += -DSIO_PRINTF
   EE_CFLAGS += -DSIO_PRINTF
-  EE_LIBS += -lsiocookie
-  ifeq ($(TTY2SIOR), 1)
-    GLOBFLAGS += -DTTY2SIOR
-    EE_CFLAGS += -DTTY2SIOR
-    IOP_MODULES += tty2sior_irx.o
-    EE_LIBS += -lisra_sior
-  endif
+#  EE_LIBS += -lsiocookie
 endif
 
 EE_OBJS_DIR = obj/
@@ -128,7 +123,6 @@ EE_OBJS := $(EE_OBJS:%=$(EE_OBJS_DIR)%) # remap all EE_OBJ to obj subdir
 #------------------------------------------------------------------#
 all: $(EXT_LIBS) $(EE_BIN)
 	@echo EE_SIO=$(EE_SIO)
-	@echo TTY2SIOR=$(TTY2SIOR)
 	@echo UDPTTY=$(UDPTTY)
 	@echo RESET_IOP=$(RESET_IOP)
 

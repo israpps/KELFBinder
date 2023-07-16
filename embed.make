@@ -99,7 +99,4 @@ $(EE_ASM_DIR)netman_irx.s: netman.irx | $(EE_ASM_DIR)
 $(EE_ASM_DIR)smap_irx.s: smap.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
-$(EE_ASM_DIR)tty2sior_irx.s: tty2sior.irx | $(EE_ASM_DIR)
-	$(BIN2S) $< $@ $(IRXTAG)
-
 #------------------------------------------------------------------#

@@ -81,11 +81,6 @@ IMPORT_BIN2C(netman_irx);
 IMPORT_BIN2C(smap_irx);
 #endif
 
-#ifdef TTY2SIOR
-#include <sior_rpc.h>
-IMPORT_BIN2C(tty2sior_irx);
-#endif
-
 FILE* LOGFILE = NULL;
 enum DEVID{NONE, MC0, MC1, MASS, HOST, MX4, ILK, HDD, XFROM, CDVD};
 unsigned int BOOT_PATH_ID = DEVID::NONE;
@@ -243,14 +238,6 @@ int main(int argc, char *argv[])
     sbv_patch_enable_lmb();
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
-
-#ifdef TTY2SIOR
-    EPRINTF("Starting SIOR thread with 0x20 priority\n");
-    SIOR_Init(0x20);
-    EPRINTF("Loading TTY2SIOR.IRX\n");
-    ret = SifExecModuleBuffer(&tty2sior_irx, size_tty2sior_irx, 0, NULL, &STAT);
-    EPRINTF("[TTY2SIOR]: ret=%d, stat=%d\n", ret, STAT);
-#endif
 
 #ifdef UDPTTY
     if (loadDEV9())
