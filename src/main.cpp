@@ -440,7 +440,7 @@ int LoadHDDIRX(void)
 {
     int ID, RET, HDDSTAT;
     static const char hddarg[] = "-o" "\0" "4" "\0" "-n" "\0" "20";
-        static const char pfsarg[] = "-m" "\0" "4" "\0" "-o" "\0" "10" "\0" "-n" "\0" "40";
+    static const char pfsarg[] = "-m" "\0" "4" "\0" "-o" "\0" "10" "\0" "-n" "\0" "40";
 
     /* PS2DEV9.IRX */
     if (!loadDEV9())
@@ -449,13 +449,13 @@ int LoadHDDIRX(void)
     /* PS2ATAD.IRX */
     ID = SifExecModuleBuffer(&ps2atad_irx, size_ps2atad_irx, 0, NULL, &RET);
     EPRINTF(" [ATAD]: ret=%d, ID=%d\n", RET, ID);
-    if (ID < 0)
+    if (ID < 0 || RET == 1)
         return -2;
 
     /* PS2HDD.IRX */
     ID = SifExecModuleBuffer(&ps2hdd_irx, size_ps2hdd_irx, sizeof(hddarg), hddarg, &RET);
     EPRINTF(" [PS2HDD]: ret=%d, ID=%d\n", RET, ID);
-    if (ID < 0)
+    if (ID < 0 || RET == 1)
         return -3;
 
     /* Check if HDD is formatted and ready to be used */
@@ -467,7 +467,7 @@ int LoadHDDIRX(void)
     {
         ID = SifExecModuleBuffer(&ps2fs_irx, size_ps2fs_irx, sizeof(pfsarg), pfsarg,  &RET);
         EPRINTF("  [PS2FS]: ret=%d, ID=%d\n", RET, ID);
-        if (ID < 0)
+        if (ID < 0 || RET == 1)
             return -5;
     }
 
