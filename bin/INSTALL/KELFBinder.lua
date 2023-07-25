@@ -1871,9 +1871,8 @@ while true do
         FadeWIthORBS(true)
         local UPDT = ExpertINSTprompt()
         if UPDT["x"] == true then
-          FadeWIthORBS(false)
           PerformExpertINST(port, 0, UPDT)
-        else WaitWithORBS(20) end
+        else OrbIntro(0) end
       end
     elseif TTT == 4 then -- MAGICGATE TEST
       local port = MemcardPickup()
