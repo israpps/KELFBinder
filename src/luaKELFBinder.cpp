@@ -196,6 +196,10 @@ static int lua_getDVDPlayerUpdatefolder(lua_State *L)
             lua_pushstring(L, "BIEXEC-DVDPLAYER");
             break;
 
+        case CONSOLE_REGIONS::EUROPE:
+            lua_pushstring(L, "BEEXEC-DVDPLAYER");
+            break;
+
         case CONSOLE_REGIONS::ASIA:
         case CONSOLE_REGIONS::USA:
             lua_pushstring(L, "BAEXEC-DVDPLAYER");
