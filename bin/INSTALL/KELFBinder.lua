@@ -620,7 +620,11 @@ function DVDPlayerRegionPicker()
     if T > 4 then T = 1 end
 
   end
-  return (T - 1)
+  if (T >= 3) then -- this special condition is required because value 2 is for ASIAN models, wicha re virtually a copy of USA
+    return T
+  else
+    return (T-1)
+  end
 end
 
 function DVDPlayerINST(port, slot, target_region)
