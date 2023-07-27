@@ -1,23 +1,25 @@
 #ifndef DPRINTF_H
 #define DPRINTF_H
 
-#ifdef SIO_PRINTF
 #ifdef __cplusplus
 extern "C" {
 #endif
-#include <sio.h>
+
+#ifdef SIO_PRINTF
+    #include <SIOCookie.h>
+    #include <sio.h>
+#endif
 void sio_printf(const char *fmt, ...);
+
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 
 #define ANSICOL_BLD_LBLUE //"\033[1;94;40m"
 #define ANSICOL_DEF //"\033[m"
 
 #ifdef SIO_PRINTF
-    #define DPRINTF_INIT() sio_init(38400, 0, 0, 0, 0)
+    #define DPRINTF_INIT() ee_sio_start(38400, 0, 0, 0, 0, 1)
 	#define DPRINTF(format, args...) sio_printf(ANSICOL_BLD_LBLUE format ANSICOL_DEF, ##args)
     #define DPUTS(buf) sio_putsn(buf)
     //#define DFLUSH() fflush(stdout)

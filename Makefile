@@ -103,6 +103,7 @@ ifeq ($(UDPTTY), 1)
   ifeq ($(EE_SIO), 0) # only enable common printf if EE_SIO is disabled. this allows separating EE and IOP printf
     GLOBFLAGS += -DCOMMON_PRINTF
     EE_CFLAGS += -DCOMMON_PRINTF
+    EE_OBJS += sioprintf.o
   endif
 endif
 
@@ -110,7 +111,6 @@ ifeq ($(EE_SIO), 1)
   $(info --- EE_SIO enabled...)
   GLOBFLAGS += -DSIO_PRINTF
   EE_CFLAGS += -DSIO_PRINTF
-  APP_CORE += sioprintf.o
 #  EE_LIBS += -lsiocookie
 endif
 
