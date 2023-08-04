@@ -11,12 +11,12 @@ X_MID = SCR_X / 2
 Y_MID = SCR_Y / 2
 LightsSeed = math.random()/2345 + 3456;
 System.log("KELFBinder.lua starts\n")
-Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 FONTPATH = "common/font2.ttf"
 
 --- __0:__ connected&formatted, __1:__ unformatted, __2:__ unusable, __3:__ not connected, __>3__ other errors
 HDD_STATUS = 3
 
+Drawbar(X_MID, Y_MID, 40, Color.new(255, 0, 0))
 Secrman.init()
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
@@ -47,7 +47,7 @@ TEST_KELF = "INSTALL/KELF/BENCHMARK.XLF"
 SYSUPDATE_HDD_MAIN  = "INSTALL/KELF/HSYSTEM.XLF"
 SYSUPDATE_HDD_BOOTSTRAP = "INSTALL/KELF/MBR.XLF"
 
-Drawbar(X_MID, Y_MID, 50, Color.new(255, 0, 0))
+Drawbar(X_MID, Y_MID, 50, Color.new(255, 255, 255))
 local circle = Graphics.loadImageEmbedded(5)
 local cross = Graphics.loadImageEmbedded(6)
 local triangle = Graphics.loadImageEmbedded(15)
