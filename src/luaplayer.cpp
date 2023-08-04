@@ -57,11 +57,11 @@ const char * runScript(const char* script, bool isStringBuffer )
   }
 
 		
-	if (s == 0) s = lua_pcall(L, 0, LUA_MULTRET, 0);
+	if (s == LUA_OK) s = lua_pcall(L, 0, LUA_MULTRET, 0);
 
-	if (s) {
+	if (s != LUA_OK) {
 		sprintf((char*)errMsg, "%s\n", lua_tostring(L, -1));
-    DPRINTF("%s\n", lua_tostring(L, -1));
+    //DPRINTF("%s\n", lua_tostring(L, -1));
 		lua_pop(L, 1); // remove error message
 	}
 	lua_close(L);
