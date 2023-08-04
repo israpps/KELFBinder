@@ -1894,6 +1894,7 @@ while true do
       Eval_HDDStatus() --check again!
       OrbIntro(1)
     elseif (ACT == 3) then
+      FadeWIthORBS(true)
       local ret = HDD.EnableHDDBoot()
       ret = 100 + ret
       Report(ret, true, false)
