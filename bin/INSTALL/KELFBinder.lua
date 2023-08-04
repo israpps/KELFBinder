@@ -28,7 +28,7 @@ if ROMVERN > 220 or console_model_sub == "DTL-H300" or console_model_sub == "DTL
 ---@PSX
 IS_PSX = false
 REAL_IS_PSX = false
-if System.doesFileExist("rom0:PSXVER") then
+if doesFileExist("rom0:PSXVER") then
   System.log("rom0:PSXVER FOUND\n")
   IS_PSX = true
   REAL_IS_PSX = true
@@ -65,12 +65,10 @@ local GREENCURSOR = Graphics.loadImageEmbedded(9)
 local CHK_ = Graphics.loadImageEmbedded(3)
 local CHKF = Graphics.loadImageEmbedded(4)
 
-if System.doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
-  System.log("### Could not access INSTALL/EXTINST.lua\n")
-  Screen.clear(Color.new(128, 0, 128))
-  Screen.flip()
-  while true do end
-end
+--if doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
+--  System.log("### Could not access INSTALL/EXTINST.lua\n")
+--end
+dofile("INSTALL/EXTINST.lua")
 System.sleep(1)
 Drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
 Graphics.setImageFilters(LOGO, LINEAR)
@@ -88,21 +86,21 @@ local R = math.random(1,180)
 local RINCREMENT = 2
 
 Language = KELFBinder.getsystemLanguage()
-if System.doesFileExist("lang/global.lua") then dofile("lang/global.lua")
+if doesFileExist("lang/global.lua") then dofile("lang/global.lua")
 elseif Language == 1 then -- intended to stop searching lang files if language is english
-elseif Language == 0 then if System.doesFileExist("lang/japanese.lua") then dofile("lang/japanese.lua") end
-elseif Language == 2 then if System.doesFileExist("lang/french.lua") then dofile("lang/french.lua") end
-elseif Language == 3 then if System.doesFileExist("lang/spanish.lua") then dofile("lang/spanish.lua") end
-elseif Language == 4 then if System.doesFileExist("lang/german.lua") then dofile("lang/german.lua") end
-elseif Language == 5 then if System.doesFileExist("lang/italian.lua") then dofile("lang/italian.lua") end
-elseif Language == 6 then if System.doesFileExist("lang/dutch.lua") then dofile("lang/dutch.lua") end
-elseif Language == 7 then if System.doesFileExist("lang/portuguese.lua") then dofile("lang/portuguese.lua") end
+elseif Language == 0 then if doesFileExist("lang/japanese.lua") then dofile("lang/japanese.lua") end
+elseif Language == 2 then if doesFileExist("lang/french.lua") then dofile("lang/french.lua") end
+elseif Language == 3 then if doesFileExist("lang/spanish.lua") then dofile("lang/spanish.lua") end
+elseif Language == 4 then if doesFileExist("lang/german.lua") then dofile("lang/german.lua") end
+elseif Language == 5 then if doesFileExist("lang/italian.lua") then dofile("lang/italian.lua") end
+elseif Language == 6 then if doesFileExist("lang/dutch.lua") then dofile("lang/dutch.lua") end
+elseif Language == 7 then if doesFileExist("lang/portuguese.lua") then dofile("lang/portuguese.lua") end
 else
   System.log("### unknown language ID ("..Language..")")
 end
 
 Drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
-if System.doesFileExist(FONTPATH) then
+if doesFileExist(FONTPATH) then
   Font.ftInit()
   LSANS = Font.ftLoad(FONTPATH)
   Font.ftSetCharSize(LSANS, 940, 940)
@@ -214,7 +212,7 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
   end
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
-      if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+      if doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         SIZECOUNT = SIZECOUNT + GetFileSizeX(MC_INST_TABLE.source[i])
         FILECOUNT = FILECOUNT + 1 -- only add the confirmed files
       end
@@ -236,7 +234,7 @@ function InstallExtraAssets(port, cur, total)
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
       ReportProgress(cur+i, total)
-      if System.doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+      if doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         ret = System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
         if ret < 0 then return ret end
       end
@@ -632,7 +630,7 @@ function DVDPlayerINST(port, slot, target_region)
   local TARGET_FOLD = KELFBinder.getDVDPlayerFolder(target_region)
   local TARGET_KELF = string.format("mc%d:/%s/dvdplayer.elf", port, TARGET_FOLD)
 
-  if System.doesFileExist(DVDPLAYERUPDATE) then
+  if doesFileExist(DVDPLAYERUPDATE) then
     System.AllowPowerOffButton(0)
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -651,8 +649,8 @@ end
 
 function NormalInstall(port, slot)
 
-  if System.doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
-      System.doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
+  if doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
+      doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
 
   local RET
   local REG = KELFBinder.getsystemregion()
@@ -1240,7 +1238,7 @@ function MagicGateTest(port, slot)
   local MESSAGE = ""
   local MESSAGE1 = ""
   local MESSAGE2 = ""
-  if System.doesFileExist(TEST_KELF) then
+  if doesFileExist(TEST_KELF) then
     RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
   else
     RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
@@ -1484,8 +1482,8 @@ function PerformExpertINST(port, slot, UPDT)
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Screen.flip()
 
-  if System.doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
-      System.doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
+  if doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
+      doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
 
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -1726,7 +1724,7 @@ function Ask2quit()
     if Pads.check(pad, PAD_CROSS) then KELFBinder.DeinitLOG() System.exitToBrowser() end
     if Pads.check(pad, PAD_CIRCLE) then break end
     if Pads.check(pad, PAD_TRIANGLE) then
-      if System.doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then
+      if doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then
         KELFBinder.DeinitLOG() 
         System.loadELF(System.getbootpath() .. "INSTALL/CORE/BACKDOOR.ELF")
       else
