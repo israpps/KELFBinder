@@ -214,7 +214,6 @@ void alternative_poweroff(void *arg)
 int main(int argc, char *argv[])
 {
     int fd;
-    init_scr();
     const char *errMsg;
     int ret = -1, STAT;
     DPRINTF_INIT();
@@ -239,6 +238,7 @@ int main(int argc, char *argv[])
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
 
+    init_scr();
 #ifdef UDPTTY
     if (loadDEV9())
         loadUDPTTY();
@@ -377,18 +377,16 @@ int main(int argc, char *argv[])
         errMsg = runScript(bootString, true);
 
         if (errMsg != NULL) {
-#ifndef SCR_PRINTF
             init_scr();
-#endif
+            sleep(1);
             scr_clear();
-            DPRINTF("\n\nerrMsg is not null and it's contents are:\n%s\n\n", errMsg);
-#ifndef SCR_PRINTF
-            scr_printf("\n\nerrMsg is not null and it's contents are:\n%s\n\n", errMsg);
-#endif
             scr_setXY(5, 2);
-            scr_printf("Enceladus ERROR!\n");
+            scr_printf("\t\tERROR!\n");
+            scr_setfontcolor(0x0000ff);
             scr_printf(errMsg);
-            scr_printf("\nPress [start] to restart\n");
+            puts(errMsg);
+            scr_setfontcolor(0xffffff);
+            scr_printf("\n\treport on: https://github.com/israpps/KELFBinder/issues\n\t or: https://www.psx-place.com/threads/kelfbinder-2.39279/");
             while (!isButtonPressed(PAD_START)) {
             }
         }
