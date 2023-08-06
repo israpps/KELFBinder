@@ -148,18 +148,17 @@ end
 	local REGION = KELFBinder.getsystemregion()
 	local VMODE = NTSC
 	if REGION == 3 then VMODE = PAL end
-	if System.doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
-	elseif System.doesFileExist("INSTALL/CORE/720p.opt") then VMODE = _720p
-	elseif System.doesFileExist("INSTALL/CORE/1080i.opt") then VMODE = _1080i
+	if doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
+	elseif doesFileExist("INSTALL/CORE/720p.opt") then VMODE = _720p
+	elseif doesFileExist("INSTALL/CORE/1080i.opt") then VMODE = _1080i
 	end
 	Screen.setMode(VMODE, 704, 480, CT24, INTERLACED, FIELD)
 	Drawbar(352, 240, 20, Color.new(255, 255, 255))
 	BETANUM = "Early Access HDD-003 Beta"
 	IS_NOT_PUBLIC_READY = false
 
-if System.doesFileExist("INSTALL/KELFBinder.lua") then
-	dofile("INSTALL/KELFBinder.lua");
-end
+dofile("INSTALL/KELFBinder.lua")
+
 System.sleep(5)
 Screen.clear(Color.new(0xff, 0xff, 0xff))
 Screen.flip()

@@ -637,6 +637,7 @@ static int lua_checkexist(lua_State *L)
     return 1;
 }
 
+
 static int lua_loadELF(lua_State *L)
 {
     size_t size;
@@ -836,7 +837,7 @@ static const luaL_Reg System_functions[] = {
     {"closeFile", lua_closefile},
     {"seekFile", lua_seekfile},
     {"sizeFile", lua_sizefile},
-    {"doesFileExist", lua_checkexist},
+    //{"doesFileExist", lua_checkexist}, BREAKS ERROR HANDLING IF DECLARED INSIDE TABLE. DONT ASK ME WHY
     {"doesDirExist", lua_direxists},
     {"currentDirectory", lua_curdir},
     {"listDirectory", lua_dir},
@@ -913,6 +914,7 @@ static const luaL_Reg Sif_functions[] = {
 
 void luaSystem_init(lua_State *L)
 {
+	lua_register(L, "doesFileExist", lua_checkexist);
     setModulePath();
     lua_newtable(L);
     luaL_setfuncs(L, System_functions, 0);
