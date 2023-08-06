@@ -157,7 +157,7 @@ end
 	BETANUM = "Early Access HDD-003 Beta"
 	IS_NOT_PUBLIC_READY = false
 
-dofile("INSTALL/KELFBinder.lua")
+if doesFileExist("INSTALL/KELFBinder.lua") then dofile("INSTALL/KELFBinder.lua") end
 
 System.sleep(5)
 Screen.clear(Color.new(0xff, 0xff, 0xff))
