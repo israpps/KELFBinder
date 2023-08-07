@@ -1193,14 +1193,14 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
         Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_HDDFORMAT_CONFIRM2, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_CONTINUE.."?", Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == 300 then
-        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SMART_STATUS_FAILS_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SMART_STATUS_FAILS_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == 301 then
-        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SECTOR_ERROR_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_SECTOR_ERROR_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_HDD_REPLACE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == 302 then
-        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_CORRUPTED_PART_WARNING, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_FORMAT_OR_FSCK, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_CORRUPTED_PART_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_FORMAT_OR_FSCK, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
       if Pads.check(pad, PAD_CROSS) and A == 0 then
         ret = true
