@@ -129,4 +129,6 @@
 	LNG_HDD_CORRUPTED_PART_WARNING = "Partición(es) Corrupta(s) detectada(s)"
 	LNG_HDD_RECOMMEND_FORMAT_OR_FSCK = "Se recomienda ejecutar el HDDChecker para reparar los daños"
 	LNG_HDD_RECOMMEND_HDD_REPLACE = "Se recomienda reemplazar el disco duro"
+	LNG_DEX_MACHINE_WARNING = "Cuidado! esta PS2 es una unidad DEX (Modelo de prueba)"
+	LNG_DEX_MACHINE_WARNING_DESC = "Las actualizaciones instaladas a una memory card con esta consola\nSolo functionarán en modelos de prueba (DTL-H)\nno functionará en modelos RETAIL (SCPH/DESR) porque estos usan\nllaves magicgate diferentes"
 -- TRADUCCION POR El_isra

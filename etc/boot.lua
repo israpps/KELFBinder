@@ -128,6 +128,8 @@
 	LNG_HDD_CORRUPTED_PART_WARNING = "Corrupted partition(s) detected"
 	LNG_HDD_RECOMMEND_FORMAT_OR_FSCK = "It is recommended to run HDDChecker or format the HDD to fix the issue."
 	LNG_HDD_RECOMMEND_HDD_REPLACE = "It is recommended to replace the HDD."
+	LNG_DEX_MACHINE_WARNING = "Warning! this PS2 is a DEX Unit (TEST Model)"
+	LNG_DEX_MACHINE_WARNING_DESC = "The memory card updates installed using this console will only boot on\n TEST units (DTL-H)\nIt won't work on RETAIL units (SCPH/DESR) because they use\ndifferent magicgate keys"
 _ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()

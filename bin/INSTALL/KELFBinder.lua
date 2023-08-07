@@ -1201,6 +1201,9 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
       elseif RET == 302 then
         Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_HDD_CORRUPTED_PART_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_HDD_RECOMMEND_FORMAT_OR_FSCK, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == 400 then
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_DEX_MACHINE_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_DEX_MACHINE_WARNING_DESC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
       if Pads.check(pad, PAD_CROSS) and A == 0 then
         ret = true
@@ -1824,6 +1827,10 @@ Greeting()
 if SUPPORTS_UPDATES == false then
   WarnIncompatibleMachine()
 end
+if KELFBinder.getsystemtype() == 2 then
+  Report(400, false, false)
+end
+
 if HDD_STATUS == 0 or HDD_STATUS == 1 then
   if HDD.GetSMARTStatus() ~= 0 then
     Report(300, false, false)

@@ -15,15 +15,15 @@ extern "C" {
 
 static int KELFBinderHelperFunctionsInited = false;
 static unsigned long int ROMVERSION;
-static unsigned int MACHINETYPE;
+static unsigned int _MACHINETYPE;
 // static int ROMYEAR, ROMMONTH, ROMDAY;
 static char ROMREGION;
 extern bool HDD_USABLE;
 #define ROMVER_LEN 16
-#define GET_MACHINE_TYPE(X)          \
-    (X == 'C') ? MACHINETYPE::CEX :  \
-    (X == 'D') ? MACHINETYPE::DEX :  \
-    (X == 'T') ? MACHINETYPE::TOOL : \
+#define GET_MACHINE_TYPE(ROMVER)          \
+    (ROMVER[5] == 'C') ? MACHINETYPE::CEX :  \
+    (ROMVER[5] == 'D') ? MACHINETYPE::DEX :  \
+    (ROMVER[5] == 'T') ? ((ROMVER[6] == 'Z') ? MACHINETYPE::COH : MACHINETYPE::TOOL) : \
                  UNKNOWN
 
 /// NOTE: sony made asian machines to use the USA region folder prefixes
@@ -47,8 +47,11 @@ static int lua_KELFBinderInit(lua_State *L)
     char ROMVNUM[4 + 1];
     ROMREGION = GET_CONSOLE_REGION(ROMVER[4]);
     if (ROMREGION == UNKNOWN)
+    {
+        DPRINTF(      "\t\tROM Region has unknown value [%c]\n\n\t\t\tCONTACT THE DEVELOPER!\n", ROMVER[4]);
         luaL_error(L, "\t\tROM Region has unknown value [%c]\n\n\t\t\tCONTACT THE DEVELOPER!\n", ROMVER[4]);
-    MACHINETYPE = GET_MACHINE_TYPE(ROMVER[5]);
+    }
+    _MACHINETYPE = GET_MACHINE_TYPE(ROMVER);
     strncpy(ROMVNUM, ROMVER, 4);
     ROMVNUM[4] = '\0';
     ROMVERSION = strtoul(ROMVNUM, NULL, 10); // convert ROM version to unsigned long int for further use on automatic Install, use hex numbers to compare!! (eg: to check for rom 1.20 do ROMVERSION == 0x120)
@@ -261,6 +264,12 @@ static int lua_setsysupdatefoldprops(lua_State *L)
     return 1;
 }
 
+static int lua_getMachineType(lua_State *L)
+{
+    lua_pushinteger(L, _MACHINETYPE);
+    return 1;
+}
+
 static int lua_initConsoleModel(lua_State *L)
 {
     DPRINTF("%s: starts\n", __func__); 
@@ -304,6 +313,7 @@ static const luaL_Reg KELFBinder_functions[] = {
     {"setSysUpdateFoldProps", lua_setsysupdatefoldprops},
     {"getsysupdatefolder", lua_getsystemupdatefolder},
     {"getsystemregion", lua_getsystemregion},
+    {"getsystemtype", lua_getMachineType},
     {"getsystemregionString", lua_getsystemregionString},
     {"getROMversion", lua_getromversion},
     {"getsystemLanguage", lua_getosdconfigLNG},

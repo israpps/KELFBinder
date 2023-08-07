@@ -17,10 +17,10 @@ enum CONSOLE_REGIONS
 
 enum MACHINETYPE
 {
-    CEX,  // SCPH and DESR models
-    DEX,  // DTL-H models
-    COH,  // COH arcade namco machines
-    TOOL, // DTL-T
+    CEX = 1,    // SCPH and DESR models
+    DEX,        // DTL-H models
+    COH,        // COH arcade namco machines
+    TOOL,       // DTL-T
 
     MACHINETYPE_COUNT,
 };
