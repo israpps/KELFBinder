@@ -37,8 +37,6 @@ __Europe__     | `SCPH-30002`/`3`/`4`/`8` | `C/C'` | `1.20 E` | `osd130.elf` |
 __All__        | Most models  | `D` and newer | `1.50` and newer | `osdXXX.elf`[^4] or `osdmain.elf` (in that order)
 __Japan__      | PSX (`DESR`)| - |  `1.80` or `2.10` | `xosdmain.elf`
 
-note: early PS2 models such as protokernels search for system updates first on `mc1:/`, then on `mc0:/`. this was inverted on later models. it is unknown to me on wich ROMVER this change was applied.
-
 [^3]: __Protokernel system update:__ theese files are used only by Protokernel PS2, FreeMcBoot installer pastes kernel patches that also redirect the system update into the executable used by the `SCPH-18000` patching the kernel and loading FreeMcBoot at the same time. However: Only Browser 2.0 is capable of patching properly and fully this early kernel. The source code of those kernel patches can be found [here](https://github.com/ps2homebrew/OSD-Initialization-Libraries/tree/main/kpatch)
 
 [^4]: `osdXXX.elf` is a specific ROM update. The XXX represents a 3 digit number calculated based on the ROM version of your console.
