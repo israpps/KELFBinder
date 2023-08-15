@@ -267,7 +267,7 @@ static void store_icvps2(void *buffer, const void *icvps2)
 
     pICVPS2 = (unsigned int)buffer + ((SecrKELFHeader_t *)buffer)->KELF_header_size - 8;
     memcpy((void *)pICVPS2, icvps2, 8);
-    DPRINTF("\ticvps2_offset %d\n", pICVPS2);
+    DPRINTF("\ticvps2_offset %u\n", pICVPS2);
 }
 
 static unsigned int get_BitTableOffset(const void *buffer)
