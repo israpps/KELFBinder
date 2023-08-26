@@ -1141,6 +1141,9 @@ function Secrerr(RET)
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-201) then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == (-202) then
+        Font.ftPrint(LSANS, X_MID, 80 , 8, 630, 64, LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS , Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET ~= 1 then -- only write unknown error if retcode is not a success
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_EUNKNOWN, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
@@ -1691,6 +1694,12 @@ function PerformHDDInst()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_CALCULATING)
   Screen.flip()
+  local MBR_SIZE = GetFileSizeX(SYSUPDATE_HDD_BOOTSTRAP)
+  if MBR_SIZE > 883200 then
+    System.log("### MBR.KELF size out of bounds: "..MBR_SIZE.."\n")
+    Secrerr(-202)
+    return
+  end
   local __sysconf_freespace = HDD.GetPartitionSize("hdd0:__sysconf")
   local __sysconf_reqspace = HDDCalculateRequiredSpace(HDD_INST_TABLE, "hdd0:__sysconf")
   System.log("> Space needed for __sysconf is "..__sysconf_reqspace.."\n")

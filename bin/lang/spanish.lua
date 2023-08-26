@@ -131,4 +131,7 @@
 	LNG_HDD_RECOMMEND_HDD_REPLACE = "Se recomienda reemplazar el disco duro"
 	LNG_DEX_MACHINE_WARNING = "Cuidado! esta PS2 es una unidad DEX (Modelo de prueba)"
 	LNG_DEX_MACHINE_WARNING_DESC = "Las actualizaciones instaladas a una memory card con esta consola\nSolo functionarán en modelos de prueba (DTL-H)\nno functionará en modelos RETAIL (SCPH/DESR) porque estos usan\nllaves magicgate diferentes"
+	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "El BootLoader MBR excede el tamaño aceptable"
+	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "No puede ser mayor a 883200 bytes"
+
 -- TRADUCCION POR El_isra

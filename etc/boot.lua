@@ -130,7 +130,10 @@
 	LNG_HDD_RECOMMEND_HDD_REPLACE = "It is recommended to replace the HDD."
 	LNG_DEX_MACHINE_WARNING = "Warning! this PS2 is a DEX Unit (TEST Model)"
 	LNG_DEX_MACHINE_WARNING_DESC = "The memory card updates installed using this console will only boot on\n TEST units (DTL-H)\nIt won't work on RETAIL units (SCPH/DESR) because they use\ndifferent magicgate keys"
-_ = "" -- garbage placeholder
+	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "The MBR bootloader exceeds acceptable size"
+	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "It cannot be larger than 883200 bytes"
+
+	_ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()
 	Graphics.drawRect(x-(prog*2), y, prog*4, 5, col)
