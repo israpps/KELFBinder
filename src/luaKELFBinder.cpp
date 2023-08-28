@@ -142,6 +142,10 @@ static int lua_getsystemregionString(lua_State *L)
             lua_pushstring(L, "Japan");
             break;
 
+        case CONSOLE_REGIONS::EUROPE:
+            lua_pushstring(L, "Europe");
+            break;
+
         case CONSOLE_REGIONS::USA:
             lua_pushstring(L, "USA");
             break;
@@ -167,6 +171,10 @@ static int lua_getsystemupdatefolder(lua_State *L)
     switch (ROMREGION) {
         case CONSOLE_REGIONS::JAPAN:
             lua_pushstring(L, "BIEXEC-SYSTEM");
+            break;
+
+        case CONSOLE_REGIONS::EUROPE:
+            lua_pushstring(L, "BEEXEC-SYSTEM");
             break;
 
         case CONSOLE_REGIONS::ASIA:
