@@ -722,7 +722,6 @@ function NormalInstall(port, slot)
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
 
   ReportProgress(5, tot)
-  Screen.flip()
   RET = InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
   local Z = 0x80
