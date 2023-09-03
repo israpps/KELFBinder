@@ -223,6 +223,8 @@ int main(int argc, char *argv[])
 #endif
     EPRINTF("KELFBINDER: Compiled on %s %s\n", __DATE__, __TIME__);
 #ifdef RESET_IOP
+    while (!SifIopReset("", 0)){};
+    while (!SifIopSync()) {};
     SifInitRpc(0);
     // ONLY ONE OF THE LINES BETWEEN THESE TWO COMMENTS CAN BE ENABLED AT THE SAME TIME
     // while (!SifIopReset("", 0)){}; // common IOP Reset
