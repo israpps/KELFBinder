@@ -1,6 +1,6 @@
 title: KELFBinder
 description: A System and DVD-player update manager for PS2 & PSX-DESR
-remote_theme: israpps/dark-jekyll-rtd-theme
+remote_theme: rundocs/jekyll-rtd-theme
 # debug:
 #   compress: true
 #   dist: false
