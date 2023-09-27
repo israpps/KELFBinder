@@ -643,7 +643,7 @@ function DVDPlayerINST(port, slot, target_region)
     if RET < 0 then Secrerr(RET) return end
     Secrerr(RET)
   else
-    Secrerr(-201)
+    Secrerr(-203)
   end
 end
 
@@ -1138,8 +1138,9 @@ function Secrerr(RET)
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_SECRMANERR, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       elseif RET == (-12) then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_ENOMEM, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-      elseif RET == (-201) then
+      elseif RET == (-201) or RET == (-203) then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_SOURCE_KELF_GONE, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        if RET == (-203) then Font.ftPrint(LSANS, X_MID, 85, 8, 630, 64, LNG_WARN_DVDPLAYER_PROPIETARY_SOFTWARE , Color.new(0x80, 0x80, 0x80, 0x80 - A)) end
       elseif RET == (-202) then
         Font.ftPrint(LSANS, X_MID, 80 , 8, 630, 64, LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS , Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 100, 8, 630, 64, LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2, Color.new(0x80, 0x80, 0x80, 0x80 - A))

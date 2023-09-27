@@ -132,6 +132,7 @@
 	LNG_DEX_MACHINE_WARNING_DESC = "The memory card updates installed using this console will only boot on\n TEST units (DTL-H)\nIt won't work on RETAIL units (SCPH/DESR) because they use\ndifferent magicgate keys"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "The MBR bootloader exceeds acceptable size"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "It cannot be larger than 883200 bytes"
+	LNG_WARN_DVDPLAYER_PROPIETARY_SOFTWARE = "DVDPlayer software is not bundled due to copyright. get it yourself"
 
 	_ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)

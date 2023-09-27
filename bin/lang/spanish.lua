@@ -133,5 +133,6 @@
 	LNG_DEX_MACHINE_WARNING_DESC = "Las actualizaciones instaladas a una memory card con esta consola\nSolo functionarán en modelos de prueba (DTL-H)\nno functionará en modelos RETAIL (SCPH/DESR) porque estos usan\nllaves magicgate diferentes"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "El BootLoader MBR excede el tamaño aceptable"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "No puede ser mayor a 883200 bytes"
+	LNG_WARN_DVDPLAYER_PROPIETARY_SOFTWARE = "El software DVDPlayer no se incluye debido a Copyright. obtenelo vos mismo"
 
 -- TRADUCCION POR El_isra
