@@ -110,7 +110,7 @@ ifeq ($(EE_SIO), 1)
   $(info --- EE_SIO enabled...)
   GLOBFLAGS += -DSIO_PRINTF
   EE_CFLAGS += -DSIO_PRINTF
-  EE_OBJS += sioprintf.o
+  APP_CORE += sioprintf.o
   EE_LIBS += -lsiocookie
 endif
 
