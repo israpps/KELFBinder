@@ -195,6 +195,14 @@ function GetFileSizeX(PATH)
   return SIZE
 end
 
+function Font.ftPrintMultiLineAligned(font, x, y, spacing, width, height, text, color)
+  local internal_y = y
+  for line in text:gmatch("([^\n]*)\n?") do
+    Font.ftPrint(font, x, internal_y, 8, width, height, line, color)
+    internal_y = internal_y+spacing
+  end
+end
+
 function HEXDUMP(DATA)
   local LOL = 0
   local MESSAGE = ""
