@@ -375,9 +375,9 @@ function MainMenu()
 
     if NA > 0 then
       if MUST_INSTALL_EXTRA_FILES then
-        Font.ftPrint(LSANS, 40, 40, 0, 630, 16,  LNG_EXTRA_INSTALL_ENABLE, Color.new(0x80, 0x80, 0, NA))
+        Font.ftPrint(LSANS, 40, 60, 0, 630, 16, LNG_EXTRA_INSTALL_ENABLE, Color.new(0x80, 0x80, 0, NA))
       else
-        Font.ftPrint(LSANS, 40, 40, 0, 630, 16, LNG_EXTRA_INSTALL_DISABLE, Color.new(0x80, 0x80, 0, NA))
+        Font.ftPrint(LSANS, 40, 60, 0, 630, 16, LNG_EXTRA_INSTALL_DISABLE, Color.new(0x80, 0x80, 0, NA))
       end
       NA = NA-1
     end
