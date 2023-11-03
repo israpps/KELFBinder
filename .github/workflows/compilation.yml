@@ -32,6 +32,12 @@ jobs:
       run: |
         make update_deps
 
+    - name: update lua
+      run: |
+        git clone --depth 1 -b ee-v5.4.4 https://github.com/ps2dev/lua
+        cd lua
+        make --trace clean all install platform=PS2
+
     - name: Compile project
       run: |
         make clean all
