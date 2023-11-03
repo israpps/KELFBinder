@@ -196,10 +196,15 @@ function GetFileSizeX(PATH)
 end
 
 function Font.ftPrintMultiLineAligned(font, x, y, spacing, width, height, text, color)
+  if color == nil then color = Color.new(128, 128, 128) end
   local internal_y = y
-  for line in text:gmatch("([^\n]*)\n?") do
-    Font.ftPrint(font, x, internal_y, 8, width, height, line, color)
-    internal_y = internal_y+spacing
+  if text:find("\n", 1, true) then
+    for line in text:gmatch("([^\n]*)\n?") do
+      Font.ftPrint(font, x, internal_y, 8, width, height, line, color)
+      internal_y = internal_y+spacing
+    end
+  else
+    Font.ftPrint(font, x, y, 8, width, height, text, color)
   end
 end
 
