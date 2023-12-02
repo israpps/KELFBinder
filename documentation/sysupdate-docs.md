@@ -54,8 +54,10 @@ Path | Console
 `BIEXEC-SYSTEM/osdmain.elf` | any `SCPH-xxx00` excluding the 3 previous models
 `BAEXEC-SYSTEM/osd120.elf`  | Early North america release model `SCPH-30001`
 `BAEXEC-SYSTEM/osd130.elf`  | Late North america release model  `SCPH-30001`
-`BAEXEC-SYSTEM/osdmain.elf` | Any USA model excluding the previous two models
+`BAEXEC-SYSTEM/osdmain.elf` | Any USA/Asian[^5] model excluding the previous two models
 `BEEXEC-SYSTEM/osd130.elf`  | PAL Release models (Europe / Oceania / Russia / England) (`SCPH-3000#` `#`=`2`/`3`/`4`/`8`)
 `BEEXEC-SYSTEM/osdmain.elf` | Any PAL model excluding the previous one
 `BCEXEC-SYSTEM/osdmain.elf` | Any Chinese PS2 (`SCPH-xxx09`)
 `BIEXEC-SYSTEM/xosdmain.elf`| Any PSX-DESR
+
+[^5]: Asian models correspond to any asian model not covered by the other regions, these are: `SCPH-xxx05` for korea, `SCPH-xxx06` for Hong Kong and `SCPH-xxx07` for Taiwan 
