@@ -32,6 +32,12 @@ jobs:
       run: |
         make update_deps
 
+    - name: PS2SDK TEST
+      run: |
+        git clone --depth 1 -b fixFileXioFunctionsOverride https://github.com/fjtrujy/ps2sdk
+        cd ps2sdk
+        make all install
+        
     - name: Compile project
       run: |
         make clean all
