@@ -541,7 +541,7 @@ static int lua_openfile(lua_State *L)
     int type = luaL_checkinteger(L, 2);
     int fileHandle = open(file_tbo, type, 0777);
     if (fileHandle < 0)
-        return luaL_error(L, "cannot open requested file.");
+        return luaL_error(L, "cannot open requested file.\n\t'%s'\n\tfd: %d\n", file_tbo, fileHandle);
     lua_pushinteger(L, fileHandle);
     return 1;
 }
