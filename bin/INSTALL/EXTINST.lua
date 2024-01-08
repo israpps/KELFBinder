@@ -43,7 +43,7 @@ function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_
   local add_dir = true
   if tmp == nil then return 0 end
   for x = 1, #tmp do
-    if not tmp[x].directory and tmp[x].size > 0 then
+    if not tmp[x].directory then
         table.insert(SOURCE_TABLE, SOURCEDIR.."/"..tmp[x].name)
         table.insert(DEST_TABLE,   DESTNTDIR.."/"..tmp[x].name)
         COUNT = COUNT+1
