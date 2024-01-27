@@ -140,11 +140,11 @@ endif
 	@echo  rev$(REVISION)
 #--------------------- Embedded ressources ------------------------#
 
-$(EE_ASM_DIR)boot.s: etc/boot.lua | $(EE_ASM_DIR)
+$(EE_ASM_DIR)boot.c: etc/boot.lua | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ bootString
 
 # Images
-$(EE_ASM_DIR)%.s: EMBED/%.png
+$(EE_ASM_DIR)%.c: EMBED/%.png
 	$(BIN2S) $< $@ $(shell basename $< .png)
 #------------------------------------------------------------------#
 
