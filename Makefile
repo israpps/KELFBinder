@@ -68,7 +68,7 @@ endif
 ifneq ($(LOG2FILE),0)
   GLOBFLAGS += -DDPRINTF_LOG_TO_FILE
 endif
-BIN2S = $(PS2SDK)/bin/bin2s
+BIN2S = $(PS2SDK)/bin/bin2c
 
 EE_CXXFLAGS += $(GLOBFLAGS)
 EE_CFLAGS += $(GLOBFLAGS)
@@ -207,11 +207,11 @@ ifeq ($(DEBUG),0)
 endif
 	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
 
-$(EE_OBJS_DIR)%.o: $(EE_ASM_DIR)%.s | $(EE_OBJS_DIR)
+$(EE_OBJS_DIR)%.o: $(EE_ASM_DIR)%.c | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
 	@echo "\033[1m ASM - $@\033[0m"
 endif
-	$(EE_AS) $(EE_ASFLAGS) $< -o $@
+	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
 
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.cpp | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
