@@ -35,6 +35,7 @@ jobs:
     - name: Compile project
       run: |
         make clean all
+        make clean all UDPTTY=1
 
     - name: Get short SHA
       id: slug
