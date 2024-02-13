@@ -36,6 +36,12 @@ jobs:
       run: |
         make clean all
 
+    - name: Compile debug build
+      run: |
+        wget https://github.com/israpps/ps2sdk/releases/download/IRX_debug/IRX.zip -O IRX.zip
+        7z e IRX.zip
+        make cleansrc all UDPTTY=1 EE_BIN_BASENAME=KELFBinder_debug_udpbd
+
     - name: Get short SHA
       id: slug
       run: | 

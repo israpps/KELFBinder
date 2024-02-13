@@ -1,6 +1,7 @@
 #-------------------- Embedded IOP Modules ------------------------#
 IRXTAG = $(notdir $(addsuffix _irx, $(basename $<)))
 vpath %.irx iop/
+vpath %.irx irx_debug/
 vpath %.irx $(PS2SDK)/iop/irx/
 
 $(EE_ASM_DIR)iomanx.c: iomanX.irx | $(EE_ASM_DIR)
