@@ -36,9 +36,10 @@ ifeq ($(DEBUG), 0)
 .SILENT:
 endif
 
+EE_BIN_BASENAME ?= KELFBinder
 EE_BIN_DIR = bin/
 EE_BIN = $(EE_BIN_DIR)KELFBinder.elf
-EE_BIN_PKD = $(EE_BIN_DIR)KELFBinder_pkd.elf
+EE_BIN_PKD = $(EE_BIN_DIR)$(EE_BIN_BASENAME)_pkd.elf
 EE_LIBS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib/ \
 		-Lmodules/ds34bt/ee/ -Lmodules/ds34usb/ee/ \
 		-lpatches -lfileXio -lpad -ldebug -llua -lmath3d \
@@ -97,6 +98,7 @@ EMBEDDED_RSC = boot.o \
 
 #---------------- Conditions wich affectApp Content ---------------#
 ifeq ($(UDPTTY), 1)
+  EE_BIN_BASENAME = KELFBinder_udptty
   GLOBFLAGS += -DUDPTTY
   EE_CFLAGS += -DUDPTTY
   IOP_MODULES += udptty_irx.o ps2ip_irx.o netman_irx.o smap_irx.o
