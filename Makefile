@@ -38,7 +38,7 @@ endif
 
 EE_BIN_BASENAME ?= KELFBinder
 EE_BIN_DIR = bin/
-EE_BIN = $(EE_BIN_DIR)KELFBinder.elf
+EE_BIN = $(EE_BIN_DIR)$(EE_BIN_BASENAME).elf
 EE_BIN_PKD = $(EE_BIN_DIR)$(EE_BIN_BASENAME)_pkd.elf
 EE_LIBS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib/ \
 		-Lmodules/ds34bt/ee/ -Lmodules/ds34usb/ee/ \
