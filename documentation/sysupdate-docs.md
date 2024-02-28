@@ -60,4 +60,14 @@ Path | Console
 `BCEXEC-SYSTEM/osdmain.elf` | Any Chinese PS2 (`SCPH-xxx09`)
 `BIEXEC-SYSTEM/xosdmain.elf`| Any PSX-DESR
 
+
 [^5]: Asian models correspond to any asian model not covered by the other regions, these are: `SCPH-xxx05` for korea, `SCPH-xxx06` for Hong Kong and `SCPH-xxx07` for Taiwan 
+
+# specific updates
+Every PS2 model that looks for `osdmain.elf` will prioritize launching a special update, its name will always be `osdXXX.elf`
+
+where `XXX` is boot rom version rounded to the next ten:
+
+- 0220 ROMVER version will look for `osd230.elf`
+
+this was inteded for updates targeting a specific group of PS2 models
