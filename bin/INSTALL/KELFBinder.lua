@@ -103,7 +103,9 @@ Drawbar(X_MID, Y_MID, 90, Color.new(255, 255, 255))
 if doesFileExist(FONTPATH) then
   Font.ftInit()
   LSANS = Font.ftLoad(FONTPATH)
+  LSANS_SMALL = Font.ftLoad(FONTPATH)
   Font.ftSetCharSize(LSANS, 940, 940)
+  Font.ftSetCharSize(LSANS_SMALL, 840, 840)
 else
   Screen.clear(Color.new(128, 128, 0)) Screen.flip() while true do end
 end
@@ -233,7 +235,7 @@ function InstallExtraAssets(port, cur, total)
   end
   if #MC_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #MC_INST_TABLE.source do
-      ReportProgress(cur+i, total)
+      ReportProgress(cur+i, total, MC_INST_TABLE.target[i])
       if doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         ret = System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
         if ret < 0 then return ret end
@@ -709,7 +711,7 @@ function NormalInstall(port, slot)
     if RET < 0 then Secrerr(RET) return end
   end
   -- KELF install finished! deal with extra files now!
-  ReportProgress(4, tot)
+  ReportProgress(4, tot, "icon.sys")
   if REG == 0 or IS_PSX then -- JPN
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   elseif REG == 1 or REG == 2 then --USA or ASIA
@@ -1271,11 +1273,11 @@ function MagicGateTest(port, slot)
       else
         Font.ftPrint(LSANS, X_MID, 40,  8, 630, 64, LNG_TESTSUCC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
         Font.ftPrint(LSANS, 120, 200, 0, 630, 64, LNG_KELF_HEAD, Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, 150, 220, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS_SMALL, 150, 220, 0, 630, 32, MESSAGE, Color.new(0x80, 0x80, 0, 0x80 - A))
         Font.ftPrint(LSANS, 120, 260, 0, 630, 64, "Kbit:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, 150, 280, 0, 630, 32, MESSAGE1, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS_SMALL, 150, 280, 0, 630, 32, MESSAGE1, Color.new(0x80, 0x80, 0, 0x80 - A))
         Font.ftPrint(LSANS, 120, 300, 0, 630, 64, "Kc:", Color.new(0x80, 0x80, 0x80, 0x80 - A))
-        Font.ftPrint(LSANS, 150, 320, 0, 630, 32, MESSAGE2, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS_SMALL, 150, 320, 0, 630, 32, MESSAGE2, Color.new(0x80, 0x80, 0, 0x80 - A))
       end
       if RET == (-5) then
         Font.ftPrint(LSANS, X_MID, 60, 8, 630, 64, LNG_EIO, Color.new(0x80, 0x80, 0x80, 0x80 - A))
@@ -1573,45 +1575,45 @@ function PerformExpertINST(port, slot, UPDT)
 
   if UPDT[0] == 1 then
     cur = cur+1
-    ReportProgress(cur, total)
+    ReportProgress(cur, total, "osdsys.elf")
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_100, string.format("mc%d:/BIEXEC-SYSTEM/osdsys.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
   if UPDT[1] == 1 then
     cur = cur+1
-    ReportProgress(cur, total)
+    ReportProgress(cur, total, "osd110.elf")
     RET = Secrman.downloadfile(port, slot, KERNEL_PATCH_101, string.format("mc%d:/BIEXEC-SYSTEM/osd110.elf", port), 0)
     if RET < 0 then Secrerr(RET) return end
   end
 
   SYSUPDATEPATH = KELFBinder.calculateSysUpdatePath()
+  cur = cur+1
+  ReportProgress(cur, total, SYSUPDATEPATH)
   local RET = Secrman.downloadfile(port, slot, SYSUPDATE_MAIN, string.format("mc%d:/%s", port, SYSUPDATEPATH), FLAGS)
   if RET < 0 then Secrerr(RET) return end
 
-  cur = cur+1
-  ReportProgress(cur, total)
 
   if NEEDS_JPN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BIEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("mc%d:/%s/icon.sys", port, "BIEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_USA then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BAEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("mc%d:/%s/icon.sys", port, "BAEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_EUR then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BEEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/EUR.sys", string.format("mc%d:/%s/icon.sys", port, "BEEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
   if NEEDS_CHN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BCEXEC-SYSTEM")
-    cur = cur+1 ReportProgress(cur, total)
+    cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("mc%d:/%s/icon.sys", port, "BCEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
@@ -1628,10 +1630,11 @@ function PerformExpertINST(port, slot, UPDT)
   Secrerr(RET)
 end
 
-function ReportProgress(prog, total)
+function ReportProgress(prog, total, EXTRASTR)
   Screen.clear()
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
+  if type(EXTRASTR) == "string" then Font.ftPrint(LSANS_SMALL, X_MID, 120, 8, 600, 64, EXTRASTR) end
   DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, 0x30))
   DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
   Screen.flip()
@@ -1644,21 +1647,22 @@ function WriteDataToHDD()
   Screen.flip()
   local mountpath
   local current_mount = "NONE"
-  local total = 2 + #HDD_INST_TABLE.source
+  local total = 3 + #HDD_INST_TABLE.source
   local pfs_path
   local pfs_mkdir
-  ReportProgress(1, total)
+  ReportProgress(1, total, LNG_HDD_INSTOPT3)
   HDD.EnableHDDBoot()
+  ReportProgress(2, total, "hdd0:__mbr:MBR.KELF")
   local ret = HDD.InstallBootstrap(SYSUPDATE_HDD_BOOTSTRAP)
-  ReportProgress(1, total)
   if ret < 0 then
     return ret
   end
   for i = 1, #HDD_INST_TABLE.source do
-    ReportProgress(2+i, total)
+    ReportProgress(3+i, total, HDD_INST_TABLE.target[i])
     mountpath, _, pfs_path = GetMountData(HDD_INST_TABLE.target[i]) -- calculate needed paths
     if mountpath ~= current_mount then --different partition...
       System.log("partition change needed '"..mountpath.."'\n")
+      ReportProgress(3+i, total, "MNT: "..mountpath)
       if HDD.MountPartition(mountpath, 0, FIO_MT_RDWR) < 0 then -- ...mount needed one
         System.log("### ERROR Mounting partition"..mountpath.."\n")
         return -5
