@@ -659,8 +659,15 @@ function NormalInstall(port, slot)
   local FILECOUNT = 2 -- icons + whatever updates you push
   local NEEDED_SPACE = 1024 + 964 -- 1kb + icon.sys size to begin with
   local AvailableSpace = 0
+  
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
-
+  if doesFileExist(TEST_KELF) then
+    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+  else
+    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
+  end
+  if RET < 0 then Secrerr(RETT) return end
+  
   if IS_PSX then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
     TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
@@ -1495,7 +1502,13 @@ function PerformExpertINST(port, slot, UPDT)
   Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
   Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_CALCULATING)
   Screen.flip()
-
+  local RETT
+  if doesFileExist(TEST_KELF) then
+    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+  else
+    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
+  end
+  if RETT < 0 then Secrerr(RETT) return end
   local AvailableSpace = 0
   local FLAGS = 0
   local SIZE_NEED = 1024 -- FreeMcBoot installed automatically adds 1024 to the needed space counter
