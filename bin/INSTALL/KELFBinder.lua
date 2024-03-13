@@ -666,7 +666,7 @@ function NormalInstall(port, slot)
   else
     RET, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
-  if RET < 0 then Secrerr(RETT) return end
+  if RET < 0 then Secrerr(RET) return end
   
   if IS_PSX then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
