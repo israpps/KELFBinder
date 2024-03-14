@@ -88,7 +88,7 @@ IOP_MODULES = iomanx.o filexio.o \
 			  sio2man.o mcman.o mcserv.o padman.o libsd.o \
 			  usbd.o bdm.o bdmfs_fatfs.o \
 			  usbmass_bd.o cdfs.o ds34bt.o ds34usb.o \
-			  secrsif.o IOPRP.o secrman.o poweroff.o \
+			  secrsif.o secrman.o IOPRP.o poweroff.o \
 			  ps2dev9_irx.o ps2atad_irx.o ps2hdd_irx.o ps2fs_irx.o
 
 EMBEDDED_RSC = boot.o \

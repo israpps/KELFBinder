@@ -79,5 +79,8 @@
     "_576p",
     "_720p",
     "doesFileExist"
-  ]
+  ],
+  "files.associations": {
+    "typeinfo": "cpp"
+  }
 }
