@@ -25,43 +25,56 @@ int SecrInit(void)
     memset(Gkcontent, 0x00, 16);
     DPRINTF("STARTING SECRMAN RPC BINDING\n");
     SifInitRpc(0);
-
+    int cnt = 0;
     nopdelay();
     while (SifBindRpc(&SifRpcClient01, 0x80000A01, 0) < 0 || SifRpcClient01.server == NULL) {
         DPRINTF("libsecr: SifRpcClient01 bind failed\n");
+        if (cnt++ > 500) return 1;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient02, 0x80000A02, 0) < 0 || SifRpcClient02.server == NULL) {
         DPRINTF("libsecr: SifRpcClient02 bind failed\n");
+        if (cnt++ > 500) return 2;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient03, 0x80000A03, 0) < 0 || SifRpcClient03.server == NULL) {
         DPRINTF("libsecr: SifRpcClient03 bind failed\n");
+        if (cnt++ > 500) return 3;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient04, 0x80000A04, 0) < 0 || SifRpcClient04.server == NULL) {
         DPRINTF("libsecr: SifRpcClient04 bind failed\n");
+        if (cnt++ > 500) return 4;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient05, 0x80000A05, 0) < 0 || SifRpcClient05.server == NULL) {
         DPRINTF("libsecr: SifRpcClient05 bind failed\n");
+        if (cnt++ > 500) return 5;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient06, 0x80000A06, 0) < 0 || SifRpcClient06.server == NULL) {
         DPRINTF("libsecr: SifRpcClient06 bind failed\n");
+        if (cnt++ > 500) return 6;
     }
 
     nopdelay();
+    cnt = 0;
     while (SifBindRpc(&SifRpcClient07, 0x80000A07, 0) < 0 || SifRpcClient07.server == NULL) {
         DPRINTF("libsecr: SifRpcClient07 bind failed\n");
+        if (cnt++ > 500) return 7;
     }
 
-    return 1;
+    return 0;
 }
 
 void GetLastKbitNKc(unsigned char Kbit[16], unsigned char kcontent[16])

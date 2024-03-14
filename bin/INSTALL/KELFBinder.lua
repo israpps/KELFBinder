@@ -17,7 +17,8 @@ FONTPATH = "common/font2.ttf"
 HDD_STATUS = 3
 
 Drawbar(X_MID, Y_MID, 40, Color.new(255, 0, 0))
-Secrman.init()
+RPC_STATUS = Secrman.rpc_init()
+
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
 local console_model_sub = KELFBinder.getConsoleModel()
@@ -1216,6 +1217,11 @@ function Report(RET, IS_GOOD, IS_A_QUESTION)
       elseif RET == 400 then
         Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_DEX_MACHINE_WARNING, Color.new(0x80, 0x80, 0, 0x80 - A))
         Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, LNG_DEX_MACHINE_WARNING_DESC, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+      elseif RET == 666 then
+        Font.ftPrint(LSANS, X_MID, 60,  8, 630, 64, LNG_SECRMAN_REPLACE_FAIL, Color.new(0x80, 0x80, 0, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 140, 8, 630, 64, string.format(LNG_SECRMAN_REPLACE_FAIL2, RPC_STATUS), Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 160, 8, 630, 64, LNG_SECRMAN_REPLACE_FAIL3, Color.new(0x80, 0x80, 0x80, 0x80 - A))
+        Font.ftPrint(LSANS, X_MID, 180, 8, 630, 64, LNG_SECRMAN_REPLACE_FAIL4, Color.new(0x80, 0x80, 0x80, 0x80 - A))
       end
       if Pads.check(pad, PAD_CROSS) and A == 0 then
         ret = true
@@ -1856,6 +1862,15 @@ end
 if KELFBinder.getsystemtype() == 2 then
   Report(400, false, false)
 end
+if KELFBinder.GetIRXInfoByName("secrman_special") == nil then--no secrman special?
+  RPC_STATUS = -10
+  if KELFBinder.GetIRXInfoByName("secrman_for_cex") ~= nil then--check if retail secrman is there
+    RPC_STATUS = -20
+  end
+end
+if RPC_STATUS ~= 0 then
+  Report(666, false, false)
+end
 
 if HDD_STATUS == 0 or HDD_STATUS == 1 then
   if HDD.GetSMARTStatus() ~= 0 then
@@ -1871,7 +1886,7 @@ OrbIntro(0)
 while true do
   local TT = MainMenu()
   WaitWithORBS(50)
-  if (TT == 1) then -- SYSTEM UPDATE
+  if (TT == 1 and RPC_STATUS == 0) then -- SYSTEM UPDATE
     local TTT = Installmodepicker()
     WaitWithORBS(50)
     if TTT == 1 then -- NORMAL INST
@@ -1933,7 +1948,7 @@ while true do
       Report(ret, true, false)
       OrbIntro(1)
     end
-  elseif TT == 3 then -- DVDPLAYER
+  elseif TT == 3 and RPC_STATUS == 0 then -- DVDPLAYER
     local port = MemcardPickup()
     WaitWithORBS(20)
     if (port >= 0) then

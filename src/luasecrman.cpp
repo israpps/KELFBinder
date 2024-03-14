@@ -23,9 +23,8 @@ static int lua_initsecrman(lua_State *L)
     if (argc != 0)
         return luaL_error(L, "wrong number of arguments(%s)", __func__);
 #endif
-    int result = SecrInit();
-    lua_pushinteger(L, result);
-    return 0;
+    lua_pushinteger(L, SecrInit());
+    return 1;
 }
 
 static int lua_deinitsecrman(lua_State *L)
@@ -38,7 +37,7 @@ static int lua_deinitsecrman(lua_State *L)
 #endif
 
     SecrDeinit();
-    return 0;
+    return 1;
 }
 
 static int SignKELF(void *buffer, int size, unsigned char port, unsigned char slot)
@@ -246,8 +245,6 @@ static int lua_secrdownloadfileTest(lua_State *L)
         }
         DPRINTF("\n}\n");
         GetLastKbitNKc(kbit, kcontent);
-//            DPRINTF("kbit: { "); for (x = 0; x < 16; x++) DPRINTF("%02x ", kbit[x]); DPRINTF(" }\n"); //no need for those, libsecr already prints it
-//            DPRINTF("kcontent: { "); for (x = 0; x < 16; x++) DPRINTF("%02x ", kcontent[x]); DPRINTF(" }\n");
         free(buf);
     }
     lua_pushinteger(L, result);
@@ -258,8 +255,8 @@ static int lua_secrdownloadfileTest(lua_State *L)
 }
 
 static const luaL_Reg Secrman_functions[] = {
-    {"init", lua_initsecrman},
-    {"deinit", lua_deinitsecrman},
+    {"rpc_init", lua_initsecrman},
+    {"rpc_deinit", lua_deinitsecrman},
     {"downloadfile", lua_secrdownloadfile},
     {"Testdownloadfile", lua_secrdownloadfileTest},
     //{"signKELFfile", lua_signKELFfile},
@@ -267,7 +264,6 @@ static const luaL_Reg Secrman_functions[] = {
 
 void luaSecrMan_init(lua_State *L)
 {
-
     lua_newtable(L);
     luaL_setfuncs(L, Secrman_functions, 0);
     lua_setglobal(L, "Secrman");

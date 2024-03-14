@@ -7,6 +7,8 @@
 #include <fcntl.h>
 #include <libmc.h>
 #include <osd_config.h>
+#include <smem.h>
+#include <smod.h>
 #include "include/dbgprintf.h"
 extern "C" {
 #include "modelname.h"
@@ -312,6 +314,35 @@ static int lua_closelog(lua_State *L)
     return 0;
 }
 
+smod_mod_info_t* GetIRXInfoByName(const char* name);
+static int lua_GetIRXInfoByName(lua_State *L)
+{
+	if (lua_gettop(L) != 1) 
+        return luaL_error(L, "GetIRXInfoByName takes 1 string as arg\n");
+    const char* name = luaL_checkstring(L, 1);
+    DPRINTF("%s: searching for %s\n", __FUNCTION__, name);
+    smod_mod_info_t* info = GetIRXInfoByName(name);
+    if (info == NULL) 
+        lua_pushnil(L);
+    else {
+        lua_newtable(L);
+
+        lua_pushstring(L, "name");
+        lua_pushstring(L, name);
+        lua_settable(L, -3);
+
+        lua_pushstring(L, "version");
+        lua_pushinteger(L, info->version);
+        lua_settable(L, -3);
+
+        lua_pushstring(L, "id");
+        lua_pushinteger(L, info->id);
+        lua_settable(L, -3);
+
+    }
+    return 1;
+}
+
 static const luaL_Reg KELFBinder_functions[] = {
     {"init", lua_KELFBinderInit},
     {"deinit", lua_KELFBinderDeInit},
@@ -329,6 +360,7 @@ static const luaL_Reg KELFBinder_functions[] = {
     {"getConsoleModel", lua_getConsoleModel},
     {"getDVDPlayerFolder",lua_getDVDPlayerUpdatefolder},
     {"DoesConsoleNeedHDDLOAD", lua_checkConsoleNeedsExtHDDLOAD},
+    {"GetIRXInfoByName", lua_GetIRXInfoByName},
     {"DeinitLOG", lua_closelog},
     {0, 0}
 };
@@ -338,4 +370,23 @@ void luaKELFBinder_init(lua_State *L)
     lua_newtable(L);
     luaL_setfuncs(L, KELFBinder_functions, 0);
     lua_setglobal(L, "KELFBinder");
+}
+
+smod_mod_info_t* curr = NULL;
+smod_mod_info_t* GetIRXInfoByName(const char* name) {
+    smod_mod_info_t info;
+    curr = NULL;
+    char sName[21];
+    int rv;
+    while ((rv = smod_get_next_mod(curr, &info)) != 0) {
+        curr = &info;
+        if (curr == NULL) continue;
+        smem_read(info.name, sName, 20);
+        DPRINTF("%s: v%x\n", sName, info.version);
+        sName[20] = 0;
+        if (!strcmp(name, sName)) {
+            return curr;
+        }
+    }
+    return NULL;
 }

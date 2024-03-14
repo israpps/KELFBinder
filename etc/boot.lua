@@ -133,7 +133,10 @@
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "The MBR bootloader exceeds acceptable size"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "It cannot be larger than 883200 bytes"
 	LNG_WARN_DVDPLAYER_PROPIETARY_SOFTWARE = "DVDPlayer software is not bundled due to copyright. get it yourself"
-
+	LNG_SECRMAN_REPLACE_FAIL = "SECRMAN ERROR"
+	LNG_SECRMAN_REPLACE_FAIL2 = "error code %d"
+	LNG_SECRMAN_REPLACE_FAIL3 = "All memory card features are disabled"
+	LNG_SECRMAN_REPLACE_FAIL4 = "this issue is probably caused by the method you used to load KELFBinder"
 	_ = "" -- garbage placeholder
 function Drawbar(x, y, prog, col)
 	Screen.clear()
