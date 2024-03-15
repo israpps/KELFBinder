@@ -18,6 +18,7 @@ HDD_STATUS = 3
 
 Drawbar(X_MID, Y_MID, 40, Color.new(255, 0, 0))
 RPC_STATUS = Secrman.rpc_init()
+Drawbar(X_MID, Y_MID, 40, Color.new(255, 255, 255))
 
 ROMVERN = KELFBinder.getROMversion()
 KELFBinder.InitConsoleModel()
