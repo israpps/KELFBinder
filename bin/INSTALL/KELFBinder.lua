@@ -35,6 +35,12 @@ if doesFileExist("rom0:PSXVER") then
   IS_PSX = true
   REAL_IS_PSX = true
 end
+
+if doesFileExist("rom0:DAEMON") then
+  Screen.clear(Color.new(0xff, 0, 0))
+  Screen.flip()
+  error("\tNAMCO ARCADE DETECTED.\n\tABORTING PROGRAM EXECUTION")
+end
 ---PSX
 
 ---
