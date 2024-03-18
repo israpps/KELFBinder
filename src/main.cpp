@@ -303,6 +303,7 @@ int main(int argc, char *argv[])
 
     ret = SifExecModuleBuffer(&cdfs_irx, size_cdfs_irx, 0, NULL, &STAT);
     EPRINTF("[CDFS]: ret=%d, stat=%d\n", ret, STAT);
+    sceCdInit(SCECdINoD);
 
     // ret = SifExecModuleBuffer(&audsrv_irx, size_audsrv_irx, 0, NULL, &STAT);
     // EPRINTF("[AUDSRV]: ret=%d, stat=%d\n", ret, STAT);
