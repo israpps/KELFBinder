@@ -68,6 +68,7 @@
 	LNG_COMPAT0 = "Esta consola no soporta actualizaciones de sistema"
 	LNG_COMPAT1 = "aun así, se puede instalar actualizaciones con ella"
 	LNG_PICK_DVDPLAYER_REG = "Selecciona la región de la actualización"
+	LNG_INSTALLING_DVDPL = "Instalando actualización de DVDPlayer..."
 	LNG_JPN = "Japón"
 	LNG_USA = "USA"
 	LNG_ASI = "Asia"
