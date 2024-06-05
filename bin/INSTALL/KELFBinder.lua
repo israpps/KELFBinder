@@ -237,11 +237,13 @@ function InstallDVDPlayerAssets(port, cur, total, dvdfolder)
   local ret = 0
   if #DVDPL_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
     for i = 1, #DVDPL_INST_TABLE.source do
+      if DVDPL_INST_TABLE.target[i] == "/dvdplayer.elf" then goto skipfile end
       ReportProgress(cur+i, total, dvdfolder..DVDPL_INST_TABLE.target[i], LNG_INSTALLING_EXTRA)
       if doesFileExist(DVDPL_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         ret = System.copyFile(DVDPL_INST_TABLE.source[i], string.format("mc%d:/%s%s", port, dvdfolder, DVDPL_INST_TABLE.target[i]))
         if ret < 0 then return ret end
       end
+      ::skipfile::
     end
   end
 return 1
