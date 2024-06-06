@@ -30,6 +30,12 @@ HDD_INST_TABLE = {
   },
 }
 
+DVDPL_INST_TABLE = {
+  source = {}, --- holds file locations relative to KELFBinder CWD.
+  target = {}, --- contains installation paths ignoring device (eg: instead of `mc0:/A/BOOT.ELF` use `A/BOOT.ELF`)
+  dirs = {} --- contains a list of directory names to be created before writing files to target
+}
+
 ---parse directory and append paths based on files found inside `SOURCEDIR` into `SOURCE_TABLE` and `DEST_TABLE`.
 ---if at least 1 file is found, the value of `DESTNTDIR` is added into `MKDIR_TABLE`
 ---@param SOURCEDIR string
@@ -71,7 +77,9 @@ Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_
 Update_InstTable("INSTALL/ASSETS/APPS-HDD"  , "hdd0:__common:pfs:/APPS"   , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/BOOT-HDD"  , "hdd0:__sysconf:pfs:/BOOT"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 
-Update_InstTable("INSTALL/ASSETS/FSCK"  , "hdd0:__system:pfs:/fsck/lang"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/FSCK", "hdd0:__system:pfs:/fsck/lang", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+
+Update_InstTable("INSTALL/ASSETS/DVDPLAYER_FILES", "", DVDPL_INST_TABLE.source, DVDPL_INST_TABLE.target, DVDPL_INST_TABLE.dirs)
 
 System.log("MC installation table:\n")
 for x = 1, #MC_INST_TABLE.source do
@@ -81,4 +89,9 @@ end
 System.log("HDD installation table:\n")
 for x = 1, #HDD_INST_TABLE.source do
   System.log(string.format("\t[%s] > [%s]\n", HDD_INST_TABLE.source[x], HDD_INST_TABLE.target[x]))
+end
+
+System.log("DVDPlayer installation table:\n")
+for x = 1, #DVDPL_INST_TABLE.source do
+  System.log(string.format("\t[%s] > [%s]\n", DVDPL_INST_TABLE.source[x], DVDPL_INST_TABLE.target[x]))
 end

@@ -231,6 +231,24 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
 
   return FILECOUNT, FOLDERCOUNT, SIZECOUNT
 end
+
+function InstallDVDPlayerAssets(port, cur, total, dvdfolder)
+  ReportProgress(cur, total, "", LNG_INSTALLING_DVDPL)
+  local ret = 0
+  if #DVDPL_INST_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #DVDPL_INST_TABLE.source do
+      if DVDPL_INST_TABLE.target[i] == "/dvdplayer.elf" then goto skipfile end
+      ReportProgress(cur+i, total, dvdfolder..DVDPL_INST_TABLE.target[i], LNG_INSTALLING_EXTRA)
+      if doesFileExist(DVDPL_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        ret = System.copyFile(DVDPL_INST_TABLE.source[i], string.format("mc%d:/%s%s", port, dvdfolder, DVDPL_INST_TABLE.target[i]))
+        if ret < 0 then return ret end
+      end
+      ::skipfile::
+    end
+  end
+return 1
+end
+
 function InstallExtraAssets(port, cur, total)
   ReportProgress(cur, total)
   local ret = 0
@@ -639,18 +657,18 @@ function DVDPlayerINST(port, slot, target_region)
   local RET
   local TARGET_FOLD = KELFBinder.getDVDPlayerFolder(target_region)
   local TARGET_KELF = string.format("mc%d:/%s/dvdplayer.elf", port, TARGET_FOLD)
-
+  local tinst = #DVDPL_INST_TABLE.target+2
   if doesFileExist(DVDPLAYERUPDATE) then
     System.AllowPowerOffButton(0)
-    Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 600, 64, string.format(LNG_INSTPMPT, TARGET_KELF))
-    Screen.flip()
+    ReportProgress(0, tinst, (LNG_INSTPMPT):format(TARGET_KELF), LNG_INSTALLING_DVDPL)
     System.createDirectory(string.format("mc%d:/%s", port, TARGET_FOLD))
     KELFBinder.setSysUpdateFoldProps(port, slot, TARGET_FOLD)
     RET = Secrman.downloadfile(port, slot, DVDPLAYERUPDATE, TARGET_KELF)
-    System.AllowPowerOffButton(1)
     if RET < 0 then Secrerr(RET) return end
+    RET = InstallDVDPlayerAssets(port, 1, tinst, TARGET_FOLD)
+    if RET < 0 then Secrerr(RET) return end
+    ReportProgress(tinst, tinst, "", LNG_INSTALLING_DVDPL)
+    System.AllowPowerOffButton(1)
     Secrerr(RET)
   else
     Secrerr(-203)
@@ -741,14 +759,7 @@ function NormalInstall(port, slot)
   ReportProgress(5, tot)
   RET = InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
-  local Z = 0x80
-  while Z > 0 do
-    Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, Z))
-    Screen.flip()
-    Z = Z-2
-  end
+  ReportProgressFadeEnd()
   Secrerr(RET)
 end
 
@@ -1645,7 +1656,25 @@ function PerformExpertINST(port, slot, UPDT)
   end
 
   RET = InstallExtraAssets(port, cur, total)
-  System.AllowPowerOffButton(1)  local Z = 0x80
+  System.AllowPowerOffButton(1)
+  ReportProgressFadeEnd()
+  Secrerr(RET)
+end
+
+function ReportProgress(prog, total, EXTRASTR, MAINSTR)
+  Screen.clear()
+  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
+  local a
+  if type(MAINSTR) == "string" then a = MAINSTR else a = LNG_INSTALLING end
+  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, a)
+  if type(EXTRASTR) == "string" then Font.ftPrint(LSANS_SMALL, X_MID, 120, 8, 600, 64, EXTRASTR) end
+  DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, 0x30))
+  DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
+  Screen.flip()
+end
+
+function ReportProgressFadeEnd()
+  local Z = 0x80
   while Z > 0 do
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
@@ -1653,17 +1682,6 @@ function PerformExpertINST(port, slot, UPDT)
     Screen.flip()
     Z = Z-2
   end
-  Secrerr(RET)
-end
-
-function ReportProgress(prog, total, EXTRASTR)
-  Screen.clear()
-  Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-  Font.ftPrint(LSANS, X_MID, 40, 8, 600, 64, LNG_INSTALLING)
-  if type(EXTRASTR) == "string" then Font.ftPrint(LSANS_SMALL, X_MID, 120, 8, 600, 64, EXTRASTR) end
-  DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, 0x30))
-  DrawbarNbg(X_MID, Y_MID, ((prog * 100) / total), Color.new(0xff, 0xff, 0xff, 0x80))
-  Screen.flip()
 end
 
 function WriteDataToHDD()
@@ -1708,14 +1726,7 @@ function WriteDataToHDD()
     end
   end
   HDD.UMountPartition(0)
-  local Z = 0x80
-  while Z > 0 do
-    Screen.clear()
-    Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
-    DrawbarNbg(X_MID, Y_MID, 100, Color.new(0xff, 0xff, 0xff, Z))
-    Screen.flip()
-    Z = Z-2
-  end
+  ReportProgressFadeEnd()
   return 1
 end
 
