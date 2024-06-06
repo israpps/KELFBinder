@@ -71,7 +71,7 @@
 	LNG_JPN = "Japan"
 	LNG_USA = "USA"
 	LNG_ASI = "Asia"
-	LNG_USANASIA = "USA & Asia"
+	LNG_USANASIA = "America / Asia"
 	LNG_EUR = "Europe / Oceania / Russia"
 	LNG_CHN = "China"
 	LNG_AI_CROSS_MODEL = "Cross Model"
@@ -155,9 +155,8 @@ end
 	ROMVER = string.sub(ROMVER, 0, 14)
 	System.closeFile(temporaryVar)
 	KELFBinder.init(ROMVER)
-	local REGION = KELFBinder.getsystemregion()
 	local VMODE = NTSC
-	if REGION == 3 then VMODE = PAL end
+	if KELFBinder.getsystemregion() == 3 then VMODE = PAL end
 	if doesFileExist("INSTALL/CORE/480p.opt") then VMODE = _480p
 	elseif doesFileExist("INSTALL/CORE/720p.opt") then VMODE = _720p
 	elseif doesFileExist("INSTALL/CORE/1080i.opt") then VMODE = _1080i
