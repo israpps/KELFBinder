@@ -71,7 +71,7 @@
 	LNG_JPN = "Japan"
 	LNG_USA = "USA"
 	LNG_ASI = "Asia"
-	LNG_USANASIA = "USA & Asia"
+	LNG_USANASIA = "America / Asia"
 	LNG_EUR = "Europe / Oceania / Russia"
 	LNG_CHN = "China"
 	LNG_AI_CROSS_MODEL = "Cross Model"
