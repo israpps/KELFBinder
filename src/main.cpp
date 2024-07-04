@@ -238,6 +238,9 @@ int main(int argc, char *argv[])
     sbv_patch_disable_prefix_check();
     sbv_patch_fileio();
 
+    ret = SifExecModuleBuffer(&secrman_irx, size_secrman_irx, 0, NULL, &STAT);
+    EPRINTF("[SECRMAN_ALT]: ret=%d, stat=%d\n", ret, STAT);
+
     init_scr();
 #ifdef UDPTTY
     if (loadDEV9())
