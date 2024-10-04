@@ -18,7 +18,7 @@ __European__  | `BEEXEC-SYSTEM` | `BEDATA-SYSTEM` |  `BEEXEC-DVDPLAYER`   |
 __Chinese__   | `BCEXEC-SYSTEM` | `BCDATA-SYSTEM` |  `BCEXEC-DVDPLAYER`   |
 
 [^1]: __DVD-player__ update executable name is: `dvdplayer.elf`
-[^2]: __Data Folder:__ seen on the console browser as "Your System Configuration" this folder hold the play history file (a file that holds a record of played games, used to generate the towers on the console start animation), also, `TITLE.DB` is held on this folder, a file used by the PS1 retrocompatibility systems
+[^2]: __Data Folder:__ seen on the console browser as "Your System Configuration" this folder hold the play history file (a file that holds a record of played games, used to generate the towers on the console start animation), also, `TITLE.DB` is held on this folder, a file used by the PS1 retrocompatibility systems on older models.
 
 
 ## System executables
@@ -61,13 +61,26 @@ Path | Console
 `BIEXEC-SYSTEM/xosdmain.elf`| Any PSX-DESR
 
 
-[^5]: Asian models correspond to any asian model not covered by the other regions, these are: `SCPH-xxx05` for korea, `SCPH-xxx06` for Hong Kong and `SCPH-xxx07` for Taiwan 
+[^5]: Asian models correspond to any asian model not covered by the other regions, these are: `SCPH-xxx05` for korea, `SCPH-xxx06` for Hong Kong and `SCPH-xxx07` for Taiwan
 
-# specific updates
+## boot rom specific updates
 Every PS2 model that looks for `osdmain.elf` will prioritize launching a special update, its name will always be `osdXXX.elf`
 
 where `XXX` is boot rom version rounded to the next ten:
 
-- 0220 ROMVER version will look for `osd230.elf`
+- eg: 0220 ROMVER version will look for `osd230.elf`
 
 this was inteded for updates targeting a specific group of PS2 models
+
+## Mechapwn Compatible installation
+Mechapwn readme has a poorly written warning related to the DECKARD models.
+
+Those models **can** change the location in wich they look for system updates if mechapwn changes their region.
+
+to ensure total compatibility on your DECKARD PS2 (`SCPH-75xxx`+) you should perform the expert install and tick the following updates at least:
+
+<img src="../mechapwn_minimal_inst.png" class="anim-fade-in"/>
+
+why we tick only those and not all available updates? because every PS2 that supports mechapwn is capable of booting the `osdmain.elf` (excluding the PSX DESR. but that's another story)
+
+we ignore the chinese folder because changing a DECKARD ps2 to mainland china region will probably brick OSDSYS because only the real chinese models have `rom2:` for storing the chinese font
