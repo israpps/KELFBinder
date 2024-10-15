@@ -44,18 +44,18 @@ jobs:
 
     - name: Get short SHA
       id: slug
-      run: | 
+      run: |
         echo "SHA8=$(echo ${GITHUB_SHA} | cut -c1-8)" >> $GITHUB_ENV
 
     - name: build changelogs and move extra files
-      run: | 
+      run: |
         make changelog
         cp LICENSE bin/LICENSE.TXT
 
     - name: Get branch
       if: github.ref != 'refs/heads/main'
       id: brnch
-      run: | 
+      run: |
         echo "BRANCH=$(echo -${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
 
     - name: Upload artifacts
@@ -71,23 +71,48 @@ jobs:
         echo if you report an issue to the developer. there is a high chance that he might ask you this code>>bin/INSTALL/CORE/HASH.TXT
         mv bin/ ${{ github.event.repository.name }}/
         7z a -t7z ${{ github.event.repository.name }}${{ env.BRANCH }}.7z ${{ github.event.repository.name }}/
- 
-    - name: Create pre-release
-      if: github.ref == 'refs/heads/main'
-      uses: marvinpinto/action-automatic-releases@latest
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: true
-        automatic_release_tag: "latest"
-        title: "Latest Development build"
-        files: |
-           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
 
     - name: Release
       if: startsWith(github.ref, 'refs/tags/v')
-      uses: marvinpinto/action-automatic-releases@latest
+      uses: softprops/action-gh-release@v2
       with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
+        prerelease: true
+        generate_release_notes: true
+        tag_name: "latest"
+        name: "Latest Development build"
         files: |
-           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
+          ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
+        body: |
+          ![dl](https://img.shields.io/github/downloads/israpps/${{ github.event.repository.name }}/latest/total?style=for-the-badge&logo=github)
+
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: softprops/action-gh-release@v2
+      with:
+        make_latest: true
+        generate_release_notes: true
+        tag_name: "${{ env.BRANCH }}"
+        name: "${{ env.BRANCH }}"
+        files: |
+          ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
+        body: |
+          ![dl](https://img.shields.io/github/downloads/israpps/${{ github.event.repository.name }}/latest/total?style=for-the-badge&logo=github)
+
+    - name: notify on discord
+      if: github.ref == 'refs/heads/main'
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_FEED }}
+        content: |
+          ## KELFBinder has been updated!
+          ### [Download Page](https://github.com/israpps/${{ github.event.repository.name }}/releases/tag/latest)"
+
+    - name: notify on discord
+      if: startsWith(github.ref, 'refs/tags/v')
+      uses: tsickert/discord-webhook@v5.3.0
+      with:
+        webhook-url: ${{ secrets.DISCORD_FEED }}
+        content: |
+          # A new stable version of KELFBinder has been released!
+          ## [Download Page](https://github.com/israpps/${{ github.event.repository.name }}/releases/latest/)
+
