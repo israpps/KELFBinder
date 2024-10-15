@@ -69,7 +69,7 @@ function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_
   return COUNT
 end
 
-Update_InstTable("INSTALL/ASSETS/PS2BBL", "PS2BBL", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/SYS-CONF", "SYS-CONF", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 
