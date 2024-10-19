@@ -36,50 +36,47 @@ DVDPL_INST_TABLE = {
   dirs = {} --- contains a list of directory names to be created before writing files to target
 }
 
----parse directory and append paths based on files found inside `SOURCEDIR` into `SOURCE_TABLE` and `DEST_TABLE`.
----if at least 1 file is found, the value of `DESTNTDIR` is added into `MKDIR_TABLE`
----@param SOURCEDIR string
----@param DESTNTDIR string
----@param SOURCE_TABLE table
----@param DEST_TABLE table
----@param MKDIR_TABLE table
-function Update_InstTable(SOURCEDIR, DESTNTDIR, SOURCE_TABLE, DEST_TABLE, MKDIR_TABLE)
+---Update the install table with files from `SOURCEDIR`
+---@param SOURCEDIR string source folder
+---@param DESTNTDIR string destination folder
+---@param T table this table must have 3 members (also tables): `source`, `target` and `dirs`
+function Update_InstTable(SOURCEDIR, DESTNTDIR, T)
   local tmp = System.listDirectory(SOURCEDIR)
   local COUNT = 0 -- Ammount of files that will be installed
   local add_dir = true
   if tmp == nil then return 0 end
   for x = 1, #tmp do
     if not tmp[x].directory then
-        table.insert(SOURCE_TABLE, SOURCEDIR.."/"..tmp[x].name)
-        table.insert(DEST_TABLE,   DESTNTDIR.."/"..tmp[x].name)
+        table.insert(T.source, SOURCEDIR.."/"..tmp[x].name)
+        table.insert(T.target, DESTNTDIR.."/"..tmp[x].name)
         COUNT = COUNT+1
     end
   end
   if COUNT > 0 then --at least one file will be installed... append to mkdir struct
-    for x = 1, #MKDIR_TABLE do
-      if MKDIR_TABLE[x] == DESTNTDIR then
+    for x = 1, #T.dirs do
+      if T.dirs[x] == DESTNTDIR then
         add_dir = false
       end
     end
     if add_dir then
-      table.insert(MKDIR_TABLE, DESTNTDIR)
+      table.insert(T.dirs, DESTNTDIR)
     end
     System.log(string.format("Installation table: %d files listed to be moved from '%s' to target:/%s'\n", COUNT, SOURCEDIR, DESTNTDIR))
   end
   return COUNT
 end
 
-Update_InstTable("INSTALL/ASSETS/SYS-CONF", "SYS-CONF", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
-Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
-Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/SYS-CONF", "SYS-CONF", MC_INST_TABLE)
+Update_InstTable("INSTALL/ASSETS/APPS" , "APPS" , MC_INST_TABLE)
+Update_InstTable("INSTALL/ASSETS/BOOT" , "BOOT" , MC_INST_TABLE)
 
-Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
-Update_InstTable("INSTALL/ASSETS/APPS-HDD"  , "hdd0:__common:pfs:/APPS"   , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
-Update_InstTable("INSTALL/ASSETS/BOOT-HDD"  , "hdd0:__sysconf:pfs:/BOOT"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_INST_TABLE)
+Update_InstTable("INSTALL/ASSETS/APPS-HDD" , "hdd0:__common:pfs:/APPS" , HDD_INST_TABLE)
+Update_InstTable("INSTALL/ASSETS/BOOT-HDD" , "hdd0:__sysconf:pfs:/BOOT" , HDD_INST_TABLE)
 
-Update_InstTable("INSTALL/ASSETS/FSCK", "hdd0:__system:pfs:/fsck/lang", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/FSCK", "hdd0:__system:pfs:/fsck/lang", HDD_INST_TABLE)
 
-Update_InstTable("INSTALL/ASSETS/DVDPLAYER_FILES", "", DVDPL_INST_TABLE.source, DVDPL_INST_TABLE.target, DVDPL_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/DVDPLAYER_FILES", "", DVDPL_INST_TABLE)
 
 System.log("MC installation table:\n")
 for x = 1, #MC_INST_TABLE.source do
