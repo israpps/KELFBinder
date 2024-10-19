@@ -14,6 +14,12 @@ MC_INST_TABLE = {
   dirs = {} --- contains a list of directory names to be created before writing files to target
 }
 
+MC_EXTRAKELF_TABLE = {
+  source = {},
+  target = {},
+  --dirs = {} -- put them in MC_INST_TABLE.dirs instead
+}
+
 --- installation table for HardDrive
 HDD_INST_TABLE = {
   source = { --- holds file locations relative to KELFBinder CWD.

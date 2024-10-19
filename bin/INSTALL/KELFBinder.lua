@@ -228,6 +228,14 @@ function PreExtraAssetsInstall(FILECOUNT, FOLDERCOUNT, SIZECOUNT)
       end
     end
   end
+  if #MC_EXTRAKELF_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #MC_EXTRAKELF_TABLE.source do
+      if doesFileExist(MC_EXTRAKELF_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        SIZECOUNT = SIZECOUNT + GetFileSizeX(MC_EXTRAKELF_TABLE.source[i])
+        FILECOUNT = FILECOUNT + 1 -- only add the confirmed files
+      end
+    end
+  end
 
   return FILECOUNT, FOLDERCOUNT, SIZECOUNT
 end
@@ -264,6 +272,22 @@ function InstallExtraAssets(port, cur, total)
       ReportProgress(cur+i, total, MC_INST_TABLE.target[i])
       if doesFileExist(MC_INST_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
         ret = System.copyFile(MC_INST_TABLE.source[i], string.format("mc%d:/%s", port, MC_INST_TABLE.target[i]))
+        if ret < 0 then return ret end
+      end
+    end
+  end
+return 1
+end
+
+function InstallExtraKELF(port, cur, total)
+  ReportProgress(cur, total)
+  local ret = 0
+  if #MC_EXTRAKELF_TABLE.source > 0 and MUST_INSTALL_EXTRA_FILES then
+    for i = 1, #MC_EXTRAKELF_TABLE.source do
+      ReportProgress(cur+i, total, "KRIPTO:"..MC_EXTRAKELF_TABLE.target[i])
+      if doesFileExist(MC_EXTRAKELF_TABLE.source[i]) then -- CHECK FOR EXISTENCE, OTHERWISE, PROGRAM CRASHES!
+        ret = System.copyFile(MC_EXTRAKELF_TABLE.source[i], string.format("mc%d:/%s", port, MC_EXTRAKELF_TABLE.target[i]))
+        ret = Secrman.downloadfile(port, 0, MC_EXTRAKELF_TABLE.source[i], string.format("mc%d:/%s", port, MC_EXTRAKELF_TABLE.target[i]))
         if ret < 0 then return ret end
       end
     end
@@ -687,15 +711,15 @@ function NormalInstall(port, slot)
   local FILECOUNT = 2 -- icons + whatever updates you push
   local NEEDED_SPACE = 1024 + 964 -- 1kb + icon.sys size to begin with
   local AvailableSpace = 0
-  
+
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
   if doesFileExist(TEST_KELF) then
-    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RET, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
   if RET < 0 then Secrerr(RET) return end
-  
+
   if IS_PSX then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
     TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
@@ -757,6 +781,7 @@ function NormalInstall(port, slot)
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
 
   ReportProgress(5, tot)
+  RET = InstallExtraKELF(port, 5, tot)
   RET = InstallExtraAssets(port, 5, tot)
   System.AllowPowerOffButton(1)
   ReportProgressFadeEnd()
@@ -1278,7 +1303,7 @@ function MagicGateTest(port, slot)
   local MESSAGE1 = ""
   local MESSAGE2 = ""
   if doesFileExist(TEST_KELF) then
-    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
@@ -1530,7 +1555,7 @@ function PerformExpertINST(port, slot, UPDT)
   Screen.flip()
   local RETT
   if doesFileExist(TEST_KELF) then
-    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
@@ -1655,6 +1680,7 @@ function PerformExpertINST(port, slot, UPDT)
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
   end
 
+  RET = InstallExtraKELF(port, cur, total)
   RET = InstallExtraAssets(port, cur, total)
   System.AllowPowerOffButton(1)
   ReportProgressFadeEnd()
@@ -1778,7 +1804,7 @@ function Ask2quit()
     if Pads.check(pad, PAD_CIRCLE) then break end
     if Pads.check(pad, PAD_TRIANGLE) then
       if doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then
-        KELFBinder.DeinitLOG() 
+        KELFBinder.DeinitLOG()
         System.loadELF(System.getbootpath() .. "INSTALL/CORE/BACKDOOR.ELF")
       else
         System.log("BACKDOOR ELF NOT ACCESIBLE\n")
