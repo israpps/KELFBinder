@@ -687,15 +687,15 @@ function NormalInstall(port, slot)
   local FILECOUNT = 2 -- icons + whatever updates you push
   local NEEDED_SPACE = 1024 + 964 -- 1kb + icon.sys size to begin with
   local AvailableSpace = 0
-  
+
   NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES)
   if doesFileExist(TEST_KELF) then
-    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RET, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
   if RET < 0 then Secrerr(RET) return end
-  
+
   if IS_PSX then
     NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_PSX)
     TARGET_FOLD = string.format("mc%d:/BIEXEC-SYSTEM", port)
@@ -1278,7 +1278,7 @@ function MagicGateTest(port, slot)
   local MESSAGE1 = ""
   local MESSAGE2 = ""
   if doesFileExist(TEST_KELF) then
-    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RET, HEADER, KBIT, KCONT = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
@@ -1530,7 +1530,7 @@ function PerformExpertINST(port, slot, UPDT)
   Screen.flip()
   local RETT
   if doesFileExist(TEST_KELF) then
-    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF) 
+    RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
     RETT, _, _, _ = Secrman.Testdownloadfile(port, slot, KERNEL_PATCH_100)
   end
@@ -1778,7 +1778,7 @@ function Ask2quit()
     if Pads.check(pad, PAD_CIRCLE) then break end
     if Pads.check(pad, PAD_TRIANGLE) then
       if doesFileExist("INSTALL/CORE/BACKDOOR.ELF") then
-        KELFBinder.DeinitLOG() 
+        KELFBinder.DeinitLOG()
         System.loadELF(System.getbootpath() .. "INSTALL/CORE/BACKDOOR.ELF")
       else
         System.log("BACKDOOR ELF NOT ACCESIBLE\n")
@@ -1884,6 +1884,9 @@ if KELFBinder.GetIRXInfoByName("secrman_special") == nil then--no secrman specia
   RPC_STATUS = -10
   if KELFBinder.GetIRXInfoByName("secrman_for_cex") ~= nil then--check if retail secrman is there
     RPC_STATUS = -20
+  end
+  if KELFBinder.GetIRXInfoByName("secrman_nomecha") ~= nil then--check if retail secrman is there
+    RPC_STATUS = 0
   end
 end
 if RPC_STATUS ~= 0 then
