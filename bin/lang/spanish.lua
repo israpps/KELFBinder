@@ -135,5 +135,9 @@
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS = "El BootLoader MBR excede el tamaño aceptable"
 	LNG_MBR_KELF_SIZE_OUT_OF_BOUNDS2 = "No puede ser mayor a 883200 bytes"
 	LNG_WARN_DVDPLAYER_PROPIETARY_SOFTWARE = "El software DVDPlayer no se incluye debido a Copyright. obtenelo vos mismo"
+	LNG_SECRMAN_REPLACE_FAIL = "ERROR EN SECRMAN.IRX"
+	LNG_SECRMAN_REPLACE_FAIL2 = "error %d"
+	LNG_SECRMAN_REPLACE_FAIL3 = "no se detectó un driver SECRMAN compatible"
+	LNG_SECRMAN_REPLACE_FAIL4 = "Todas las funciones relacionadas a memory card fallaran"
 
 -- TRADUCCION POR El_isra
