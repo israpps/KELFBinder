@@ -7,6 +7,9 @@ System.log("declaring installation tables for PS2BBL\n")
 
 SYSUPDATE_ICON_SYS = "PS2BBL.icn" -- icon files for memory card update
 SYSUPDATE_ICON_SYS_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_SYS
+SYSUPDATE_ICON_DEL = "delete.icn" -- icon files for memory card update
+SYSUPDATE_ICON_DEL_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_DEL
+
 --- installation table for memory card.
 MC_INST_TABLE = {
   source = {}, --- holds file locations relative to KELFBinder CWD.
