@@ -1,4 +1,6 @@
-# KELFBinder(UMCS MOD) FORKED FROM KELFBinder by El_isra (https://israpps.github.io/)
+# KELFBinder Remapped
+FORKED FROM KELFBinder by El_isra (https://israpps.github.io/)
+---------------------------------------------------------------------
 DVDPlayer and System Updates Manager for SCE PlayStation2
 
 ![GitHub all releases](https://img.shields.io/github/downloads/israpps/KELFBinder/total)
