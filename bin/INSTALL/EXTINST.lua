@@ -7,8 +7,8 @@ System.log("declaring installation tables for PS2BBL\n")
 
 SYSUPDATE_ICON_SYS = "PS2BBL.icn" -- icon files for memory card update
 SYSUPDATE_ICON_SYS_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_SYS
-SYSUPDATE_ICON_DEL = "delete.icn" -- icon files for memory card update
-SYSUPDATE_ICON_DEL_RES = "INSTALL/ASSETS/"..SYSUPDATE_ICON_DEL
+SYSUPDATE_DELETE_ICN = "delete.icn" -- icon files for memory card update
+SYSUPDATE_DELETE_ICN_RES = "INSTALL/ASSETS/"..SYSUPDATE_DELETE_ICN
 
 --- installation table for memory card.
 MC_INST_TABLE = {
@@ -75,6 +75,11 @@ end
 Update_InstTable("INSTALL/ASSETS/SYS-CONF", "SYS-CONF", MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/APPS"  , "APPS"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/SYS_FMCB-CFG"  , "SYS_FMCB-CFG"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/FMCBD-1.953"  , "FMCBD-1.953"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+Update_InstTable("INSTALL/ASSETS/FMCBD-1.966"  , "FMCBD-1.966"  , MC_INST_TABLE.source, MC_INST_TABLE.target, MC_INST_TABLE.dirs)
+
+
 
 Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/APPS-HDD"  , "hdd0:__common:pfs:/APPS"   , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
