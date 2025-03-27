@@ -95,15 +95,6 @@ jobs:
           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
 
     - name: notify on discord
-      if: github.ref == 'refs/heads/main'
-      uses: tsickert/discord-webhook@v5.3.0
-      with:
-        webhook-url: ${{ secrets.DISCORD_FEED }}
-        content: |
-          ## KELFBinder has been updated!
-          ### [Download Page](https://github.com/israpps/${{ github.event.repository.name }}/releases/tag/latest)
-
-    - name: notify on discord
       if: startsWith(github.ref, 'refs/tags/v')
       uses: tsickert/discord-webhook@v5.3.0
       with:
