@@ -24,7 +24,7 @@ jobs:
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
@@ -60,7 +60,7 @@ jobs:
 
     - name: Upload artifacts
       if: ${{ success() }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ github.event.repository.name }}-${{ env.SHA8 }}
         path: bin
@@ -72,31 +72,27 @@ jobs:
         mv bin/ ${{ github.event.repository.name }}/
         7z a -t7z ${{ github.event.repository.name }}${{ env.BRANCH }}.7z ${{ github.event.repository.name }}/
 
-    - name: Release
+    - name: Create prerelease
       if: github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v2
+      uses: mathieucarbou/marvinpinto-action-automatic-releases@latest
       with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: true
-        generate_release_notes: true
-        tag_name: "latest"
-        name: "Latest Development build"
+        automatic_release_tag: "latest"
+        title: "Latest development build"
         files: |
           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
-        body: |
-          ![dl](https://img.shields.io/github/downloads/israpps/${{ github.event.repository.name }}/latest/total?style=for-the-badge&logo=github)
 
-    - name: Release
+    - name: Create prerelease
       if: startsWith(github.ref, 'refs/tags/v')
-      uses: softprops/action-gh-release@v2
+      uses: mathieucarbou/marvinpinto-action-automatic-releases@latest
       with:
-        make_latest: true
-        generate_release_notes: true
-        tag_name: "${{ env.BRANCH }}"
-        name: "${{ env.BRANCH }}"
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        automatic_release_tag: "${{ env.BRANCH }}"
+        title: "${{ env.BRANCH }}"
         files: |
           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
-        body: |
-          ![dl](https://img.shields.io/github/downloads/israpps/${{ github.event.repository.name }}/latest/total?style=for-the-badge&logo=github)
 
     - name: notify on discord
       if: github.ref == 'refs/heads/main'
