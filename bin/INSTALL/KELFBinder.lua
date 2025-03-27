@@ -373,11 +373,6 @@ function MainMenu()
     else
       Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_MM2, Color.new(200, 200, 200, 0x80 - A))
     end
-    if T == 2 then
-      Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_MM7, Color.new(0, 0xde, 0xff, 0x90 - A))
-    else
-      Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_MM7, Color.new(COL, COL, COL, 0x80 - A))
-    end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
@@ -677,18 +672,15 @@ end
 
 function NormalInstall(port, slot)
 
-  if doesFileExist(string.format("mc%d:SYS-CONF/FMCBUINST.dat", port)) or
-      doesFileExist(string.format("mc%u:SYS-CONF/uninstall.dat", port)) then WarnOfShittyFMCBInst() return end
-
   local RET
   local REG = KELFBinder.getsystemregion()
   local TARGET_FOLD
   local FOLDCOUNT = 1 -- the system update folder that we'll be dealing with
-  local FILECOUNT = 3 -- icons + whatever updates you push
+  local FILECOUNT = 4 -- icons + whatever updates you push
   local NEEDED_SPACE = 1024 + 964 -- 1kb + icon.sys size to begin with
   local AvailableSpace = 0
 
-  NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES) + GetFileSizeX(SYSUPDATE_ICON_DEL_RES)
+  NEEDED_SPACE = NEEDED_SPACE + GetFileSizeX(SYSUPDATE_ICON_SYS_RES) + GetFileSizeX(SYSUPDATE_DELETE_ICN_RES)
   if doesFileExist(TEST_KELF) then
     RET, _, _, _ = Secrman.Testdownloadfile(port, slot, TEST_KELF)
   else
@@ -706,7 +698,7 @@ function NormalInstall(port, slot)
   FILECOUNT, FOLDCOUNT, NEEDED_SPACE = PreExtraAssetsInstall(FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   AvailableSpace, NEEDED_SPACE = CalculateRequiredSpace(port, FILECOUNT, FOLDCOUNT, NEEDED_SPACE)
   if AvailableSpace < NEEDED_SPACE then InsufficientSpace(NEEDED_SPACE, AvailableSpace, LNG_MEMORY_CARD.." "..port) return end
-  local tot = FILECOUNT + 3
+  local tot = FILECOUNT + 4
   local cur = 0
   if System.doesDirExist(TARGET_FOLD) then
     Ask2WipeSysUpdateDirs(false, false, false, false, true, port)
@@ -755,7 +747,7 @@ function NormalInstall(port, slot)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("%s/icon.sys", TARGET_FOLD))
   end
   System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_SYS)) --icon is the same for all
-  System.copyFile(SYSUPDATE_ICON_DEL_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_ICON_DEL)) --icon is the same for all deletes
+  System.copyFile(SYSUPDATE_DELETE_ICN_RES, string.format("%s/%s", TARGET_FOLD, SYSUPDATE_DELETE_ICN)) --icon is the same for all deletes
 
   ReportProgress(5, tot)
   RET = InstallExtraAssets(port, 5, tot)
@@ -1636,28 +1628,28 @@ function PerformExpertINST(port, slot, UPDT)
     cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/JPN.sys", string.format("mc%d:/%s/icon.sys", port, "BIEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
-    System.copyFile(SYSUPDATE_ICON_DEL_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_ICON_DEL))
+    System.copyFile(SYSUPDATE_DELETE_ICN_RES, string.format("mc%d:/%s/%s", port, "BIEXEC-SYSTEM", SYSUPDATE_DELETE_ICN))
   end
   if NEEDS_USA then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BAEXEC-SYSTEM")
     cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/USA.sys", string.format("mc%d:/%s/icon.sys", port, "BAEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
-    System.copyFile(SYSUPDATE_ICON_DEL_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_ICON_DEL))
+    System.copyFile(SYSUPDATE_DELETE_ICN_RES, string.format("mc%d:/%s/%s", port, "BAEXEC-SYSTEM", SYSUPDATE_DELETE_ICN))
   end
   if NEEDS_EUR then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BEEXEC-SYSTEM")
     cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/EUR.sys", string.format("mc%d:/%s/icon.sys", port, "BEEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
-    System.copyFile(SYSUPDATE_ICON_DEL_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_ICON_DEL))
+    System.copyFile(SYSUPDATE_DELETE_ICN_RES, string.format("mc%d:/%s/%s", port, "BEEXEC-SYSTEM", SYSUPDATE_DELETE_ICN))
   end
   if NEEDS_CHN then
     KELFBinder.setSysUpdateFoldProps(port, slot, "BCEXEC-SYSTEM")
     cur = cur+1 ReportProgress(cur, total, SYSUPDATE_ICON_SYS)
     System.copyFile("INSTALL/ASSETS/CHN.sys", string.format("mc%d:/%s/icon.sys", port, "BCEXEC-SYSTEM"))
     System.copyFile(SYSUPDATE_ICON_SYS_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_SYS))
-    System.copyFile(SYSUPDATE_ICON_DEL_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_ICON_DEL))
+    System.copyFile(SYSUPDATE_DELETE_ICN_RES, string.format("mc%d:/%s/%s", port, "BCEXEC-SYSTEM", SYSUPDATE_DELETE_ICN))
    end
 
   RET = InstallExtraAssets(port, cur, total)
