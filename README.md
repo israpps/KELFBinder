@@ -1,4 +1,4 @@
-# KELFBinder Remapped
+# KELFBinder: UMCS Installer
 FORKED FROM KELFBinder by El_isra (https://israpps.github.io/)
 ---------------------------------------------------------------------
 DVDPlayer and System Updates Manager for SCE PlayStation2
