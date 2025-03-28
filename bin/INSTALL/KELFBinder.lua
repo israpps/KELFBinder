@@ -373,6 +373,11 @@ function MainMenu()
     else
       Font.ftPrint(LSANS, X_MID, 150, 0, 630, 16, LNG_MM2, Color.new(200, 200, 200, 0x80 - A))
     end
+    if T == 2 then
+       Font.ftPrint(LSANS, X_MID+1, 190, 0, 630, 16, LNG_MM7, Color.new(0, 0xde, 0xff, 0x90 - A))
+     else
+       Font.ftPrint(LSANS, X_MID, 190, 0, 630, 16, LNG_MM7, Color.new(COL, COL, COL, 0x80 - A))
+     end
     if T == 3 then
       Font.ftPrint(LSANS, X_MID+1, 230, 0, 630, 16, LNG_MM3, Color.new(0, 0xde, 0xff, 0x90 - A))
     else
