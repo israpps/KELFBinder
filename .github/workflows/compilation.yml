@@ -28,10 +28,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: update dependencies
-      run: |
-        make update_deps
-
     - name: Compile project
       run: |
         make clean all
@@ -93,13 +89,3 @@ jobs:
         title: "${{ env.BRANCH }}"
         files: |
           ${{ github.event.repository.name }}${{ env.BRANCH }}.7z
-
-    - name: notify on discord
-      if: startsWith(github.ref, 'refs/tags/v')
-      uses: tsickert/discord-webhook@v5.3.0
-      with:
-        webhook-url: ${{ secrets.DISCORD_FEED }}
-        content: |
-          # A new stable version of KELFBinder has been released!
-          ## [Download Page](https://github.com/israpps/${{ github.event.repository.name }}/releases/latest/)
-
