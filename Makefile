@@ -191,7 +191,7 @@ reset:
 
 update_deps:
 	wget -q https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
-	cp bin/INSTALL/CORE/BACKDOOR.ELF bin/INSTALL/ASSETS/BOOT/BOOT.ELF
+	cp bin/INSTALL/CORE/BACKDOOR.ELF
 
 intellisense:
 	etc/update_lua_globals.sh
