@@ -18,7 +18,6 @@ MC_INST_TABLE = {
 HDD_INST_TABLE = {
   source = { --- holds file locations relative to KELFBinder CWD.
     SYSUPDATE_HDD_MAIN,
-    "INSTALL/KELF/FSCK.XLF"
   },
   target = { --- contains fully qualified HDD paths, so installation routine has all the needed info (partition name, and PFS path)
     "hdd0:__system:pfs:/osd/osdmain.elf",
@@ -76,8 +75,6 @@ Update_InstTable("INSTALL/ASSETS/BOOT"  , "BOOT"  , MC_INST_TABLE.source, MC_INS
 Update_InstTable("INSTALL/ASSETS/PS2BBL-HDD", "hdd0:__sysconf:pfs:/PS2BBL", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/APPS-HDD"  , "hdd0:__common:pfs:/APPS"   , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 Update_InstTable("INSTALL/ASSETS/BOOT-HDD"  , "hdd0:__sysconf:pfs:/BOOT"  , HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
-
-Update_InstTable("INSTALL/ASSETS/FSCK", "hdd0:__system:pfs:/fsck/lang", HDD_INST_TABLE.source, HDD_INST_TABLE.target, HDD_INST_TABLE.dirs)
 
 Update_InstTable("INSTALL/ASSETS/DVDPLAYER_FILES", "", DVDPL_INST_TABLE.source, DVDPL_INST_TABLE.target, DVDPL_INST_TABLE.dirs)
 
