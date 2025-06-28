@@ -1,16 +1,16 @@
 define HEADER
-                                                                       
 
-  _  _______ _     _____ ____  _           _           
- | |/ / ____| |   |  ___| __ )(_)_ __   __| | ___ _ __ 
+
+  _  _______ _     _____ ____  _           _
+ | |/ / ____| |   |  ___| __ )(_)_ __   __| | ___ _ __
  | ' /|  _| | |   | |_  |  _ \| | '_ \ / _` |/ _ \ '__|
- | . \| |___| |___|  _| | |_) | | | | | (_| |  __/ |   
- |_|\_\_____|_____|_|   |____/|_|_| |_|\__,_|\___|_|   
-                                                       
-                                                                                
-                           		KELFBinder                 
-                    			Based on Enceladus project                                                               
-                                                                                
+ | . \| |___| |___|  _| | |_) | | | | | (_| |  __/ |
+ |_|\_\_____|_____|_|   |____/|_|_| |_|\__,_|\___|_|
+
+
+                           		KELFBinder
+                    			Based on Enceladus project
+
 endef
 export HEADER
 REVISION = 0
@@ -78,7 +78,7 @@ EXT_LIBS = modules/ds34usb/ee/libds34usb.a modules/ds34bt/ee/libds34bt.a
 
 APP_CORE = main.o libcdvd_add.o modelname.o system.o pad.o graphics.o render.o \
 		   calc_3d.o gsKit3d_sup.o atlas.o fntsys.o md5.o \
-		   libsecr.o baexec-system_paths.o strUtils.o # sound.o 
+		   libsecr.o baexec-system_paths.o strUtils.o # sound.o
 
 LUA_LIBS =	luaplayer.o luacontrols.o \
 			luatimer.o luaScreen.o luagraphics.o \
@@ -169,7 +169,7 @@ clean:
 
 	@echo "rm - obj dir"
 	@rm -rf $(EE_OBJS_DIR)
-	
+
 	$(MAKE) -C modules/ds34usb clean
 	$(MAKE) -C modules/ds34bt clean
 
@@ -185,9 +185,9 @@ rebuild: clean all
 
 run:
 	ps2client -h $(PS2LINK_IP) -t 1 execee host:$(EE_BIN)
-       
+
 reset:
-	ps2client -h $(PS2LINK_IP) reset   
+	ps2client -h $(PS2LINK_IP) reset
 
 update_deps:
 	wget -q https://github.com/israpps/wLaunchELF_ISR/releases/download/latest/BOOT-EXFAT.ELF -O bin/INSTALL/CORE/BACKDOOR.ELF
@@ -205,19 +205,19 @@ changelog:
 
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.c | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo "\033[1m CC  - $@\033[0m"
+	@printf "\033[1m CC  - $@\033[0m\n"
 endif
 	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
 
 $(EE_OBJS_DIR)%.o: $(EE_ASM_DIR)%.c | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo "\033[1m ASM - $@\033[0m"
+	@printf "\033[1m ASM - $@\033[0m\n"
 endif
 	$(EE_CC) $(EE_CFLAGS) $(EE_INCS) -c $< -o $@
 
 $(EE_OBJS_DIR)%.o: $(EE_SRC_DIR)%.cpp | $(EE_OBJS_DIR)
 ifeq ($(DEBUG),0)
-	@echo "\033[1m CXX - $@\033[0m"
+	@printf "\033[1m CXX - $@\033[0m\n"
 endif
 	$(EE_CXX) $(EE_CXXFLAGS) $(EE_INCS) -c $< -o $@
 
