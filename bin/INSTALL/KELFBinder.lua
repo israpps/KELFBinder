@@ -1813,7 +1813,7 @@ function SystemInfo()
     Screen.clear()
     Graphics.drawScaleImage(BG, 0.0, 0.0, SCR_X, SCR_Y)
     ORBMAN(0x80)
-    Font.ftPrint(LSANS, X_MID, 20, 8, 630, 32, LNG_SYSTEMINFO, Color.new(220, 220, 220, 0x80 - A))
+    Font.ftPrint(LSANS, X_MID, 30, 8, 630, 32, LNG_SYSTEMINFO, Color.new(220, 220, 220, 0x80 - A))
 
     Font.ftPrint(LSANS, 50, 60, 0, 630, 32, string.format("ROMVER = [%s]", ROMVER), Color.new(220, 220, 220, 0x80 - A))
     Font.ftPrint(LSANS, 50, 80, 0, 630, 32, string.format(LNG_CONSOLE_MODEL, KELFBinder.getConsoleModel()),
