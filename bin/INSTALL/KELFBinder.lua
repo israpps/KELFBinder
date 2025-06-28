@@ -135,12 +135,13 @@ function ORBMAN(Q)
 end
 
 function ORBMANex(IMG, Q, X, Z, POW)
-  R = R+RINCREMENT
+  time = os.clock()*3
   for l = 1, 7 do
-		--local C = math.cos(((R + LightsSeed + l*17)*0.01 *(l+10)*0.1)) -- THANKS to AAP for the math from his OSDSYS reversal
-		local S = math.sin(((R + LightsSeed + l*15)*0.005*(l+10)*0.1))
-    --Graphics.drawCircle(180+(80*math.cos((S+l))), 180+(80*math.sin((S+l))), 4.0, Color.new(255, 0, 0, Q))
-    Graphics.drawImage(IMG, X+(POW*math.cos((S+l))), Z+(POW*math.sin((S+l))), Color.new(128, 128, 128, Q))
+    local angle = time * l * math.pi / 30
+    local radius = POW
+    local x = radius * math.cos(angle) + 150
+    local y = radius * math.sin(angle) + 150
+    Graphics.drawScaleImage(IMG, x, y, 32, 32, Color.new(128, 128, 128, Q))
   end
 end
 
