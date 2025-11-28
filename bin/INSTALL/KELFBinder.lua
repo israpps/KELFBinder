@@ -39,7 +39,7 @@ end
 if doesFileExist("rom0:DAEMON") then
   Screen.clear(Color.new(0xff, 0, 0))
   Screen.flip()
-  error("\tNAMCO ARCADE DETECTED.\n\tABORTING PROGRAM EXECUTION")
+  error("\tARCADE DETECTED.\n\tABORTING PROGRAM EXECUTION")
 end
 ---PSX
 
@@ -76,9 +76,46 @@ local CHKF = Graphics.loadImageEmbedded(4)
 --if doesFileExist("INSTALL/EXTINST.lua") then dofile("INSTALL/EXTINST.lua") else
 --  System.log("### Could not access INSTALL/EXTINST.lua\n")
 --end
+
+---parse directory and append paths based on files found inside `SOURCEDIR` into `SOURCE_TABLE` and `DEST_TABLE`.
+---if at least 1 file is found, the value of `DESTNTDIR` is added into `MKDIR_TABLE`
+---@param SOURCEDIR string relative path to parse for registering installation files
+---@param DESTNTDIR string destination path on target device
+---@param T table installation table
+function Update_InstTable(SOURCEDIR, DESTNTDIR, T)
+  if type(T.source) ~= "table" or type(T.target) ~= "table" or type(T.dirs) ~= "table" then
+    error("Invalid installation table passed to table updater")
+  end
+  local tmp = System.listDirectory(SOURCEDIR)
+  local COUNT = 0 -- Ammount of files that will be installed
+  local add_dir = true
+  if tmp == nil then return 0 end
+  for x = 1, #tmp do
+    if not tmp[x].directory then
+        table.insert(T.source, SOURCEDIR.."/"..tmp[x].name)
+        table.insert(T.target, DESTNTDIR.."/"..tmp[x].name)
+        COUNT = COUNT+1
+    end
+  end
+  if COUNT > 0 then --at least one file will be installed... append to mkdir struct
+    for x = 1, #T.dirs do
+      if T.dirs[x] == DESTNTDIR then
+        add_dir = false
+      end
+    end
+    if add_dir then
+      table.insert(T.dirs, DESTNTDIR)
+    end
+    System.log(string.format("Installation table: %d files listed to be moved from '%s' to target:/%s'\n", COUNT, SOURCEDIR, DESTNTDIR))
+  end
+  return COUNT
+end
+
+Drawbar(X_MID, Y_MID, 60, Color.new(0, 255, 0))
+System.log("declaring installation tables for PS2BBL\n")
 dofile("INSTALL/EXTINST.lua")
-System.sleep(1)
 Drawbar(X_MID, Y_MID, 70, Color.new(255, 255, 255))
+
 Graphics.setImageFilters(LOGO, LINEAR)
 Graphics.setImageFilters(BG, LINEAR)
 Graphics.setImageFilters(BGERR, LINEAR)
