@@ -24,7 +24,7 @@ $(EE_ASM_DIR)mcserv.c: mcserv.irx | $(EE_ASM_DIR)
 
 $(EE_ASM_DIR)padman.c: padman.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
-	
+
 $(EE_ASM_DIR)libsd.c: libsd.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
@@ -53,6 +53,9 @@ $(EE_ASM_DIR)secrman.c: secrman_debug.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ secrman_irx
 
 $(EE_ASM_DIR)cdfs.c: cdfs.irx | $(EE_ASM_DIR)
+	$(BIN2S) $< $@ $(IRXTAG)
+
+$(EE_ASM_DIR)mmceman.c: mmceman.irx | $(EE_ASM_DIR)
 	$(BIN2S) $< $@ $(IRXTAG)
 
 modules/ds34bt/ee/libds34bt.a: modules/ds34bt/ee

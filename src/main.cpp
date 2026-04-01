@@ -51,6 +51,7 @@ extern unsigned int size_bootString;
 IMPORT_BIN2C(iomanX_irx);
 IMPORT_BIN2C(fileXio_irx);
 IMPORT_BIN2C(sio2man_irx);
+IMPORT_BIN2C(mmceman_irx);
 IMPORT_BIN2C(mcman_irx);
 IMPORT_BIN2C(mcserv_irx);
 IMPORT_BIN2C(padman_irx);
@@ -98,7 +99,7 @@ extern int mnt(const char* path, int index, int openmod);
 
 void setLuaBootPath(int argc, char **argv, int idx)
 {
-    char MountPoint[32+6+1]; // max partition name + 'hdd0:/' = '\0' 
+    char MountPoint[32+6+1]; // max partition name + 'hdd0:/' = '\0'
     char newCWD[255];
     if (argc >= (idx + 1)) {
 
@@ -121,7 +122,7 @@ void setLuaBootPath(int argc, char **argv, int idx)
         }
     }
 
-    
+
     if (!strncmp(boot_path, "mass", 4))
         BOOT_PATH_ID = DEVID::MASS;
     if ((!strncmp(boot_path, "mass:/", 6)) && (strlen(boot_path) > 6)) {
@@ -186,7 +187,7 @@ void alternative_poweroff(void *arg)
         // As required by some (typically 2.5") HDDs, issue the SCSI STOP UNIT command to avoid causing an emergency park.
         if (HaveFileXio)
         {
-            
+
             if (dev9_loaded) {
                 DPRINTF("pfs: PDIOC_CLOSEALL\n");
                 fileXioDevctl("pfs:", PDIOC_CLOSEALL, NULL, 0, NULL, 0);
@@ -201,7 +202,7 @@ void alternative_poweroff(void *arg)
         DPRINTF("shutting down...\n");
         poweroffShutdown();
     } else {DPRINTF("Poweroff is  NOT allowed right now!\n"); return;}
-    
+
 }
 
 #include "SIOCookie.h"
@@ -280,6 +281,9 @@ int main(int argc, char *argv[])
     EPRINTF("[PADMAN]: ret=%d, stat=%d\n", ret, STAT);
     ret = SifExecModuleBuffer(&libsd_irx, size_libsd_irx, 0, NULL, &STAT);
     EPRINTF("[LIBSD]: ret=%d, stat=%d\n", ret, STAT);
+
+    ret = SifExecModuleBuffer(&mmceman_irx, size_mmceman_irx, 0, NULL, &STAT);
+    EPRINTF("[MMCEMAN]: ret=%d, stat=%d\n", ret, STAT);
 
     // load USB modules
     ret = SifExecModuleBuffer(&usbd_irx, size_usbd_irx, 0, NULL, &STAT);

@@ -89,7 +89,7 @@ IOP_MODULES = iomanx.o filexio.o \
 			  usbd.o bdm.o bdmfs_fatfs.o \
 			  usbmass_bd.o cdfs.o ds34bt.o ds34usb.o \
 			  secrsif.o IOPRP.o secrman.o poweroff.o \
-			  ps2dev9_irx.o ps2atad_irx.o ps2hdd_irx.o ps2fs_irx.o
+			  ps2dev9_irx.o ps2atad_irx.o ps2hdd_irx.o ps2fs_irx.o mmceman.o
 
 EMBEDDED_RSC = boot.o \
     background.o background_error.o background_success.o checkbox_empty.o \
